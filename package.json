@@ -1,0 +1,26 @@
+{
+  "name": "studiecf2023_fredj_corentin",
+  "version": "1.0.0",
+  "description": "This is the repository for the final test of Studi. There is a README.md document, it explain the project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin/issues"
+  },
+  "homepage": "https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin#readme",
+  "dependencies": {
+    "cookieparser": "^0.1.0",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.1",
+    "nodemon": "^2.0.21"
+  }
+}
