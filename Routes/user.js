@@ -1,10 +1,20 @@
-const { usersGet, userCreate } = require("../Controllers/user")
+const { usersGet, userCreate, userUpdate, userDelete, userLogin } = require("../Controllers/user")
 
 function userRoute(app){
 
-    app.get("/users", usersGet)
+    // User CRUD routing
 
+    // Create
     app.post("/userCreate", userCreate)
+    // Read
+    app.get("/users", usersGet)
+    // Update
+    app.post("/userUpdate", userUpdate)
+    // Delete
+    app.post("/userDelete", userDelete)
+
+    // Login
+    app.post("/userLogin", userLogin)
 }
 
 module.exports = userRoute

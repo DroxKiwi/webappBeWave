@@ -14,20 +14,12 @@ const pool = new Pool({
     password: 'psqlpsw',
 })
 
-//const db = pg.createConnection({
-//    host: 'localhost',
-//    user: 'postgres',
-//    password: null,
-//    database: 'database_dev_studiECF'
-//})
-
 // Read the SQL file
 const sql = fs.readFileSync('./Utils/initDB.sql').toString()
 
 // Execute the SQL commands in the database
 pool.query(sql, (err, result) => {
     if (err) throw err
-    //console.log(result)
 })
 
 const userRoute = require("./Routes/user")
