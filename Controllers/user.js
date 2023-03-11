@@ -12,17 +12,17 @@ const pool = new Pool({
 
 // Get all the users stored into the database
 async function usersGet(req, res){
-    //if (req.role == "ROLE_ADMIN"){
+    if (req.role != "ROLE_ADMIN"){
+        return res.json("Only ADMIN can do that !")
+    }
+    else {
         pool.query('SELECT * FROM users', (error, results) => {
             if (error) {
                 throw error;
             }
             res.send(results.rows);
         });
-    //}
-    //else {
-    //    return res.send("You can't access")
-    //}
+    }
 }
 
 // Creatin a new user
@@ -41,7 +41,7 @@ async function userCreate(req, res){
 
 // Update of an existing user
 async function userUpdate(req, res){
-    if (!req.cookies.userToken){
+    if (req.role == "unauthentificated"){
         return res.json("You can't have acces ! You need to log in first !")
     }
     else {
@@ -51,13 +51,16 @@ async function userUpdate(req, res){
         else {
             const value = req.body.value
             const row = req.body.row
-            const token = req.cookies.token
+            const userToken = req.cookies.userToken.token
             if (row == "password"){
-                await pool.query(`SELECT user_id FROM users WHERE token = '${token}'`, (error, results) => {
+                await pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
                     if (error){
                         throw error
                     }
                     const user_id = results.rows[0].user_id
+                    if (!user_id){
+                        return res.send("No match found ! Contact an Admin")
+                    }
                     const {token, salt, hash} = encryptPassword(value)
                     pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
                         if (error){
@@ -68,7 +71,7 @@ async function userUpdate(req, res){
                 })
             }
             else {
-                await pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${token}'`, (error, results) => {
+                await pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
                     if (error){
                         throw error
                     }
@@ -81,17 +84,33 @@ async function userUpdate(req, res){
 
 // Delete a user by pseudo selection
 async function userDelete(req, res){
-    const target_pseudo = req.body.target_pseudo
-    if (!req.body.target_pseudo){
-        return res.send("MIssing pseudo to confirm wich one you want to delete")
+    if (req.role != "ROLE_ADMIN"){
+        return res.json("Only ADMIN can do that !")
     }
     else {
-        await pool.query(`DELETE FROM users WHERE pseudo = '${target_pseudo}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            res.send(results)
-        })
+        const target_pseudo = req.body.target_pseudo
+        if (!req.body.target_pseudo){
+            return res.send("MIssing pseudo to confirm wich one you want to delete")
+        }
+        else {
+            await pool.query(`SELECT user_id FROM users WHERE pseudo = '${target_pseudo}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                const selectedUser = results.rows[0]
+                if (!selectedUser){
+                    return res.json('No user found with this pseudo !')
+                }
+                else {
+                    pool.query(`DELETE FROM users WHERE pseudo = '${target_pseudo}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        return res.send("Succefuly deleted")
+                    })
+                }
+            })
+        }
     }
 }
 
@@ -124,4 +143,10 @@ async function userLogin(req, res){
     }
 }
 
-module.exports = { usersGet, userCreate, userUpdate, userDelete, userLogin }
+async function userLogout(req, res){
+    res.clearCookie('userToken')
+    return res.json("logout complete")
+    //res.redirect('/')
+}
+
+module.exports = { usersGet, userCreate, userUpdate, userDelete, userLogin, userLogout }
