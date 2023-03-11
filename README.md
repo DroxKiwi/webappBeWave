@@ -1,110 +1,89 @@
 # studiECF2023_Fredj_Corentin
-This is the repository for the final test of Studi. There is a README.md document, it explain the project.
 
-# Presentation 
+Ceci est le dépôt pour l'ECF Graduate Developper
 
-This project is a Web application, it has for purpuse to make a subscription page for an early acces to the application BeWave Mobile (It's a startup project since august 2021)
+# Présentation 
 
-You can create an account and accept to be contacted to be a beta tester.
+Ceci est un projet Web, il a pour but de créer une page de souscription aux notes de patch de mise à jour d'une application en cours de développement (BeWave). L'application en question est un projet sur lequel je travail avec une équipe depuis Août 2021. Pour des raisons de droits je suis dans l'incapacité de vous livrer plus d'informations. 
 
-# External tools
+Sur l'application Web lié à ce projet il sera donc possible de s'inscrire pour obtenir les notes de mises à jour, mais aussi de s'inscrire comme bêta testeur de l'application et obtenir cette dernière en accès anticipé.
+
+L'application BeWave possède aussi un BackOffice et un Front office. Je travail donc depuis un moment déjà sur le framework Symfony. Pour cette raison j'ai décidé de faire celui ci à l'aide d'Express pour découvrir un nouveau framework.
+
+# Outils
 
 - [Jira](https://projetfun.atlassian.net/jira/software/projects/ECF/boards/2/roadmap?shared=&atlOrigin=eyJpIjoiMjI5NWYzZmVkMDQ5NDQyMTg2YThmNzViZmRiNTIxNTEiLCJwIjoiaiJ9)
 
+![alt](./ECFimages/jiraFeuilleDeRoute.png)
+
 - [Github](https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin)
-
-
-
-# Packages installed
-
-## nodemon
-## express
-## cookieparser
-## pg (postgresql)
-## fs
-## uid2
-## crypto-js
-
-To connect Express.js to PostgreSQL, you need to use a Node.js package called pg. This package allows you to interact with your PostgreSQL database by sending SQL queries from your Node application.
-
-Install the pg package via npm by running:
-
-npm install pg
-
-In your index.js file, require the pg package at the top of your file:
-
-Create a new instance of the Pool object, passing in an object with configuration options that match your PostgreSQL server's settings:
-
-```js
-const pool = new Pool({
-  user: 'your_database_user',
-  host: 'your_database_host',
-  database: 'your_database_name',
-  password: 'your_database_password',
-  port: your_database_port,
-});
-```
-
-To execute a query against your PostgreSQL database using the pool object, use the .query() method. For example, to retrieve all rows from a table named customers, you would write:
-
-```js
-app.get('/customers', (req, res) => {
-  pool.query('SELECT * FROM customers', (error, results) => {
-    if (error) {
-      throw error;
-    }
-    res.send(results.rows);
-  });
-});
-```
+ 
 
 # BackOffice
 
-## fs
+## Paquets installés
 
-## pg
+### nodemon
 
-To use postgresql in local on the shell start to change user 
+nodemon permet de redémarrer le serveur à chaque modification du code de manière automatique.
 
-    sudo -i -u postgres
+### express
 
-You can now access a Postgres prompt immediately by typing:
+Express.js est le framework standard pour le développement de serveur basés sur Node.js
 
-    psql
+### cookieparser
 
-Exit out of the PostgreSQL prompt by typing:
+CookieParser me permet de gérer les cookies comme le token d'itentification
 
-    \q
+### pg (postgresql)
 
-Once in the PostgreSQL prompt, I create the database database_dev_studiECF
+pg est le paquet permettant de faire communiquer avec plus de simplicité la BDD (postgreSQL) avec le code du framework Express.js
 
-```sql
-    CREATE DATABASE database_dev_studiECF
-```
+### fs
 
-## index.js
+fs est le paquet me permettant d'executer des script d'extensions .sql, de ce fait je peux créer des scripts plus complèxes que de simple requête et les injecter dans mon code JavaScript pour y gagner en lisibilité.
 
-## Controllers
+### uid2 / crypto-js
 
-## Models
+uid2 et crypto-js sont les paquets me permettant d'encrypter les informations sensibles utilisateurs comme le mot de passe.
 
-## Routes
+## Construction du BackOffice
 
-## Utils
+Le BackOffice est constitué d'un dossier *./Controllers*, d'un dossier *./Routes*, d'un dossier *./Models* et d'un dossier *./Utils*.
 
-## BDD
+J'ai décidé volontairement de ne pas utiliser de librairie me permettant de générer des "models" ou des "entités" (EX : sequelize). Dans la consigne il est stipulé que vous souhaitez vérifier certains script SQL, mon application étant simple j'ai choisis de coder mes script SQL qui représentent mes modèles.
+N'ayant pas de librairies pour générer les modèles, j'ai donc des requêtes SQL dans mes controllers.
 
-# API
+### Controllers
 
+Dans le dossier */Controllers*, se trouve un fichier *user.js* qui définit les fonctions liées au modèle *USER*.
 
-## User
+Vous y trouverez 6 fonctions asynchrones : 
 
-## Connection
+- usersGet()
+- userCreate() 
+- userUpdate()
+- userDelete()
+- userLogin()
+- userLogout()
 
-## Subscription
+Elles représentent donc le CRUD du modèles *USER* ainsi que la connection et la déconnection du client au BackOffice (l'authentification sera vu un peu plus loin).
 
-## Cookies
+Dans le dossier */Routes*, se trouve un fichier *user.js* qui définit les relations entre les appels API et les fonctions qui y sont liées.
 
+Dans le dossier */Models* se trouve un fichier *user.sql* qui permet de construire la table *USER* si celle ci ne l'es pas déjà au sein de la BDD.
+
+# Authentification 
+
+## Utils -> encryptPassword.js / decryptPassword.js / getRolesMiddleware.js
+
+Les deux fichiers cité au-dessus, permettent d'encrypter le mot de passe utilisateur et de faire correspondre un mot de passe avec une combinaise de *SALT* et de *HASH*.
+
+encryptPassword.js contient une fonction encryptPassword() qui depuis un mot de passe génère le jeu de données *SALT*, *HASH* et *TOKEN*. A la création d'un nouvelle utilisateur, le jeu de données est sauvegardé en BDD.
+
+decryptPassword.js contient une fonction decryptPassword() qui prend pour paramètre un jeu de données *SALT*, *HASH* et *TOKEN* ainsi qu'un mot de passe, si le mot de passe est le bon, la fonction retourne le *TOKEN* lié à l'utilisateur. Lorsqu'un utilisateur parvient à se connecter le *TOKEN* en question est conservé côté client pour une durée de 15 minutes, permettant de continuer à authentifier l'utilisateur.
+
+getRolesMiddleware.js contient une fonction getRolesMiddleware() qui lors d'un appel à l'API vérifie si l'utilisateur est déjà connecté par le biais du *TOKEN*, si c'est le cas, elle renvoie un role qui correspond à l'utilisateur sauvegardé en BDD. Ce rôle servira dans les controllers à confirmer ou non l'accés à certains appels API.
 
 # FrontOffice
 

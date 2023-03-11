@@ -12,6 +12,7 @@ const pool = new Pool({
 
 // Get all the users stored into the database
 async function usersGet(req, res){
+    // ROLE_ADMIN needed to get users in DB
     if (req.role != "ROLE_ADMIN"){
         return res.json("Only ADMIN can do that !")
     }
@@ -115,24 +116,43 @@ async function userDelete(req, res){
 }
 
 async function userLogin(req, res){
-    if (!req.body.pseudo || !req.body.password){
-        res.json("pseudo or password missing")
+    if (!req.body.id || !req.body.password){
+        res.json("pseudo, email or password missing")
     }
     else {
-        const pseudo = req.body.pseudo
+        // Users can log with an email or pseudo
+        const id = req.body.id
         const password = req.body.password
-        await pool.query(`SELECT * FROM users WHERE pseudo = '${pseudo}'`, (error, results) => {
+        await pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
             if (error){
                 throw error
             }
             if (!results.rows[0]){
-                return res.json("No user found")
+                pool.query(`SELECT * FROM users WHERE email = '${id}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    if (!results.rows[0]){
+                        return res.json("No user found")
+                    }
+                    else {
+                        const currentUser = results.rows[0]
+                        const userToken = decryptPassword(currentUser, password)
+                        if (!userToken){
+                            return res.json('Authentication impossible, check your password')
+                        }
+                        else {
+                            res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
+                            res.send('Authentication successful');
+                        }
+                    }
+                })
             }
             else {
                 const currentUser = results.rows[0]
                 const userToken = decryptPassword(currentUser, password)
                 if (!userToken){
-                    return res.json('Authentication impossible, check user _id or password')
+                    return res.json('Authentication impossible, check your password')
                 }
                 else {
                     res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
@@ -143,6 +163,7 @@ async function userLogin(req, res){
     }
 }
 
+// Used to delete cookies 
 async function userLogout(req, res){
     res.clearCookie('userToken')
     return res.json("logout complete")
