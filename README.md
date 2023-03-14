@@ -12,6 +12,27 @@ L'application BeWave possède aussi un BackOffice et un Front office. Je travail
 
 # Outils
 
+- VScode
+
+Une capture d'écran de mon espace de travail : 
+
+J'ai deux écrans, l'un me sert à afficher Postman et la documentation, le second me sert à afficher VScode.
+
+J'ai deux fenêtrage de code, souvent celui de droite est le code sur le quel je me base, typiquement mes modèles et celui de gauche le code que je travails.
+
+
+J'ai deux invite de commandes, l'un me sert à afficher le prompt et le retour d'erreur du serveur Express et le second à installer mes paquet et naviguer sur ma machine.
+
+
+Les extensions installées sur VScode sont nombreuses, je ne vais citer que les plus pertinantes pour ce projet. 
+
+- Github - Pour pouvoir effectuer mes commits, changement de branche et fusion de manière assisté et éviter les erreurs
+- PowerShell et SSH FS qui me permettent d'obtenir un prompt connecté en SSH à une machine distante
+-  Microsoft Edge Tool pour obtenir une fenêtre de navigateur dans VScode, peut être très utile lorsque je souhaite de la documentation et que mon second écran est utilisé.
+- ChatGPT, qui me sert EXCLUSIVEMENT et j'insiste, à vérifier des connaissances ou me donner des noms de librairies lorsque je ne connais pas bien le framework.
+
+![alt](./ECFimages/VScodeExempleWorkspace.png)
+
 - [Jira](https://projetfun.atlassian.net/jira/software/projects/ECF/boards/2/roadmap?shared=&atlOrigin=eyJpIjoiMjI5NWYzZmVkMDQ5NDQyMTg2YThmNzViZmRiNTIxNTEiLCJwIjoiaiJ9)
 
 ![alt](./ECFimages/jiraFeuilleDeRoute.png)
