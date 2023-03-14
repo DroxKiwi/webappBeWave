@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% extends 'base.twig' %}
+
+<html>
+  <head>
+  <title>
+  {% block title %}
+    home
+  {% endblock %}
+  </title>
+  <meta name="viewport">
+  <link rel="stylesheet" href="./CSS/homepage.css">
+  </head>
+    {% block content %}
+      <div class="container-fluid">
+        <h1>
+          Welcome into the app !
+        </h1>
+        <br>
+        {% if id == "unauthentificated" %}
+            <a href="/login">login</a>
+        {% else %}
+            <h2>
+                Welcome {{ id }}
+                <br>
+                <a href="/userLogout">logout</a>
+                <br>
+                more stuff here
+            </h2>
+        {% endif %}
+      </div>
+    {% endblock %}
+</html>

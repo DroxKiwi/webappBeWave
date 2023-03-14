@@ -23,6 +23,7 @@ async function getRolesMiddleware(req, res, next){
             req.role = "unauthentificated"
             return next()
         }
+        req.pseudo = userCheck.pseudo
         req.role = userCheck.role
         return next()
     })

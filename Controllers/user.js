@@ -116,13 +116,12 @@ async function userDelete(req, res){
 }
 
 async function userLogin(req, res){
+    const { id, password } = req.body
     if (!req.body.id || !req.body.password){
-        res.json("pseudo, email or password missing")
+        res.send("pseudo, email or password missing")
     }
     else {
         // Users can log with an email or pseudo
-        const id = req.body.id
-        const password = req.body.password
         await pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
             if (error){
                 throw error
@@ -133,13 +132,13 @@ async function userLogin(req, res){
                         throw error
                     }
                     if (!results.rows[0]){
-                        return res.json("No user found")
+                        return res.send("No user found")
                     }
                     else {
                         const currentUser = results.rows[0]
                         const userToken = decryptPassword(currentUser, password)
                         if (!userToken){
-                            return res.json('Authentication impossible, check your password')
+                            return res.send('Authentication impossible, check your password')
                         }
                         else {
                             res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
@@ -152,11 +151,12 @@ async function userLogin(req, res){
                 const currentUser = results.rows[0]
                 const userToken = decryptPassword(currentUser, password)
                 if (!userToken){
-                    return res.json('Authentication impossible, check your password')
+                    return res.send('Authentication impossible, check your password')
                 }
                 else {
                     res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
-                    res.send('Authentication successful');
+                    //res.send('Authentication successful');
+                    res.redirect(302, '/')
                 }
             }
         })
@@ -166,7 +166,7 @@ async function userLogin(req, res){
 // Used to delete cookies 
 async function userLogout(req, res){
     res.clearCookie('userToken')
-    return res.json("logout complete")
+    res.redirect(302, '/')
     //res.redirect('/')
 }
 

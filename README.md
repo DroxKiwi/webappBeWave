@@ -108,3 +108,14 @@ getRolesMiddleware.js contient une fonction getRolesMiddleware() qui lors d'un a
 
 # FrontOffice
 
+## Paquets installés 
+
+### Twig
+
+### body-parser
+
+### bootstrap
+
+### jQuery
+
+### popper
