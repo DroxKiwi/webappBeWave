@@ -116,7 +116,7 @@ async function userDelete(req, res){
 }
 
 async function userLogin(req, res){
-    const { id, password } = req.body
+    const { id, password, remember } = req.body
     if (!req.body.id || !req.body.password){
         res.send("pseudo, email or password missing")
     }
@@ -154,9 +154,18 @@ async function userLogin(req, res){
                     return res.send('Authentication impossible, check your password')
                 }
                 else {
-                    res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
-                    //res.send('Authentication successful');
-                    res.redirect(302, '/')
+                    if (remember){
+                        // token is saved for 1 year
+                        res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
+                        //res.send('Authentication successful');
+                        res.redirect(302, '/')
+                    }
+                    else {
+                        // token is saved for 25 minutes
+                        res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
+                        //res.send('Authentication successful');
+                        res.redirect(302, '/')
+                    }
                 }
             }
         })

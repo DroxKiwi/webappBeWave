@@ -35,6 +35,8 @@ Les extensions installées sur VScode sont nombreuses, je ne vais citer que les 
 
 - [Jira](https://projetfun.atlassian.net/jira/software/projects/ECF/boards/2/roadmap?shared=&atlOrigin=eyJpIjoiMjI5NWYzZmVkMDQ5NDQyMTg2YThmNzViZmRiNTIxNTEiLCJwIjoiaiJ9)
 
+![alt](./ECFimages/JIRAexemple1.png)
+
 ![alt](./ECFimages/jiraFeuilleDeRoute.png)
 
 - [Github](https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin)

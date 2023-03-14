@@ -25,6 +25,7 @@ pool.query(userModel, (err, result) => {
 })
 
 const userRoute = require("./Routes/user")
+const appRoute = require("./Routes/app")
 
 app.use(express.json())
 app.use(cookieParser())
@@ -40,24 +41,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Setting up static directory
 app.use(express.static('Public'));
 
-// Homepage application
-app.get('/', (req, res) => {
-    if (req.role != "unauthentificated"){
-        const id = req.pseudo
-        res.render('./Templates/home.html.twig', { id })
-    }
-    else {
-        const id = "unauthentificated"
-        res.render('./Templates/home.html.twig', { id })
-    }
-})
-
-// /login is a redirection to get clear /userLogin path from to much code
-app.get('/login', (req, res) => {
-    res.render('./Templates/login.html.twig')
-})
-
 userRoute(app)
+appRoute(app)
 
 app.listen(port, () => {
     console.log(`Server app listening on port ${port}`)
