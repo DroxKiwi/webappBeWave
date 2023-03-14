@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% set modepreference = templateVars[1] %}
 
 <!DOCTYPE html>
 
@@ -22,11 +23,11 @@
               </li>
             {% if id == "unauthentificated" %}
               <li>
-                <button onclick="location.href = '/login'" type="button" class="btn btn-outline-success">Connexion</button>
+                <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
               </li>
             {% else %}
               <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
+                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
               </li>
             {% endif %}
             </ul>
@@ -49,13 +50,13 @@
             <div class="offcanvas-body">
               <div class="row justify-content-center">
                 <div class="col-12">
-                  <button type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
+                  <button onclick="location.href = '/information'" type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
                 </div>
                 <div class="col-12">
-                  <button type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Rapport d'erreur</button>
+                  <button type="button" onclick="location.href = '/report'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Rapport d'erreur</button>
                 </div>
                 <div class="col-12">
-                  <button type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Paramètre de compte</button>
+                  <button type="button" onclick="location.href = '/settings'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Paramètre de compte</button>
                 </div>
                 <div class="col-12">
                   <button onclick="location.href = '/userLogout'" style="margin-bottom: 10px;" type="button" class="btn btn-outline-warning">Déconnexion</button>

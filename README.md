@@ -60,6 +60,14 @@ CookieParser me permet de gérer les cookies comme le token d'itentification
 
 ### pg (postgresql)
 
+Depuis un shell LINUX pour se connecter : 
+
+    sudo -i -u postgres
+
+puis : 
+
+    psql
+
 pg est le paquet permettant de faire communiquer avec plus de simplicité la BDD (postgreSQL) avec le code du framework Express.js
 
 ### fs

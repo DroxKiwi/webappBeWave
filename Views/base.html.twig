@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bootstrap with Twig and Express</title>
+    <title>STUDI fredj corentin ECF 2023</title>
 
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -10,6 +10,11 @@
     <!-- Bootstrap CSS -->
     {% block stylesheets %}
         <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
+            {% if modepreference == "lightmode" %}
+                <link rel="stylesheet" href="/CSS/stylelight.css"/>
+            {% else %}
+                <link rel="stylesheet" href="/CSS/styledark.css"/>
+            {% endif %}
     {% endblock %}
 </head>
 <body>

@@ -12,35 +12,29 @@
             </h1>
             <ul class="nav nav-tabs justify-content-center">
               <li class="nav-item">
-                <a class="nav-link" href="/">App</a>
+                <a class="nav-link" href="#">App</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/contact">Nous contacter</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Souscrire à la Bêta Test !</a>
+                <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
               </li>
-            {% if id == "unauthentificated" %}
-              <li>
-                <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
-              </li>
-            {% else %}
               <li>
                 <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
               </li>
-            {% endif %}
             </ul>
           </header>
           <h2>
-            Page de souscription
+            Page de rapport d'erreur
           </h2>
           <div class="row">
             <div class="col">
             </div>
           </div>
 
-
         <!-- OffCanvas and hidden elements -->
+
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>
@@ -63,5 +57,7 @@
               </div>
             </div>
           </div>
+
+        </div>
   {% endblock %}
 </html>
