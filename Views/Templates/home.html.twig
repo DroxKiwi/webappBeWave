@@ -1,24 +1,19 @@
+{% extends 'base.html.twig' %}
+
 <!DOCTYPE html>
-{% extends 'base.twig' %}
 
 <html>
   <head>
-  <title>
-  {% block title %}
-    home
-  {% endblock %}
-  </title>
-  <meta name="viewport">
-  <link rel="stylesheet" href="./CSS/homepage.css">
+  <link rel="stylesheet" href="/CSS/homepage.css">
   </head>
     {% block content %}
-      <div class="container-fluid">
+      <div class="test container-fluid">
         <h1>
           Welcome into the app !
         </h1>
         <br>
         {% if id == "unauthentificated" %}
-            <a href="/login">login</a>
+          <button onclick="location.href = '/login'" type="button" class="btn btn-outline-success">login</button>
         {% else %}
             <h2>
                 Welcome {{ id }}

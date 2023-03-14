@@ -6,7 +6,6 @@ const getRolesMiddleware = require("./Utils/getRolesMiddleware")
 
 const twig = require('twig')
 const bodyParser = require('body-parser')
-//const bootstrap = require('bootstrap')
 
 const port = 3000
 const app = express()
@@ -37,6 +36,9 @@ app.engine('twig', twig.renderFile);
 
 // used to parse form
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Setting up static directory
+app.use(express.static('Public'));
 
 // Homepage application
 app.get('/', (req, res) => {

@@ -117,5 +117,3 @@ getRolesMiddleware.js contient une fonction getRolesMiddleware() qui lors d'un a
 ### bootstrap
 
 ### jQuery
-
-### popper
