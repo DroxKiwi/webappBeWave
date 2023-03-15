@@ -1,4 +1,4 @@
-const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectInformation, redirectSettings, settingsPreferences, redirectReport } = require("../Controllers/app")
+const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, settingsPreferences, redirectReport } = require("../Controllers/app")
 
 function appRoute(app){
 
@@ -11,6 +11,8 @@ function appRoute(app){
 
     // login is a redirection to get clear /userLogin path from to much code
     app.get('/login', redirectLogin)
+
+    app.get('/createAccount', redirectCreateAccount)
 
     // user settings redirection
     app.get('/information', redirectInformation)

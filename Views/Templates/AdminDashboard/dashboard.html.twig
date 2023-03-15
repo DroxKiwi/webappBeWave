@@ -5,50 +5,40 @@
 
 <html>
   {% block content %}
-
         <div class="container-fluid text-center">
           <header>
             <h1>
-              Bienvenu sur l'application !
+              Bienvenu sur le dashboard admin !
             </h1>
             <ul class="nav nav-tabs justify-content-center">
               <li class="nav-item">
                 <a class="nav-link" href="/">App</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/contact">Nous contacter</a>
+                <a class="nav-link active" aria-current="page" href="#">Nous contacter</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
               </li>
+            {% if id == "unauthentificated" %}
+              <li>
+                <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
+              </li>
+              <li>
+                <button onclick="location.href = '/createAccount'" type="button" style="margin-left: 10px;" class="btn btn-outline-primary">Créer un compte</button>
+              </li>
+            {% else %}
               <li>
                 <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
               </li>
+            {% endif %}
             </ul>
           </header>
           <h2>
-            Page de paramètre de compte utilisateur
+            Page de contacte
           </h2>
           <div class="row">
             <div class="col">
-              <div class="row justify-content-center">
-                <div class="col-6">
-                  <form action="/settingsPreferences" method="post">
-                    <div class="mb-3">
-                      <label for="colorapp" class="form-label">couleur d'application</label>
-                      <select id="colorapp" name="colorapp">
-                        <option name="darkmode" value="darkmode">dark mode</option>
-                        <option name="lightmode" value="lightmode">light mode</option>
-                      </select>
-                    </div>
-                    {% if templateVars[1] == "lightmode" %}
-                      <button type="submit" class="btn btn-outline-dark">Enregistrer</button>
-                    {% else %}
-                      <button type="submit" class="btn btn-outline-light">Enregistrer</button>
-                    {% endif %}
-                  </form>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -76,7 +66,5 @@
               </div>
             </div>
           </div>
-
-        </div>
   {% endblock %}
 </html>

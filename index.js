@@ -24,6 +24,7 @@ pool.query(userModel, (err, result) => {
     if (err) throw err
 })
 
+// routing initialization
 const userRoute = require("./Routes/user")
 const appRoute = require("./Routes/app")
 

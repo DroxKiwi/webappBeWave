@@ -6,14 +6,13 @@
   </head>
     {% block content %}
       <div class="container-fluid text-center">
-
         <header>
         <h1>
             Bienvenu sur l'application !
         </h1>
         <ul class="nav nav-tabs justify-content-center">
             <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">App</a>
+            <a class="nav-link" href="/">App</a>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="/contact">Nous contacter</a>
@@ -31,25 +30,22 @@
         </header>
 
 
-
-
         <div class="row justify-content-center">
           <div class="col-6">
-            <form action="/userLogin" method="post">
+            <form action="/userCreate" method="post">
               <div class="mb-3">
-                <label for="id" class="form-label">Identifiant (pseudo / @)</label>
-                <input type="text" class="form-control" id="id" aria-describedby="idHelp" name="id" required>
-                <div id="idHelp" class="form-text">Votre Email ne sera jamais partagé !</div>
+                <label for="pseudo" class="form-label">Pseudonyme</label>
+                <input type="text" class="form-control" id="pseudo" name="pseudo" required>
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="email" required>
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Mot de passe</label>
                 <input type="password" class="form-control" id="password" name="password" required>
               </div>
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                <label class="form-check-label" for="remember">Se souvenir de moi</label>
-              </div>
-              <button type="submit" class="btn btn-outline-light">Se connecter</button>
+              <button type="submit" class="btn btn-outline-light">Créer mon compte</button>
             </form>
           </div>
         </div>
