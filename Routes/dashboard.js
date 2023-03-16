@@ -3,7 +3,7 @@ const { redirectDashboard, redirectAdminCreatUser, redirectShowUser } = require(
 function adminRoute(app){
 
     // Dashboard and redirection
-    app.post('/dashboard', redirectDashboard)
+    app.get('/dashboard', redirectDashboard)
 
     app.get('/makeuser', redirectAdminCreatUser)
 

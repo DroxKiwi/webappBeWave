@@ -32,10 +32,6 @@
             <li class="nav-item">
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
             </li>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Valider</button>
-            </form>
           </ul>
 
 
@@ -76,11 +72,7 @@
                     </select>
                   </td>
                 </tr>
-                {% if templateVars[1] == "lightmode" %}
-                  <button type="submit" class="btn btn-outline-dark">Enregistrer</button>
-                {% else %}
-                  <button type="submit" class="btn btn-outline-light">Enregistrer</button>
-                {% endif %}
+                  <button type="submit" class="btn btn-outline-warning">Enregistrer</button>
               </form>
               <form action="/resetpassworduser" method="post">
                 <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ templateVars[2] }}">
@@ -92,8 +84,11 @@
             </tbody>
           </table>
 
-          <button type="button" style="margin-top: 10px;" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Supprimer l'utilisateur !</button>
-
+          <form action="/userDelete" method="post">
+            <input type="hidden" class="form-control" id="nonselfupdate" name="nonselfupdate" value="true">
+            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ templateVars[2] }}">
+            <button type="submit" class="btn btn-outline-danger">Supprimer utilisateur</button>
+          </form>
         </div>
   {% endblock %}
 </html>

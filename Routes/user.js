@@ -7,7 +7,10 @@ function userRoute(app){
     app.post("/userCreate", userCreate)
 
     // Read
+    app.get("/usersGet", usersGet)
+    // userGet post request exist to request a research into the dashboard
     app.post("/usersGet", usersGet)
+
     
     // Reset the user password with one randomly generated
     app.post("/resetpassworduser", resetPassword)

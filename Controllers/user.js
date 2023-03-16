@@ -17,8 +17,7 @@ async function usersGet(req, res){
     if (req.role == "ROLE_ADMIN"){
         // Here we are managing the search bar request 
         const { searchrequest } = req.body
-        console.log(searchrequest)
-        if (searchrequest != ""){
+        if (!searchrequest){
             const userToken = req.cookies.userToken.token
             const id = req.pseudo
             // We select into the database the preferences in link with the current user connected by checking the token
@@ -52,14 +51,16 @@ async function usersGet(req, res){
                 }
                 else {
                     const modepreference = results.rows[0].preferences[0]
-                    pool.query(`SELECT * FROM users WHERE user_id = '${searchrequest}' OR pseudo = '${searchrequest}' OR email = '${searchrequest}' OR token = '${searchrequest}' OR role = '${searchrequest}' OR`, (error, results) => {
+                    // I define a modele based SQL to use LIKE statement to send every user where an email, pseudo token or even role is matching
+                    const modeleSQL = "%"+searchrequest+"%"
+                    pool.query(`SELECT * FROM users WHERE pseudo LIKE '${modeleSQL}' OR email LIKE '${modeleSQL}' OR token LIKE '${modeleSQL}' OR role LIKE '${modeleSQL}'`, (error, results) => {
                         if (error){
-                            res.send("An error occured while the research was done")
+                            throw error
                         }
                         else{
-                            console.log(results.rows)
+                            const length = results.rows.length
                             const users = results.rows
-                            const templateVars = [id, modepreference, users]
+                            const templateVars = [id, modepreference, users, length]
                             res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
                         }
                     })
@@ -76,7 +77,6 @@ async function usersGet(req, res){
 async function userCreate(req, res){
     if (req.role == "ROLE_ADMIN"){
         const { pseudo, email, password, role } = req.body
-        console.log(role)
         const {token, salt, hash} = encryptPassword(password)
         pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
             if (error){
@@ -133,7 +133,7 @@ async function resetPassword(req, res){
         const {token, salt, hash} = encryptPassword(password)
         pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
             if (error){
-                res.send("An error occured while genereting the new random password")
+                throw error
             }
             else {
                 // Here the application is supposed to send the new password to the user
@@ -156,14 +156,14 @@ async function userUpdate(req, res){
         if (req.role == "ROLE_ADMIN" && nonselfupdate == "true"){
             pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (error, results) => {
                 if (error){
-                    res.send('An error occured !')
+                    throw error
                 }
                 else {
                     const currentUser_id = results.rows[0].user_id
                     if (password == ""){
                         pool.query(`UPDATE users SET pseudo = '${pseudo}', email = '${email}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
                             if (error){
-                                res.send('An error occured when trying to update the user')
+                                throw error
                             }
                             else {
                                 res.redirect(302, '/dashboard')
@@ -174,7 +174,7 @@ async function userUpdate(req, res){
                         const {token, salt, hash} = encryptPassword(password)
                         pool.query(`UPDATE users set pseudo = '${pseudo}', email = '${email}', token = '${token}', salt = '${salt}', hash = '${hash}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
                             if (error){
-                                res.send('An error occured when trying to update the user')
+                                throw error
                             }
                             else {
                                 res.redirect(302, '/dashboard')
@@ -238,26 +238,39 @@ async function userDelete(req, res){
         return res.json("Seulement les Admins peuvent effectuer cette action")
     }
     else {
-        const userToken = req.cookies.userToken.token
-        // first we check if the current token is matching an user_id 
-        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            const selectedUserId = results.rows[0].user_id
-            if (!selectedUserId){
-                return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
-            }
-            else {
-                // If yes, we delete it
-                pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    res.redirect(302, '/')
-                })
-            }
-        })
+        const { user_id, nonselfupdate } = req.body
+        if (req.role == "ROLE_ADMIN" && nonselfupdate == "true"){
+            pool.query(`DELETE FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    res.redirect(302, "/dashboard")
+                }
+            })
+        }
+        else {
+            const userToken = req.cookies.userToken.token
+            // first we check if the current token is matching an user_id 
+            pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                const selectedUserId = results.rows[0].user_id
+                if (!selectedUserId){
+                    return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
+                }
+                else {
+                    // If yes, we delete it
+                    pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        res.redirect(302, '/')
+                    })
+                }
+            })
+        }
     }
 }
 
