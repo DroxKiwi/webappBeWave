@@ -7,7 +7,7 @@ function userRoute(app){
     app.post("/userCreate", userCreate)
 
     // Read
-    app.get("/usersGet", usersGet)
+    app.post("/usersGet", usersGet)
     
     // Reset the user password with one randomly generated
     app.post("/resetpassworduser", resetPassword)

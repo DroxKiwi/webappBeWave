@@ -15,28 +15,57 @@ const pool = new Pool({
 async function usersGet(req, res){
     // ROLE_ADMIN needed to get users in DB
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const id = req.pseudo
-        // We select into the database the preferences in link with the current user connected by checking the token
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const modepreference = results.rows[0].preferences[0]
-                pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        const users = results.rows
-                        // We send the preferences to the twig template 
-                        const templateVars = [id, modepreference, users]
-                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
-                    }
-                })
-            }
-        })
+        // Here we are managing the search bar request 
+        const { searchrequest } = req.body
+        console.log(searchrequest)
+        if (searchrequest != ""){
+            const userToken = req.cookies.userToken.token
+            const id = req.pseudo
+            // We select into the database the preferences in link with the current user connected by checking the token
+            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    const modepreference = results.rows[0].preferences[0]
+                    pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        else {
+                            const users = results.rows
+                            // We send the preferences to the twig template 
+                            const templateVars = [id, modepreference, users]
+                            res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                        }
+                    })
+                }
+            })
+        }
+        else {
+            const userToken = req.cookies.userToken.token
+            const id = req.pseudo
+            // We select into the database the preferences in link with the current user connected by checking the token
+            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    const modepreference = results.rows[0].preferences[0]
+                    pool.query(`SELECT * FROM users WHERE user_id = '${searchrequest}' OR pseudo = '${searchrequest}' OR email = '${searchrequest}' OR token = '${searchrequest}' OR role = '${searchrequest}' OR`, (error, results) => {
+                        if (error){
+                            res.send("An error occured while the research was done")
+                        }
+                        else{
+                            console.log(results.rows)
+                            const users = results.rows
+                            const templateVars = [id, modepreference, users]
+                            res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                        }
+                    })
+                }
+            })
+        }
     }
     else {
         res.redirect(302, '/')

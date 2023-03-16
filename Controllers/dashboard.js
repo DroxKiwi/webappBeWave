@@ -20,7 +20,7 @@ async function redirectAdminCreatUser(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-        await pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
             if (error){
                 throw error
             }
@@ -42,7 +42,7 @@ async function redirectShowUser(req, res){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
         // We select into the database the preferences in link with the current user connected by checking the token
-        await pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
             if (error){
                 throw error
             }
