@@ -1,4 +1,4 @@
-const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, settingsPreferences, redirectReport } = require("../Controllers/app")
+const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport } = require("../Controllers/app")
 
 function appRoute(app){
 
@@ -17,8 +17,8 @@ function appRoute(app){
     // user settings redirection
     app.get('/information', redirectInformation)
 
+    // Account settings are managed by the user controller
     app.get('/settings', redirectSettings)
-    app.post('/settingsPreferences', settingsPreferences)
 
     app.get('/report', redirectReport)
 

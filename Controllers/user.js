@@ -1,5 +1,6 @@
 const encryptPassword = require("../Utils/encryptPassword")
 const decryptPassword = require("../Utils/decryptPassword")
+const generateRandomPassword = require ("../Utils/generatePassword")
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -10,95 +11,194 @@ const pool = new Pool({
 })
 
 
-// Get all the users stored into the database
+// Get all the users stored into the database and send it to the dashboard
 async function usersGet(req, res){
     // ROLE_ADMIN needed to get users in DB
-    if (req.role != "ROLE_ADMIN"){
-        return res.json("Only ADMIN can do that !")
-    }
-    else {
-        pool.query('SELECT * FROM users', (error, results) => {
-            if (error) {
-                throw error;
-            }
-            res.send(results.rows);
-        });
-    }
-}
-
-// Creatin a new user
-async function userCreate(req, res){
-    const { pseudo, email, password } = req.body
-    const {token, salt, hash} = encryptPassword(password)
-    let role = "ROLE_USER"
-    await pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
-        if (error){
-            throw error
-        }
-        else {
-            // We check if a user is allready existing with this email or pseudo
-            if (!results.rows[0]){
-                pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
-                    if (error) {
-                        throw error
-                    }
-                    res.redirect(302, '/')
-                })
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        // We select into the database the preferences in link with the current user connected by checking the token
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
             }
             else {
-                res.send("Un compte existe déjà avec ses identifiants !")
+                const modepreference = results.rows[0].preferences[0]
+                pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        const users = results.rows
+                        // We send the preferences to the twig template 
+                        const templateVars = [id, modepreference, users]
+                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                    }
+                })
             }
-        }
-    } )
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
 }
 
-// Update of an existing user
+// Creat a new user
+async function userCreate(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { pseudo, email, password, role } = req.body
+        console.log(role)
+        const {token, salt, hash} = encryptPassword(password)
+        pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                // We check if a user is allready existing with this email or pseudo
+                if (!results.rows[0]){
+                    pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
+                        if (error) {
+                            throw error
+                        }
+                        res.redirect(302, '/dashboard')
+                    })
+                }
+                else {
+                    res.send("Un compte existe déjà avec ses identifiants !")
+                }
+            }
+        } )
+    }
+    else {
+        const { pseudo, email, password } = req.body
+        const {token, salt, hash} = encryptPassword(password)
+        let role = "ROLE_USER"
+        pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                // We check if a user is allready existing with this email or pseudo
+                if (!results.rows[0]){
+                    pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
+                        if (error) {
+                            throw error
+                        }
+                        res.redirect(302, '/')
+                    })
+                }
+                else {
+                    res.send("Un compte existe déjà avec ses identifiants !")
+                }
+            }
+        } )
+    }
+}
+
+// I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
+async function resetPassword(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        const length = 5
+        const password = generateRandomPassword(length)
+        const {token, salt, hash} = encryptPassword(password)
+        pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+            if (error){
+                res.send("An error occured while genereting the new random password")
+            }
+            else {
+                // Here the application is supposed to send the new password to the user
+                console.log(password)
+                res.redirect(302, 'dashboard')
+            }
+        })
+    }
+}
+
+// Update an existing user
 async function userUpdate(req, res){
     if (req.role != "ROLE_USER" && req.role != "ROLE_ADMIN"){
         res.redirect(302, '/')
     }
     else {
-        const userToken = req.cookies.userToken.token
-        const { pseudo, email, password } = req.body
-        // To verify which form is send we check if pseudo, email or password is true (not null)
-        if (pseudo){
-            const row = "pseudo"
-            const value = pseudo
-            await pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
+        const { pseudo, email, password, role, nonselfupdate, user_id } = req.body
+        // Here we are updating an user giving by his user_id. Only Admin can do that
+        // To make a difference between an update of his own account or the update of an user account, I implement a value nonselfupdate
+        if (req.role == "ROLE_ADMIN" && nonselfupdate == "true"){
+            pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (error, results) => {
                 if (error){
-                    throw error
+                    res.send('An error occured !')
                 }
-                res.redirect(302, '/information')
-            });
+                else {
+                    const currentUser_id = results.rows[0].user_id
+                    if (password == ""){
+                        pool.query(`UPDATE users SET pseudo = '${pseudo}', email = '${email}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
+                            if (error){
+                                res.send('An error occured when trying to update the user')
+                            }
+                            else {
+                                res.redirect(302, '/dashboard')
+                            }
+                        })
+                    }
+                    else {
+                        const {token, salt, hash} = encryptPassword(password)
+                        pool.query(`UPDATE users set pseudo = '${pseudo}', email = '${email}', token = '${token}', salt = '${salt}', hash = '${hash}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
+                            if (error){
+                                res.send('An error occured when trying to update the user')
+                            }
+                            else {
+                                res.redirect(302, '/dashboard')
+                            }
+                        })
+                    }
+                }
+            })
         }
-        if (email){
-            const row = "email"
-            const value = email
-            await pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                res.redirect(302, '/information')
-            });
-        }
-        if (password){
-            const value = password
-            await pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                const user_id = results.rows[0].user_id
-                if (!user_id){
-                    return res.send("Aucun compte trouvé ! Contacter un Admin si nécessaire")
-                }
-                const {token, salt, hash} = encryptPassword(value)
-                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+        // Here we are updating the user account itself (the one beeing connected)
+        else {
+            const userToken = req.cookies.userToken.token
+            //const { pseudo, email, password } = req.body
+            // To verify which form is send we check if pseudo, email or password is true (not null)
+            if (pseudo){
+                const row = "pseudo"
+                const value = pseudo
+                pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
                     if (error){
                         throw error
                     }
                     res.redirect(302, '/information')
+                });
+            }
+            if (email){
+                const row = "email"
+                const value = email
+                pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    res.redirect(302, '/information')
+                });
+            }
+            if (password){
+                const value = password
+                pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    const user_id = results.rows[0].user_id
+                    if (!user_id){
+                        return res.send("Aucun compte trouvé ! Contacter un Admin si nécessaire")
+                    }
+                    const {token, salt, hash} = encryptPassword(value)
+                    pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        res.redirect(302, '/information')
+                    })
                 })
-            })
+            }
         }
     }
 }
@@ -111,7 +211,7 @@ async function userDelete(req, res){
     else {
         const userToken = req.cookies.userToken.token
         // first we check if the current token is matching an user_id 
-        await pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
+        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
             if (error){
                 throw error
             }
@@ -132,10 +232,29 @@ async function userDelete(req, res){
     }
 }
 
+// Here we set the preferences choosen by the user into the databse
+async function settingsPreferences(req, res){
+    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const { colorapp } = req.body
+        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                res.redirect(302, '/settings')
+            }
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
 async function userLogin(req, res){
     const { id, password, remember } = req.body
     // Users can log with an email or pseudo
-    await pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
+    pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
         if (error){
             throw error
         }
@@ -162,23 +281,13 @@ async function userLogin(req, res){
                             // token is saved for 1 year
                             res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
                             //res.send('Authentication successful');
-                            if (currentRole == "ROLE_USER"){
-                                res.redirect(302, '/')
-                            }
-                            if (currentRole == "ROLE_ADMIN") {
-                                res.redirect(302, '/admin')
-                            }         
+                            res.redirect(302, '/')     
                         }
                         else {
                             // token is saved for 25 minutes
                             res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
                             //res.send('Authentication successful');
-                            if (currentRole == "ROLE_USER"){
-                                res.redirect(302, '/')
-                            }
-                            if (currentRole == "ROLE_ADMIN") {
-                                res.redirect(302, '/admin')
-                            }         
+                            res.redirect(302, '/')
                         }
                     }
                 }
@@ -197,23 +306,13 @@ async function userLogin(req, res){
                     // token is saved for 1 year
                     res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
                     //res.send('Authentication successful');
-                    if (currentRole == "ROLE_USER"){
-                        res.redirect(302, '/')
-                    }
-                    if (currentRole == "ROLE_ADMIN") {
-                        res.redirect(302, '/admin')
-                    }
+                    res.redirect(302, '/')
                 }
                 else {
                     // token is saved for 25 minutes
                     res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
                     //res.send('Authentication successful');
-                    if (currentRole == "ROLE_USER"){
-                        res.redirect(302, '/')
-                    }
-                    if (currentRole == "ROLE_ADMIN") {
-                        res.redirect(302, '/admin')
-                    }                
+                    res.redirect(302, '/')
                 }
             }
         }
@@ -227,4 +326,4 @@ async function userLogout(req, res){
     //res.redirect('/')
 }
 
-module.exports = { usersGet, userCreate, userUpdate, userDelete, userLogin, userLogout }
+module.exports = { usersGet, userCreate, resetPassword, userUpdate, userDelete, settingsPreferences, userLogin, userLogout }

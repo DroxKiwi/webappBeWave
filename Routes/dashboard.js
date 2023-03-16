@@ -1,10 +1,14 @@
-const {  } = require("../Controllers/dashboard")
+const { redirectDashboard, redirectAdminCreatUser, redirectShowUser } = require("../Controllers/dashboard")
 
-function appRoute(app){
+function adminRoute(app){
 
     // Dashboard and redirection
     app.get('/dashboard', redirectDashboard)
 
+    app.get('/makeuser', redirectAdminCreatUser)
+
+    app.post('/showuser', redirectShowUser)
+
 }
 
-module.exports = appRoute
+module.exports = adminRoute

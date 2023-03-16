@@ -8,39 +8,63 @@
         <div class="container-fluid text-center">
           <header>
             <h1>
-              Bienvenu sur le dashboard admin !
+              Bienvenu sur l'application !
             </h1>
             <ul class="nav nav-tabs justify-content-center">
-              <li class="nav-item">
-                <a class="nav-link" href="/">App</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Nous contacter</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
-              </li>
-            {% if id == "unauthentificated" %}
               <li>
-                <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
+                <button onclick="location.href = '/'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Application</button>
               </li>
-              <li>
-                <button onclick="location.href = '/createAccount'" type="button" style="margin-left: 10px;" class="btn btn-outline-primary">Créer un compte</button>
-              </li>
-            {% else %}
               <li>
                 <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
               </li>
-            {% endif %}
             </ul>
           </header>
           <h2>
-            Page de contacte
+            Liste utilisateurs
           </h2>
-          <div class="row">
-            <div class="col">
-            </div>
-          </div>
+
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Liste utilisateurs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
+            </li>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
+              <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
+            </form>
+          </ul>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">user_id</th>
+                <th scope="col">Pseudo</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for user in templateVars[2] %}
+                <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
+                  <td>{{ user.user_id }}</td>
+                  <td>{{ user.pseudo }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>
+                    <form action="/showuser" method="post"> 
+                      <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
+                      <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
 
         <!-- OffCanvas and hidden elements -->
 
@@ -55,9 +79,6 @@
                   <button onclick="location.href = '/information'" type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
                 </div>
                 <div class="col-12">
-                  <button type="button" onclick="location.href = '/report'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Rapport d'erreur</button>
-                </div>
-                <div class="col-12">
                   <button type="button" onclick="location.href = '/settings'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Préferences de compte</button>
                 </div>
                 <div class="col-12">
@@ -66,5 +87,9 @@
               </div>
             </div>
           </div>
+
+
+
+
   {% endblock %}
 </html>

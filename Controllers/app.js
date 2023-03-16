@@ -20,7 +20,8 @@ async function redirectHomepage(req, res){
             else {
                 // We send the preferences to the twig template 
                 modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
+                const role = req.role
+                const templateVars = [id, modepreference, role]
                 res.render('./Templates/home.html.twig', { templateVars })
             }
         })
@@ -42,8 +43,10 @@ async function redirectContact(req, res){
                 throw error
             }
             else {
+                // We send the preferences to the twig template 
                 modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
+                const role = req.role
+                const templateVars = [id, modepreference, role]
                 res.render('./Templates/contact.html.twig', { templateVars })
             }
         })
@@ -64,8 +67,10 @@ async function redirectSuscribe(req, res){
                 throw error
             }
             else {
+                // We send the preferences to the twig template 
                 modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
+                const role = req.role
+                const templateVars = [id, modepreference, role]
                 res.render('./Templates/suscribe.html.twig', { templateVars })
             }
         })
@@ -138,25 +143,6 @@ async function redirectSettings(req, res){
     }
 }
 
-// Here we set the preferences choosen by the user into the databse
-async function settingsPreferences(req, res){
-    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { colorapp } = req.body
-        await pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                res.redirect(302, '/settings')
-            }
-        })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
 // Redirection to the report page
 async function redirectReport(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
@@ -178,4 +164,5 @@ async function redirectReport(req, res){
     }
 }
 
-module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, settingsPreferences, redirectReport }
+
+module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport }

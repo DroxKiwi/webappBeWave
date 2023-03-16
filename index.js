@@ -27,6 +27,7 @@ pool.query(userModel, (err, result) => {
 // routing initialization
 const userRoute = require("./Routes/user")
 const appRoute = require("./Routes/app")
+const adminRoute = require("./Routes/dashboard")
 
 app.use(express.json())
 app.use(cookieParser())
@@ -44,6 +45,7 @@ app.use(express.static('Public'));
 
 userRoute(app)
 appRoute(app)
+adminRoute(app)
 
 app.listen(port, () => {
     console.log(`Server app listening on port ${port}`)
