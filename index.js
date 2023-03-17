@@ -3,7 +3,6 @@ const { Pool } = require('pg')
 const fs = require('fs')
 const cookieParser = require('cookie-parser')
 const getRolesMiddleware = require("./Utils/getRolesMiddleware")
-
 const twig = require('twig')
 const bodyParser = require('body-parser')
 
@@ -17,11 +16,17 @@ const pool = new Pool({
 })
 
 // Read the SQL file
-const userModel = fs.readFileSync('./Models/user.sql').toString()
+const usersModel = fs.readFileSync('./Models/user.sql').toString()
+const logsModel = fs.readFileSync('./Models/logs.sql').toString()
 
 // Execute the SQL commands in the database
-pool.query(userModel, (err, result) => {
+pool.query(usersModel, (err, result) => {
     if (err) throw err
+    else {
+        pool.query(logsModel, (err, result) => {
+            if (err) throw err
+        })
+    }
 })
 
 // routing initialization

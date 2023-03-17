@@ -57,8 +57,16 @@ async function redirectShowUser(req, res){
                         email = results.rows[0].email
                         token = results.rows[0].token
                         role = results.rows[0].pseudo
-                        const templateVars = [ id, modepreference, user_id, pseudo, email, token, role ]
-                        res.render('./Templates/AdminDashboard/showuser.html.twig', { templateVars })
+                        pool.query(`SELECT * FROM logs WHERE user_email = '${email}'`, (error, results) => {
+                            if (error){
+                                throw error
+                            }
+                            else {
+                                const logs = results.rows
+                                const templateVars = [ id, modepreference, user_id, pseudo, email, token, role, logs ]
+                                res.render('./Templates/AdminDashboard/showuser.html.twig', { templateVars })
+                            }
+                        })
                     }
                 })
             }
@@ -69,4 +77,33 @@ async function redirectShowUser(req, res){
     }
 }
 
-module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser }
+async function getLogs(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        // We select into the database the preferences in link with the current user connected by checking the token
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const modepreference = results.rows[0].preferences[0]
+                pool.query(`SELECT * FROM logs`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        const logs = results.rows
+                        const templateVars = [ id, modepreference, logs ]
+                        res.render('./Templates/AdminDashboard/logs.html.twig', { templateVars })
+                    }
+                })
+            }
+        })
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
+module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, getLogs }

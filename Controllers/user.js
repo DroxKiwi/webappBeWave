@@ -2,6 +2,7 @@ const encryptPassword = require("../Utils/encryptPassword")
 const decryptPassword = require("../Utils/decryptPassword")
 const generateRandomPassword = require ("../Utils/generatePassword")
 const { Pool } = require('pg');
+const logger = require("../Utils/logger")
 
 const pool = new Pool({
     user: 'postgres',
@@ -9,7 +10,6 @@ const pool = new Pool({
     database: 'database_dev_studiecf',
     password: 'psqlpsw',
 })
-
 
 // Get all the users stored into the database and send it to the dashboard
 async function usersGet(req, res){
@@ -78,6 +78,10 @@ async function userCreate(req, res){
     if (req.role == "ROLE_ADMIN"){
         const { pseudo, email, password, role } = req.body
         const {token, salt, hash} = encryptPassword(password)
+
+        message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
+        logger.newLog(req.cookies.userToken.token, message)
+
         pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
             if (error){
                 throw error
@@ -131,14 +135,26 @@ async function resetPassword(req, res){
         const length = 5
         const password = generateRandomPassword(length)
         const {token, salt, hash} = encryptPassword(password)
-        pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+
+        pool.query(`SELECT pseudo FROM users WHERE user_id = '${user_id}'`, (error, results) => {
             if (error){
                 throw error
             }
             else {
-                // Here the application is supposed to send the new password to the user
-                console.log(password)
-                res.redirect(302, 'dashboard')
+                const pseudo = results.rows[0].pseudo
+                message = "Reset a password for : "+pseudo
+                logger.newLog(req.cookies.userToken.token, message)
+        
+                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        // Here the application is supposed to send the new password to the user
+                        console.log(password)
+                        res.redirect(302, 'dashboard')
+                    }
+                })
             }
         })
     }
@@ -151,9 +167,14 @@ async function userUpdate(req, res){
     }
     else {
         const { pseudo, email, password, role, nonselfupdate, user_id } = req.body
+
         // Here we are updating an user giving by his user_id. Only Admin can do that
         // To make a difference between an update of his own account or the update of an user account, I implement a value nonselfupdate
         if (req.role == "ROLE_ADMIN" && nonselfupdate == "true"){
+
+            message = "Update a user : "+pseudo 
+            logger.newLog(req.cookies.userToken.token, message)
+
             pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (error, results) => {
                 if (error){
                     throw error
@@ -187,6 +208,10 @@ async function userUpdate(req, res){
         // Here we are updating the user account itself (the one beeing connected)
         else {
             const userToken = req.cookies.userToken.token
+            const pseudo = req.pseudo
+            message = "Update is account pseudo : "+pseudo
+            logger.newLog(req.cookies.userToken.token, message)
+
             //const { pseudo, email, password } = req.body
             // To verify which form is send we check if pseudo, email or password is true (not null)
             if (pseudo){
@@ -240,12 +265,22 @@ async function userDelete(req, res){
     else {
         const { user_id, nonselfupdate } = req.body
         if (req.role == "ROLE_ADMIN" && nonselfupdate == "true"){
-            pool.query(`DELETE FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+            pool.query(`SELECT pseudo FROM users WHERE user_id = '${user_id}'`, (error ,results) => {
                 if (error){
                     throw error
                 }
                 else {
-                    res.redirect(302, "/dashboard")
+                    const pseudo = results.rows[0].pseudo
+                    message = "Delete an user : "+pseudo
+                    logger.newLog(req.cookies.userToken.token, message)
+                    pool.query(`DELETE FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        else {
+                            res.redirect(302, "/dashboard")
+                        }
+                    })
                 }
             })
         }
@@ -256,18 +291,23 @@ async function userDelete(req, res){
                 if (error){
                     throw error
                 }
-                const selectedUserId = results.rows[0].user_id
-                if (!selectedUserId){
-                    return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
-                }
                 else {
-                    // If yes, we delete it
-                    pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
-                        if (error){
-                            throw error
-                        }
-                        res.redirect(302, '/')
-                    })
+                    const selectedUserId = results.rows[0].user_id
+                    const pseudo = req.pseudo
+                    if (!selectedUserId){
+                        return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
+                    }
+                    else {
+                        message = "Delete his account : "+pseudo
+                        logger.newLog(req.cookies.userToken.token, message)
+                        // If yes, we delete it
+                        pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
+                            if (error){
+                                throw error
+                            }
+                            res.redirect(302, '/')
+                        })
+                    }
                 }
             })
         }
@@ -295,6 +335,7 @@ async function settingsPreferences(req, res){
 
 async function userLogin(req, res){
     const { id, password, remember } = req.body
+
     // Users can log with an email or pseudo
     pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
         if (error){
@@ -317,7 +358,10 @@ async function userLogin(req, res){
                         return res.send('Connexion impossible, vérifiez votre mot de passe')
                     }
                     else {
-                        const currentRole = currentUser.role
+
+                        message = "Log in : "+currentUser.pseudo
+                        logger.newLog(currentUser.token, message)
+
                         // If the user want to be log in for long time, we create a 1 year token
                         if (remember){
                             // token is saved for 1 year
@@ -343,7 +387,10 @@ async function userLogin(req, res){
                 return res.send('Connexion impossible, vérifiez votre mot de passe')
             }
             else {
-                const currentRole = currentUser.role
+
+                message = "Log in : "+currentUser.pseudo
+                logger.newLog(currentUser.token, message)
+
                 if (remember){
                     // token is saved for 1 year
                     res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
@@ -363,9 +410,23 @@ async function userLogin(req, res){
 
 // Used to delete cookies 
 async function userLogout(req, res){
-    res.clearCookie('userToken')
-    res.redirect(302, '/')
-    //res.redirect('/')
+
+    userToken = req.cookies.userToken.token
+
+    pool.query(`SELECT pseudo FROM users WHERE token = '${userToken}'`, (error, results) => {
+        if (error){
+            throw error
+        }
+        else {
+            pseudo = results.rows[0].pseudo
+            message = "Log out : "+pseudo
+            logger.newLog(req.cookies.userToken.token, message)
+        
+            res.clearCookie('userToken')
+            res.redirect(302, '/')
+            //res.redirect('/')
+        }
+    })
 }
 
 module.exports = { usersGet, userCreate, resetPassword, userUpdate, userDelete, settingsPreferences, userLogin, userLogout }
