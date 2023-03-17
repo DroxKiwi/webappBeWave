@@ -6,7 +6,7 @@ const getRolesMiddleware = require("./Utils/getRolesMiddleware")
 const twig = require('twig')
 const bodyParser = require('body-parser')
 
-const port = 3000
+const port = process.env.PORT
 const app = express()
 const pool = new Pool({
     user: 'postgres',
@@ -14,6 +14,10 @@ const pool = new Pool({
     database: 'database_dev_studiecf',
     password: 'psqlpsw',
 })
+
+console.log(`Ready on ${process.env.NODE_ENV} mode`)
+console.log(`Port listening on ${process.env.PORT} mode`)
+
 
 // Read the SQL file
 const usersModel = fs.readFileSync('./Models/user.sql').toString()

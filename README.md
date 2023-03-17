@@ -46,19 +46,19 @@ Les extensions installées sur VScode sont nombreuses, je ne vais citer que les 
 
 ## Paquets installés
 
-### nodemon
+- ### nodemon
 
 nodemon permet de redémarrer le serveur à chaque modification du code de manière automatique.
 
-### express
+- ### express
 
 Express.js est le framework standard pour le développement de serveur basés sur Node.js
 
-### cookieparser
+- ### cookieparser
 
 CookieParser me permet de gérer les cookies comme le token d'itentification
 
-### pg (postgresql)
+- ### pg (postgresql)
 
 Depuis un shell LINUX pour se connecter : 
 
@@ -70,31 +70,37 @@ puis :
 
 pg est le paquet permettant de faire communiquer avec plus de simplicité la BDD (postgreSQL) avec le code du framework Express.js
 
-### fs
+- ### fs
 
 fs est le paquet me permettant d'executer des script d'extensions .sql, de ce fait je peux créer des scripts plus complèxes que de simple requête et les injecter dans mon code JavaScript pour y gagner en lisibilité.
 
-### uid2 / crypto-js
+- ### uid2 / crypto-js
 
 uid2 et crypto-js sont les paquets me permettant d'encrypter les informations sensibles utilisateurs comme le mot de passe.
 
+- ### env-cmd
+
+env-cmd me permet d'intégrer et lire des fichier d'environnement
+
 ## Construction du BackOffice
 
-Le BackOffice est constitué d'un dossier *./Controllers*, d'un dossier *./Routes*, d'un dossier *./Models* et d'un dossier *./Utils*.
+Le BackOffice est constitué d'un dossier *./Controllers*, d'un dossier *./Routes*, d'un dossier *./Models*, d'un dossier *./Utils* et d'un dossier */Fixtures*.
 
 J'ai décidé volontairement de ne pas utiliser de librairie me permettant de générer des "models" ou des "entités" (EX : sequelize). Dans la consigne il est stipulé que vous souhaitez vérifier certains script SQL, mon application étant simple j'ai choisis de coder mes script SQL qui représentent mes modèles.
 N'ayant pas de librairies pour générer les modèles, j'ai donc des requêtes SQL dans mes controllers.
 
-### Controllers
+- ### Controllers
 
 Dans le dossier */Controllers*, se trouve un fichier *user.js* qui définit les fonctions liées au modèle *USER*.
 
-Vous y trouverez 6 fonctions asynchrones : 
+Vous y trouverez 8 fonctions asynchrones : 
 
 - usersGet()
-- userCreate() 
+- userCreate()
+- resetPassword()
 - userUpdate()
 - userDelete()
+- settingsPreferences()
 - userLogin()
 - userLogout()
 
@@ -102,7 +108,7 @@ Elles représentent donc le CRUD du modèles *USER* ainsi que la connection et l
 
 Dans le dossier */Controllers* se trouve aussi un fichier *app.js* qui définit les fonctions liées à l'utilisation de l'application.
 
-Vous y trouverez 9 fonctions asynchrones qui composent le système de redirection de l'application :
+Vous y trouverez 8 fonctions asynchrones qui composent le système de redirection de l'application :
 
 - redirectHomepage()
 - redirectContact()
@@ -111,66 +117,85 @@ Vous y trouverez 9 fonctions asynchrones qui composent le système de redirectio
 - redirectCreateAccount()
 - redirectInformation()
 - redirectSettings()
-- settingsPreferences()
 - redirectReport
 
-### Routes
+Dans le dossier */Controllers* se trouve pour finir un fichier */dashboard.js* qui définit les fonctions liées à l'utilisation de l'interface backoffice pour les adminisitrateurs. Comme son nom l'indique il s'agit d'un tableau de bord pour visualiser et gérer les utilisateurs.
+ 
+- ### Routes
 
 Dans le dossier */Routes*, se trouve un fichier *user.js* qui définit les relations entre les appels API et les fonctions qui y sont liées.
 
-Dans le dossier */Routes*, se trouve auss un fichier *app.js* qui définit les relations entre les appels de redirections et les fonctions qui y sont liées.
+Dans le dossier */Routes*, se trouve aussi un fichier *app.js* qui définit les relations entre les appels de redirections et les fonctions qui y sont liées.
 
-### Models
+Dans le dossier */Routes*, se trouve pour finir un fichier *dashboard.js* qui définit les relations entre les appels tu tableau de bord administrateur et les fonctions qui y sont liées.
 
-Dans le dossier */Models* se trouve un fichier *user.sql* qui permet de construire la table *USER* si celle ci ne l'es pas déjà au sein de la BDD.
+- ### Models
 
-# Authentification 
+Dans le dossier */Models* se trouve un fichier *user.sql* qui permet de construire la table *USER* si celle ci ne l'es pas déjà au sein de la BDD. On y trouve aussi un fichier *logs.sql* qui construit la table logs si celle ci n'est pas déjà créée.
 
-## Utils -> encryptPassword.js / decryptPassword.js / getRolesMiddleware.js
+- ### Fixtures
 
-Les deux fichiers cité au-dessus, permettent d'encrypter le mot de passe utilisateur et de faire correspondre un mot de passe avec une combinaise de *SALT* et de *HASH*.
+Dans le dossier */Fixtures* se trouve un fichier *load.js* qui une lorsque éxecuté permet d'inscrire le premier utilisateur, soit un administrateu au sein de la BDD pour pouvoi intéragir avec l'application.
 
-encryptPassword.js contient une fonction encryptPassword() qui depuis un mot de passe génère le jeu de données *SALT*, *HASH* et *TOKEN*. A la création d'un nouvelle utilisateur, le jeu de données est sauvegardé en BDD.
+- ### Utils
 
-decryptPassword.js contient une fonction decryptPassword() qui prend pour paramètre un jeu de données *SALT* et *HASH* ainsi qu'un mot de passe, si le mot de passe est le bon, la fonction retourne le *TOKEN* lié à l'utilisateur. Lorsqu'un utilisateur parvient à se connecter le *TOKEN* en question est conservé côté client pour une durée de 25 minutes, ou de 1 an selon le choix de l'utilisateur, permettant de continuer à authentifier ce dernier.
+Les deux fichiers *encryptPassword.js* et *decryptPassword.js*, permettent d'encrypter le mot de passe utilisateur et de faire correspondre un mot de passe avec une combinaise de *SALT* et de *HASH*.
 
-getRolesMiddleware.js contient une fonction getRolesMiddleware() qui lors d'un appel à l'API vérifie si l'utilisateur est déjà connecté par le biais du *TOKEN*, si c'est le cas, elle renvoie un role qui correspond à l'utilisateur sauvegardé en BDD. Ce rôle servira dans les controllers à confirmer ou non l'accés à certains appels API.
+*encryptPassword.js* contient une fonction encryptPassword() qui depuis un mot de passe génère le jeu de données *SALT*, *HASH* et *TOKEN*. A la création d'un nouvelle utilisateur, le jeu de données est sauvegardé en BDD.
+
+*decryptPassword.js* contient une fonction decryptPassword() qui prend pour paramètre un jeu de données *SALT* et *HASH* ainsi qu'un mot de passe, si le mot de passe est le bon, la fonction retourne le *TOKEN* lié à l'utilisateur. Lorsqu'un utilisateur parvient à se connecter le *TOKEN* en question est conservé côté client pour une durée de 25 minutes, ou de 1 an selon le choix de l'utilisateur, permettant de continuer à authentifier ce dernier.
+
+*getRolesMiddleware.js* contient une fonction getRolesMiddleware() qui lors d'un appel à l'API vérifie si l'utilisateur est déjà connecté par le biais du *TOKEN*, si c'est le cas, elle renvoie un role qui correspond à l'utilisateur sauvegardé en BDD. Ce rôle servira dans les controllers à confirmer ou non l'accés à certains appels API.
+
+*logger.js* contient une fonction newLog() qui permet d'ajouter un log en BDD.
+
+*generatePassword.js* comme son nom l'indique permet de génerer aléatoirement un mot de passe, utile si un utilisateur souhaite réinitialiser son mot de passe.
 
 # FrontOffice
 
 ## Paquets installés
 
-### Twig
+- ### Twig
 
 Twig en moteur de template, ayant déjà travaillé avec Symfony auparavant, twig me semblait une solution simple de mise en oeuvre. Il me permet de transmettre des données au front et de le conditionner selon certain paramètre. Typiquement, si l'utilisateur est connecté ou non.
 
-### body-parser
+- ### body-parser
 
 body-parser me permet de récupérer de manière simple et efficace le contenu du body de la requête transmise par les formulaires. 
 
-### bootstrap
+- ### bootstrap
 
 Bootstrap pour la mise en page, évident, mais aussi et surtout pour l'adaptation mobile. 
 
-### jQuery
+- ### jQuery
 
 jQuery est nécessaire pour faire fonctionner Bootstrap avec Express.
 
 ## Construction du FrontOffice
 
-Le FrontOffice est constitué de deux dossiers, */Views* qui contient les pages html.twig et d'un dossier */Public* qui est déclaré static dans mon index.js.
+Le FrontOffice est constitué de deux dossiers, */Views* qui contient les pages html.twig et d'un dossier */Public* qui est déclaré static dans mon index.js, qui lui contient les fichiers nécessaire au rendu coté client.
 
 ### Views
 
 Le dossier */Views* contient un fichier *base.html.twig* qui sert de parent aux autres templates. Les appels de script JS ainsi que les appels de style CSS se font dans ce fichier pour être répercutés sur toute l'application, me permettant de mettre en place un système de thème.
-Le dossier */Views/Templates* contient donc les templates de l'application, les pages qui seront affichées à l'utilisateur final.
+Le dossier */Views/Templates* contient donc les templates de l'application, les pages qui seront affichées à l'utilisateur final. Il s'y trouve aussi un dossier */Views/Templates/AdminDashboard* qui contient les fichiers nécessaire au rendu du tableau de bord administrateu
 
 ### Public
 
 Le dossier */Public* me permet de transporter les modules utiles au bon fonctionnement du front, comme la bibliothèque Bootstrap, jQuery ou encore les fichiers personnalisés CSS.
 
-## Utilisation du FrontOffice
+# Mettre en place le backoffice 
+
+## PostgreSQL 
+
+Il faut nécessairement PostgreSQL sur votre machine pour qu'il fonctionne
+
+## 
+
+# Utilisation du FrontOffice
 
 Le front est extrement simple, il a pour but de gérer un utilisateur, création de compte, connexion, modification des informations utilisateurs et suppression du compte. La gestion de l'utilisateur permet uniquement de pouvoir distinguer un simple curieux de quelqu'un de suffisement intéressé pour vouloir devenir Bêta testeur.
 
 Le front aura pour but d'afficher les mises à jour à venir et ce qui est déjà dans l'application "BeWave".
+
+## Amélioration possible du code

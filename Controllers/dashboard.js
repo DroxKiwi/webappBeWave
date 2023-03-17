@@ -77,7 +77,7 @@ async function redirectShowUser(req, res){
     }
 }
 
-async function getLogs(req, res){
+async function redirectLogs(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
@@ -106,4 +106,4 @@ async function getLogs(req, res){
     }
 }
 
-module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, getLogs }
+module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs }

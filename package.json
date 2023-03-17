@@ -4,14 +4,16 @@
   "description": "This is the repository for the final test of Studi. There is a README.md document, it explain the project.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "env-cmd -f ./.env.dev node index.js",
+    "prod": "env-cmd -f ./.env.prod node index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Fredj Corentin",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin/issues"
@@ -26,12 +28,13 @@
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "jquery": "^3.6.4",
-    "mongoose": "^7.0.1",
     "nodemon": "^2.0.21",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.29.3",
     "twig": "^1.16.0",
     "uid2": "^1.0.0"
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0"
   }
 }
