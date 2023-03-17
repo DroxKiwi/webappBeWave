@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "env-cmd -f ./.env.dev node index.js",
-    "prod": "env-cmd -f ./.env.prod node index.js"
+    "dev": "env-cmd -f ./.env node index.js",
+    "prod": "env-cmd -f ./.env node index.js"
   },
   "repository": {
     "type": "git",

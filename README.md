@@ -190,14 +190,27 @@ Le dossier */Public* me permet de transporter les modules utiles au bon fonction
 
 Il faut nécessairement PostgreSQL et NPM sur votre machine !
 
-## Cloner le projet depuis git
+## Cloner le projet depuis git :
 
     git clone git@github.com:DroxKiwi/studiECF2023_Fredj_Corentin.git
 
-## Télécharger les dépendances 
+## Télécharger les dépendances :
 
     cd /chemin_du_projet/studiECF2023_Fredj_Corentin
     npm install
+
+## Initialiser la base de données :
+
+Le fichier bash ./init_database.sh permet d'initialiser la BDD en local, il est important de vérifier le mot de passe de l'utilisateur postgres ! 
+
+    cd studiECF2023_Fredj_Corentin/bin
+    ./init_database.sh
+
+Le script bash va dont redémarrer postgres, créer la base de données *database_dev_studiecf* et appliquer les fixtures et les modèles dans la base de données. Si la variable d'environnement du fichier .env NODE_ENV est fixée sur "prod" alors le script ne fonctionnera pas !
+
+## Lancer l'application en local :
+
+    npm run dev
 
 
 

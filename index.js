@@ -1,37 +1,22 @@
 const express = require('express')
 const { Pool } = require('pg')
-const fs = require('fs')
 const cookieParser = require('cookie-parser')
 const getRolesMiddleware = require("./Utils/getRolesMiddleware")
 const twig = require('twig')
 const bodyParser = require('body-parser')
 
+
 const port = process.env.PORT
 const app = express()
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
+    user: process.env.POSTGRES_USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
 })
 
 console.log(`Ready on ${process.env.NODE_ENV} mode`)
 console.log(`Port listening on ${process.env.PORT} mode`)
-
-
-// Read the SQL file
-const usersModel = fs.readFileSync('./Models/user.sql').toString()
-const logsModel = fs.readFileSync('./Models/logs.sql').toString()
-
-// Execute the SQL commands in the database
-pool.query(usersModel, (err, result) => {
-    if (err) throw err
-    else {
-        pool.query(logsModel, (err, result) => {
-            if (err) throw err
-        })
-    }
-})
 
 // routing initialization
 const userRoute = require("./Routes/user")
