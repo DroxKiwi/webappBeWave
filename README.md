@@ -10,7 +10,7 @@ Sur l'application Web lié à ce projet il sera donc possible de s'inscrire pour
 
 L'application BeWave possède aussi un BackOffice et un Front office. Je travail donc depuis un moment déjà sur le framework Symfony. Pour cette raison j'ai décidé de faire celui ci à l'aide d'Express pour découvrir un nouveau framework.
 
-# Outils
+# Outils de développement
 
 - VScode
 

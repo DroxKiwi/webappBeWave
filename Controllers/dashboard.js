@@ -57,7 +57,7 @@ async function redirectShowUser(req, res){
                         email = results.rows[0].email
                         token = results.rows[0].token
                         role = results.rows[0].pseudo
-                        pool.query(`SELECT * FROM logs WHERE user_email = '${email}'`, (error, results) => {
+                        pool.query(`SELECT * FROM logs WHERE user_id = '${user_id}'`, (error, results) => {
                             if (error){
                                 throw error
                             }

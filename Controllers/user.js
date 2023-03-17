@@ -208,7 +208,6 @@ async function userUpdate(req, res){
         // Here we are updating the user account itself (the one beeing connected)
         else {
             const userToken = req.cookies.userToken.token
-            const pseudo = req.pseudo
             message = "Update is account pseudo : "+pseudo
             logger.newLog(req.cookies.userToken.token, message)
 
