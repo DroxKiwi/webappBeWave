@@ -184,13 +184,22 @@ Le dossier */Views/Templates* contient donc les templates de l'application, les 
 
 Le dossier */Public* me permet de transporter les modules utiles au bon fonctionnement du front, comme la bibliothèque Bootstrap, jQuery ou encore les fichiers personnalisés CSS.
 
-# Mettre en place le backoffice 
+# Mettre en place le backoffice en local
 
 ## PostgreSQL 
 
-Il faut nécessairement PostgreSQL sur votre machine pour qu'il fonctionne
+Il faut nécessairement PostgreSQL et NPM sur votre machine !
 
-## 
+## Cloner le projet depuis git
+
+    git clone git@github.com:DroxKiwi/studiECF2023_Fredj_Corentin.git
+
+## Télécharger les dépendances 
+
+    cd /chemin_du_projet/studiECF2023_Fredj_Corentin
+    npm install
+
+
 
 # Utilisation du FrontOffice
 
