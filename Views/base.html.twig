@@ -18,6 +18,11 @@
     {% endblock %}
 </head>
 <body>
+    {% if modepreference == "lightmode" %}
+        <a href="/"> <img src="/Images/BeWave_logo_noir.png" style="position: absolute; height: 50px; width: 50px;" alt="logo"/></a>
+    {% else %}
+        <a href="/"> <img src="/Images/BeWave_logo_blanc.png" style="position: absolute; height: 50px; width: 50px;"  alt="logo"/></a>
+    {% endif %}
 
     {% block content %}{% endblock %}
 
