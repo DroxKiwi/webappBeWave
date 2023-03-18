@@ -32,6 +32,12 @@
             <li class="nav-item">
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/logs">Logs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/formcontact">formulaire de contacts</a>
+            </li>
           </ul>
 
 
@@ -89,6 +95,33 @@
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ templateVars[2] }}">
             <button type="submit" class="btn btn-outline-danger">Supprimer utilisateur</button>
           </form>
+
+
+          {% if templateVars[8] != "null" %}
+          <table class="table">
+            <thead>
+              <tr>
+                  Informations à propos du Bêta testeur :
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for info in templateVars[8] %}
+                    <td>
+                        {{ info }}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+            <form action="/betatesterDelete" method="post">
+              <input type="hidden" class="form-control" id="nonselfupdate" name="nonselfupdate" value="true">
+              <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ templateVars[2] }}">
+              <input type="hidden" class="form-control" id="userPseudo" name="userPseudo" value="{{ templateVars[3] }}">
+              <button type="submit" class="btn btn-outline-warning">Retirer</button>
+            </form>
+            {% endif %}
+
+
 
           <table class="table">
             <thead>

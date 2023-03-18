@@ -40,18 +40,46 @@
               {% endif %}
             </ul>
           </header>
-          <h2>
-            Page d'accueil
+          <h2 style="margin-top:10vh;">
+            Présentation de l'application mobile
           </h2>
-          <div class="row">
-            <div class="col">
-              {% if newuser %}
-                Bienvenu !
-              {% endif %}
+
+          <p>L'application est nommée BeWave ! Elle aura pour but d'apporter un agenda d'évenments dans un premier temps. Très vite nous intégrerons des mises à jour importantes pour 
+          que les artistes, les établissements et les utilisateurs concernés puissent profiter d'informations pertinantes.
+          Les détails concernant l'application ne seront délivrés que si vous souscrivez à la Bêta test. Notre point fort ? Le lien avec la communauté.
+          Nous avons déjà des contacts bien ancré au seins des artistes et établissement des régions ciblées. Par la suite nous aurons du monde sur place pour conserver ce lien.</p>
+
+          <h3><b>! ATTENTION ! Le contenu présenter actuellement est sous réserve de droit d'auteur. Il est donc intérdit de l'utiliser à des fin personnels.</b></h3>
+
+        <!-- Content of home page ! -->
+
+          <div id="carouselExampleIndicators" class="carousel slide">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="/Images/appBeWave1.png" style="height:15%; width:15%;" alt="...">
+              </div>
+              <div class="carousel-item">
+                <img src="/Images/appBeWave2.png" style="height:15%; width:15%;" alt="...">
+              </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden"></span>
+            </button>
           </div>
 
+          <h2 style="margin-top: 5vh;">Les images ci-dessus sont des exemples graphique de l'application dans son état final de V2</h2>
+
+          <h3>Voici la palette de couleur sélectionnée par notre designer</h3>
+
+          <img src="/Images/colorBeWave.png" alt="colorapp" style="height: 35vh; width: 35vh;"/>
         <!-- OffCanvas and hidden elements -->
+
+          <h4 style="margin:10vh;">N'hésitez pas à souscrire pour recevoir des news concernant les mise à jour et un accès anticipé à l'applcation ! Merci :D</h4>
 
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">

@@ -3,7 +3,7 @@ set -o errexit -o nounset -o xtrace -o pipefail
 
 source ../.env.dev
 
-sudo systemctl restart postgresql
+systemctl restart postgresql
 createdb database_dev_studiecf
 
 # Execution depend on the app environment

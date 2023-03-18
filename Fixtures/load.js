@@ -10,6 +10,7 @@ const pool = new Pool({
     password: 'psqlpsw',
 })
 
+
 function fixtureLoad(){
     const password = "admin"
     const pseudo = "admin"

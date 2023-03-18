@@ -33,26 +33,26 @@
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Logs</a>
+              <a class="nav-link" href="/logs">Logs</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/formcontact">formulaire de contacts</a>
+              <a class="nav-link active" href="/formcontact">formulaire de contacts</a>
             </li>
           </ul>
 
           <table class="table">
             <thead>
               <tr>
-                  logs :
+                  formulaires de contact :
               </tr>
             </thead>
             <tbody>
-                {% for logs in templateVars[2] %}
+                {% for forms in templateVars[2] %}
                 <tr>
                   <td>
-                  {% for log in logs %}
+                  {% for form in forms %}
                     <td>
-                      {{ log }}
+                      {{ form }}
                     </td>
                   {% endfor %}
                   </td>

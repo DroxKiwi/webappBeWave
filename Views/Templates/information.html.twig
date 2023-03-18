@@ -42,6 +42,13 @@
                   password : ***********
                   <button type="button" style="margin-top: 10px;" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#passwordModal">Modifier</button>
                   <br>
+                  {% if templateVars[4] %}
+                    <form action="/betatesterDelete" method="post">
+                      <p>Vous êtes Bêta testeur</p>
+                      <button type="submit" class="btn btn-outline-warning">Se retirer</button>
+                    </form>
+                  {% endif %}
+                  <br>
                   <button type="button" style="margin-top: 10px;" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">Supprimer mon compte !</button>
               </h3>
 

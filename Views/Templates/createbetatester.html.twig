@@ -41,36 +41,31 @@
           </header>
           <br>
           <h2>
-            Devenir Bêta testeur !
+            Remplissez le formulaire pour devenir Bêta tester
           </h2>
           <br>
           <br>
           <div class="row">
             <div class="col">
               <form action="/suscribe" method="post">
-                <button type="submit" class="btn btn-outline-success" style="margin-left: 10px;">Souscrire</button>
-                <br>
-                <label for="consent">Consentir au partage et traitement d'informations relative à vos données</label>
-                <input name="consent" id="consent" type="checkbox" value="ON" required/>
+                <input type="hidden" class="form-control" id="suscribeBeta" name="suscribeBeta" value="true">
+
+                <input name="firstname" id="firstname" type="text" placeholder="prénom" required/>
+                <br><br>
+                <input name="name" id="name" type="text" placeholder="nom" required/>
+                <br><br>
+                <input name="dob" id="dob" type="date" required/>
+                <br><br>
+                <input name="adress" id="adress" type="text" placeholder="adresse" required/>
+                <br><br>
+                <input name="phone" id="phone" type="tel" placeholder="phone" required/>
+                <br><br>
+                <input type="submit" type="button" style="margin-left: 10px;" class="btn btn-outline-success" value="Confirmer"/>
               </form>
             </div>
           </div>
           <br>
           <br>
-          <h3><b>Souscrie à devenir Bêta testeur ça veut dire quoi ?</b></h3>
-          <h4>Bêta testeur c'est tout d'abord nous aider à avoir un avis extérieur à l'équipe !</h4>
-          <p>Dans le cadre du développement d'une application, le retour utilisateur est primordial pour savoir si nous sommes sur la bonne voie.</p>
-          <h4>Bêta testeur c'est aussi vous permettre de vous impliquer dans un projet qui vous plaît</h4>
-          <p>Evidemment nous en tirons profit de votre expérience utilisateur, mais cela vous donne aussi la possibilité de vous rapprocher de l'équipe !
-          Il est encore difficile d'imaginer vous donner accès à du code brute pour des questions de sécurité, mais rien ne nous empêche de partager avec vous 
-          les problématiques aux-quelles nous faisons face. De plus vous pourrez nous soumettre évidement vos envies et vos attentes concernant l'application.</p>
-          <h3>Notre mot d'ordre ? La proximité !</h3>
-          <p>De nos jours, beaucoup de société deviennent monopolisantes sur leur secteur d'activité, une fois la socitété grossit, elle perds le contact priviligié avec ses 
-          utilisateurs. Notre démache est d'être proche de vous, par le biais de l'application qui a pour bute d'être une manière de céer du contact mais aussi par le biais de 
-          se genre de plateforme qui nous permet en tant que dev de vous donner accès à un lien avec nous.</p>
-          <h4>En devenant Bêta testeur, vous aurez un accès anticipé à l'application</h4>
-          <p>Comme vous le devinez peut être, vous aurez les mises à jours les plus récente avant qu'elle sorte en production sur les stores. De ce fait nous aurons besoin de vous
-          pour nous dire les bugs et problèmes en tous genres que vous rencontrez !</p>
 
 
         <!-- OffCanvas and hidden elements -->

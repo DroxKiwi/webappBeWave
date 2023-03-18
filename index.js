@@ -1,27 +1,14 @@
 const express = require('express')
-const { Pool } = require('pg')
 const cookieParser = require('cookie-parser')
 const getRolesMiddleware = require("./Utils/getRolesMiddleware")
 const twig = require('twig')
 const bodyParser = require('body-parser')
 const app = express()
 
-const port = process.env.PORT
-const pool = new Pool({
-    user: process.env.POSTGRES_USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
-})
-
-// Configuration Used with nodemon in local dev environnement
-//const port = 3000
-//const pool = new Pool({
-//    user: 'postgres',
-//    host: 'localhost',
-//    database: 'database_dev_studiecf',
-//    password: 'psqlpsw'
-//})
+// IF USING NPM !
+//const port = process.env.PORT
+//IF USING NODEMON !
+const port = 3000
 
 console.log(`Ready on ${process.env.NODE_ENV} mode`)
 console.log(`Port listening on ${process.env.PORT} mode`)

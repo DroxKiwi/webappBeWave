@@ -10,37 +10,101 @@ Sur l'application Web lié à ce projet il sera donc possible de s'inscrire pour
 
 L'application BeWave possède aussi un BackOffice et un Front office. Je travail donc depuis un moment déjà sur le framework Symfony. Pour cette raison j'ai décidé de faire celui ci à l'aide d'Express pour découvrir un nouveau framework.
 
-# Outils de développement
+# Mettre en place le backoffice en local
 
-- VScode
+## PostgreSQL 
 
-Une capture d'écran de mon espace de travail : 
+Il faut nécessairement PostgreSQL et NPM sur votre machine !
 
-J'ai deux écrans, l'un me sert à afficher Postman et la documentation, le second me sert à afficher VScode.
+## Cloner le projet depuis git :
 
-J'ai deux fenêtrage de code, souvent celui de droite est le code sur le quel je me base, typiquement mes modèles et celui de gauche le code que je travails.
+    git clone git@github.com:DroxKiwi/studiECF2023_Fredj_Corentin.git
+
+## Télécharger les dépendances :
+
+    cd /chemin_du_projet/studiECF2023_Fredj_Corentin
+    npm install
+
+## Initialiser la base de données :
+
+Le fichier bash ./init_database.sh permet d'initialiser la BDD en local, il est important de vérifier les informations PostgreSQL avant de lancer le script ! 
+
+**./Models/init_models.js**
+
+```js
+const fs = require('fs')
+const { Pool } = require('pg')
 
 
-J'ai deux invite de commandes, l'un me sert à afficher le prompt et le retour d'erreur du serveur Express et le second à installer mes paquet et naviguer sur ma machine.
+// Verify information about database HERE !!!!
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'database_dev_studiecf',
+    password: 'psqlpsw',
+})
 
 
-Les extensions installées sur VScode sont nombreuses, je ne vais citer que les plus pertinantes pour ce projet. 
+// Read the SQL file
+const usersModel = fs.readFileSync('user.sql').toString()
+const logsModel = fs.readFileSync('logs.sql').toString()
 
-- Github - Pour pouvoir effectuer mes commits, changement de branche et fusion de manière assisté et éviter les erreurs
-- PowerShell et SSH FS qui me permettent d'obtenir un prompt connecté en SSH à une machine distante
--  Microsoft Edge Tool pour obtenir une fenêtre de navigateur dans VScode, peut être très utile lorsque je souhaite de la documentation et que mon second écran est utilisé.
-- ChatGPT, qui me sert EXCLUSIVEMENT et j'insiste, à vérifier des connaissances ou me donner des noms de librairies lorsque je ne connais pas bien le framework.
+// Execute the SQL commands in the database
+pool.query(usersModel, (err, result) => {
+    if (err) throw err
+    else {
+        pool.query(logsModel, (err, result) => {
+            if (err) throw err
+        })
+    }
+})
+```
 
-![alt](./ECFimages/VScodeExempleWorkspace.png)
+**./Fixtures/load.js**
 
-- [Jira](https://projetfun.atlassian.net/jira/software/projects/ECF/boards/2/roadmap?shared=&atlOrigin=eyJpIjoiMjI5NWYzZmVkMDQ5NDQyMTg2YThmNzViZmRiNTIxNTEiLCJwIjoiaiJ9)
+```js
+const { Pool } = require('pg');
+const encryptPassword = require("../Utils/encryptPassword")
 
-![alt](./ECFimages/JIRAexemple1.png)
 
-![alt](./ECFimages/jiraFeuilleDeRoute.png)
+// Verify information about database HERE !!!!
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'database_dev_studiecf',
+    password: 'psqlpsw',
+})
 
-- [Github](https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin)
- 
+
+function fixtureLoad(){
+    const password = "admin"
+    const pseudo = "admin"
+    const email = "admin@admin.com"
+    const role = "ROLE_ADMIN"
+    const {token, salt, hash} = encryptPassword(password)
+    console.log("Fixture load -> creat : Admin user | pseudo : admin, password : admin")
+    pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
+        if (error){
+            throw error
+        }
+        else {
+            console.log("Fixture loaded ! you can now connect as admin")
+        }
+    })
+}
+
+fixtureLoad()
+```
+
+    cd studiECF2023_Fredj_Corentin/bin
+    ./init_database.sh
+
+Le script bash va donc redémarrer postgres, créer la base de données *database_dev_studiecf* et appliquer les fixtures et les modèles dans la base de données. Si la variable d'environnement du fichier .env.dev NODE_ENV est fixée sur "test" alors le script ne fonctionnera pas !
+
+## Lancer l'application en local :
+
+    cd ..
+    npm run dev
 
 # BackOffice
 
@@ -184,106 +248,56 @@ Le dossier */Views/Templates* contient donc les templates de l'application, les 
 
 Le dossier */Public* me permet de transporter les modules utiles au bon fonctionnement du front, comme la bibliothèque Bootstrap, jQuery ou encore les fichiers personnalisés CSS.
 
-# Mettre en place le backoffice en local
-
-## PostgreSQL 
-
-Il faut nécessairement PostgreSQL et NPM sur votre machine !
-
-## Cloner le projet depuis git :
-
-    git clone git@github.com:DroxKiwi/studiECF2023_Fredj_Corentin.git
-
-## Télécharger les dépendances :
-
-    cd /chemin_du_projet/studiECF2023_Fredj_Corentin
-    npm install
-
-## Initialiser la base de données :
-
-Le fichier bash ./init_database.sh permet d'initialiser la BDD en local, il est important de vérifier les informations PostgreSQL avant de lancer le script ! 
-
-**./bin/init_database.js**
-
-```js
-const fs = require('fs')
-const { Pool } = require('pg')
-
-
-// Verify information about database HERE !!!!
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
-})
-
-
-// Read the SQL file
-const usersModel = fs.readFileSync('../Models/user.sql').toString()
-const logsModel = fs.readFileSync('../Models/logs.sql').toString()
-
-// Execute the SQL commands in the database
-pool.query(usersModel, (err, result) => {
-    if (err) throw err
-    else {
-        pool.query(logsModel, (err, result) => {
-            if (err) throw err
-        })
-    }
-})
-```
-
-**./Fixtures/load.js**
-
-```js
-const { Pool } = require('pg');
-const encryptPassword = require("../Utils/encryptPassword")
-
-
-// Verify information about database HERE !!!!
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
-})
-
-function fixtureLoad(){
-    const password = "admin"
-    const pseudo = "admin"
-    const email = "admin@admin.com"
-    const role = "ROLE_ADMIN"
-    const {token, salt, hash} = encryptPassword(password)
-    console.log("Fixture load -> creat : Admin user | pseudo : admin, password : admin")
-    pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
-        if (error){
-            throw error
-        }
-        else {
-            console.log("Fixture loaded ! you can now connect as admin")
-        }
-    })
-}
-
-fixtureLoad()
-```
-
-    cd studiECF2023_Fredj_Corentin/bin
-    ./init_database.sh
-
-Le script bash va dont redémarrer postgres, créer la base de données *database_dev_studiecf* et appliquer les fixtures et les modèles dans la base de données. Si la variable d'environnement du fichier .env.dev NODE_ENV est fixée sur "test" alors le script ne fonctionnera pas !
-
-## Lancer l'application en local :
-
-    npm run dev
-
-
-
-# Utilisation du FrontOffice
+## Utilisation du FrontOffice
 
 Le front est extrement simple, il a pour but de gérer un utilisateur, création de compte, connexion, modification des informations utilisateurs et suppression du compte. La gestion de l'utilisateur permet uniquement de pouvoir distinguer un simple curieux de quelqu'un de suffisement intéressé pour vouloir devenir Bêta testeur.
 
 Le front aura pour but d'afficher les mises à jour à venir et ce qui est déjà dans l'application "BeWave".
 
-## Amélioration possible du code
+# Amélioration possible du code
+
+- ### Gestion de la validation des formulaires
+Les formulaires fonctionnent mais la gestion de la données n'est pas entiérement implémentée. Cela viendra. Typiquement, il est possible de rentrer une chaîne de charactère dans le champs d'un numéro de téléphone, le serveur va renvoyer une erreur mais il faut que je gère ça côté front.
+
+- ### Redirection après validation d'un formulaire
+Les redirection sont pas toujours logique, il faudrait que j'ajoute des messages de confirmation lorsqu'on effectue une action comme la création d'un compte et la connexion.
+
+- ### Ajout de popup
+Il faut que j'ajoute une couche de confirmation côté utilisateur, quand on veut supprimer son compte, quand on veut arrêter la souscription à la bêta test etc ..
+
+- ### Ajout d'une gestion des fichiers de l'application front depuis le Dashboard admin
+J'aimerais beaucoup qu'un administrateurs puisse modifier le contenu de la homepage depuis le dashboard admin
+
+- ### Gérer la cohérence du code 
+En deux semaines de code je me permet de faire une pécision, oui il y a clairement des améliorations dans la cohérence du code ! les conditions, et la manière dont j'appels les variables. La redirection des routes qui ne suit pas toujours la même logique.
+
+# Outils de développement
+
+- VScode
+
+Une capture d'écran de mon espace de travail : 
+
+J'ai deux écrans, l'un me sert à afficher Postman et la documentation, le second me sert à afficher VScode.
+
+J'ai deux fenêtrage de code, souvent celui de droite est le code sur le quel je me base, typiquement mes modèles et celui de gauche le code que je travails.
+
+
+J'ai deux invite de commandes, l'un me sert à afficher le prompt et le retour d'erreur du serveur Express et le second à installer mes paquet et naviguer sur ma machine.
+
+
+Les extensions installées sur VScode sont nombreuses, je ne vais citer que les plus pertinantes pour ce projet. 
+
+- Github - Pour pouvoir effectuer mes commits, changement de branche et fusion de manière assisté et éviter les erreurs
+- PowerShell et SSH FS qui me permettent d'obtenir un prompt connecté en SSH à une machine distante
+-  Microsoft Edge Tool pour obtenir une fenêtre de navigateur dans VScode, peut être très utile lorsque je souhaite de la documentation et que mon second écran est utilisé.
+- ChatGPT, qui me sert EXCLUSIVEMENT et j'insiste, à vérifier des connaissances ou me donner des noms de librairies lorsque je ne connais pas bien le framework.
+
+![alt](./ECFimages/VScodeExempleWorkspace.png)
+
+- [Jira](https://projetfun.atlassian.net/jira/software/projects/ECF/boards/2/roadmap?shared=&atlOrigin=eyJpIjoiMjI5NWYzZmVkMDQ5NDQyMTg2YThmNzViZmRiNTIxNTEiLCJwIjoiaiJ9)
+
+![alt](./ECFimages/JIRAexemple1.png)
+
+![alt](./ECFimages/jiraFeuilleDeRoute.png)
+
+- [Github](https://github.com/DroxKiwi/studiECF2023_Fredj_Corentin)

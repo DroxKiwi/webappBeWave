@@ -1,19 +1,5 @@
-const { Pool } = require('pg');
+const pool = require('../Utils/db');
 
-// Configuration Used with nodemon in local dev environnement
-//const pool = new Pool({
-//    user: 'postgres',
-//    host: 'localhost',
-//    database: 'database_dev_studiecf',
-//    password: 'psqlpsw',
-//})
-
-const pool = new Pool({
-    user: process.env.POSTGRES_USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
-})
 
 async function redirectDashboard(req, res){
     if (req.role == "ROLE_ADMIN"){
@@ -72,8 +58,22 @@ async function redirectShowUser(req, res){
                             }
                             else {
                                 const logs = results.rows
-                                const templateVars = [ id, modepreference, user_id, pseudo, email, token, role, logs ]
-                                res.render('./Templates/AdminDashboard/showuser.html.twig', { templateVars })
+                                pool.query(`SELECT * FROM betatesters WHERE user_id = '${user_id}'`, (error, results) => {
+                                    if (error){
+                                        throw error
+                                    }
+                                    else {
+                                        const betatester_info = results.rows[0]
+                                        if (!betatester_info){
+                                            const templateVars = [ id, modepreference, user_id, pseudo, email, token, role, logs, "null" ]
+                                            res.render('./Templates/AdminDashboard/showuser.html.twig', { templateVars })
+                                        }
+                                        else {
+                                            const templateVars = [ id, modepreference, user_id, pseudo, email, token, role, logs, betatester_info ]
+                                            res.render('./Templates/AdminDashboard/showuser.html.twig', { templateVars })
+                                        }
+                                    }
+                                })
                             }
                         })
                     }
@@ -115,4 +115,33 @@ async function redirectLogs(req, res){
     }
 }
 
-module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs }
+async function redirectFormcontact(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        // We select into the database the preferences in link with the current user connected by checking the token
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const modepreference = results.rows[0].preferences[0]
+                pool.query(`SELECT * FROM contacts`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        const formcontacts = results.rows
+                        const templateVars = [ id, modepreference, formcontacts ]
+                        res.render('./Templates/AdminDashboard/formcontact.html.twig', { templateVars })
+                    }
+                })
+            }
+        })
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
+module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact }

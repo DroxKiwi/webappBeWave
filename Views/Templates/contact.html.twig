@@ -39,16 +39,38 @@
             {% endif %}
             </ul>
           </header>
+          <br>
           <h2>
-            Page de contacte
+            Contactez nous !
           </h2>
+          <br>
+          <br>
           <div class="row">
             <div class="col">
+            {% if templateVars[3] %}
+              <h3>{{templateVars[3]}}</h3>
+            {% else %}
+              {% if id == "unauthentificated" %}
+                <h3>Vous devez créer un compte ou vous connecter pour nous contacter !</h3>
+              {% else %}
+                <form action="/contact" method="post">
+                  <br>
+                  <input type="hidden" class="form-control" id="sendContact" name="sendContact" value="true">
+                  <select id="type" name="type" required>
+                    <option value="userBug">Bug sur la plateforme</option>
+                    <option value="appBug">Bug sur l'application mobile</option>
+                    <option value="proposition">Proposition d'amélioration</option>
+                  </select>                  
+                  <textarea type="text" style="height:30vh;" class="form-control" id="message" name="message" placeholder="Ecrivez votre message" required="true"></textarea>
+                  <button type="submit" class="btn btn-outline-success" style="margin-left: 10px;">Envoyer</button>
+                </form>
+              {% endif %}
+            {% endif %}
             </div>
           </div>
 
-        <!-- OffCanvas and hidden elements -->
 
+        <!-- OffCanvas and hidden elements -->
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>
