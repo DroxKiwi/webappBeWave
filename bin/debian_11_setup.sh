@@ -52,3 +52,13 @@ export https_proxy='http://127.0.0.1:7080/proxy.pac'
 export ftp_proxy='http://127.0.0.1:7080/proxy.pac'
 export no_proxy='127.0.0.1,localhost'
 HEREDOC
+
+cd /home/tux/studiECF2023_Fredj_Corentin
+# Installation of npm package
+apt install npm
+# Updating ingoring packages from git
+npm install
+# Installing postgresql
+apt-get install postgresql
+# I set up a new user tux into psql and give it "login" and "superuser" role
+# I also modifiy the password for postgres to "psqlpsw"
