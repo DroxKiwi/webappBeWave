@@ -1,6 +1,8 @@
 const { Pool } = require('pg');
 const encryptPassword = require("../Utils/encryptPassword")
 
+
+// Verify information about database HERE !!!!
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',

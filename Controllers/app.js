@@ -1,10 +1,19 @@
 const { Pool } = require('pg');
 
+
+// Configuration Used with nodemon in local dev environnement
+//const pool = new Pool({
+//    user: 'postgres',
+//    host: 'localhost',
+//    database: 'database_dev_studiecf',
+//    password: 'psqlpsw',
+//})
+
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
+    user: process.env.POSTGRES_USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
 })
 
 // Redirection to the landingpage

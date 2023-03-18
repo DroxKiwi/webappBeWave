@@ -6,21 +6,22 @@ const twig = require('twig')
 const bodyParser = require('body-parser')
 const app = express()
 
-//const port = process.env.PORT
-//const pool = new Pool({
-//    user: process.env.POSTGRES_USER,
-//    host: process.env.HOST,
-//    database: process.env.DATABASE,
-//    password: process.env.PASSWORD,
-//})
-
-const port = 3000
+const port = process.env.PORT
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw'
+    user: process.env.POSTGRES_USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
 })
+
+// Configuration Used with nodemon in local dev environnement
+//const port = 3000
+//const pool = new Pool({
+//    user: 'postgres',
+//    host: 'localhost',
+//    database: 'database_dev_studiecf',
+//    password: 'psqlpsw'
+//})
 
 console.log(`Ready on ${process.env.NODE_ENV} mode`)
 console.log(`Port listening on ${process.env.PORT} mode`)
@@ -29,6 +30,7 @@ console.log(`Port listening on ${process.env.PORT} mode`)
 const userRoute = require("./Routes/user")
 const appRoute = require("./Routes/app")
 const adminRoute = require("./Routes/dashboard")
+
 
 app.use(express.json())
 app.use(cookieParser())
@@ -44,9 +46,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Setting up static directory
 app.use(express.static('Public'));
 
-userRoute(app, pool)
-appRoute(app, pool)
-adminRoute(app, pool)
+userRoute(app)
+appRoute(app)
+adminRoute(app)
 
 app.listen(port, () => {
     console.log(`Server app listening on port ${port}`)

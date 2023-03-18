@@ -1,14 +1,22 @@
 const encryptPassword = require("../Utils/encryptPassword")
 const decryptPassword = require("../Utils/decryptPassword")
 const generateRandomPassword = require ("../Utils/generatePassword")
-const { Pool } = require('pg');
 const logger = require("../Utils/logger")
+const { Pool } = require('pg');
+
+// Configuration Used with nodemon in local dev environnement
+//const pool = new Pool({
+//    user: 'postgres',
+//    host: 'localhost',
+//    database: 'database_dev_studiecf',
+//    password: 'psqlpsw',
+//})
 
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
+    user: process.env.POSTGRES_USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
 })
 
 // Get all the users stored into the database and send it to the dashboard

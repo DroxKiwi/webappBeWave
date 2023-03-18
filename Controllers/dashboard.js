@@ -1,10 +1,18 @@
 const { Pool } = require('pg');
 
+// Configuration Used with nodemon in local dev environnement
+//const pool = new Pool({
+//    user: 'postgres',
+//    host: 'localhost',
+//    database: 'database_dev_studiecf',
+//    password: 'psqlpsw',
+//})
+
 const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
+    user: process.env.POSTGRES_USER,
+    host: process.env.HOST,
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
 })
 
 async function redirectDashboard(req, res){
@@ -20,6 +28,7 @@ async function redirectAdminCreatUser(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
+      
         pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
             if (error){
                 throw error

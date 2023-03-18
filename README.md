@@ -201,12 +201,78 @@ Il faut nécessairement PostgreSQL et NPM sur votre machine !
 
 ## Initialiser la base de données :
 
-Le fichier bash ./init_database.sh permet d'initialiser la BDD en local, il est important de vérifier le mot de passe de l'utilisateur postgres ! 
+Le fichier bash ./init_database.sh permet d'initialiser la BDD en local, il est important de vérifier les informations PostgreSQL avant de lancer le script ! 
+
+**./bin/init_database.js**
+
+```js
+const fs = require('fs')
+const { Pool } = require('pg')
+
+
+// Verify information about database HERE !!!!
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'database_dev_studiecf',
+    password: 'psqlpsw',
+})
+
+
+// Read the SQL file
+const usersModel = fs.readFileSync('../Models/user.sql').toString()
+const logsModel = fs.readFileSync('../Models/logs.sql').toString()
+
+// Execute the SQL commands in the database
+pool.query(usersModel, (err, result) => {
+    if (err) throw err
+    else {
+        pool.query(logsModel, (err, result) => {
+            if (err) throw err
+        })
+    }
+})
+```
+
+**./Fixtures/load.js**
+
+```js
+const { Pool } = require('pg');
+const encryptPassword = require("../Utils/encryptPassword")
+
+
+// Verify information about database HERE !!!!
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'database_dev_studiecf',
+    password: 'psqlpsw',
+})
+
+function fixtureLoad(){
+    const password = "admin"
+    const pseudo = "admin"
+    const email = "admin@admin.com"
+    const role = "ROLE_ADMIN"
+    const {token, salt, hash} = encryptPassword(password)
+    console.log("Fixture load -> creat : Admin user | pseudo : admin, password : admin")
+    pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
+        if (error){
+            throw error
+        }
+        else {
+            console.log("Fixture loaded ! you can now connect as admin")
+        }
+    })
+}
+
+fixtureLoad()
+```
 
     cd studiECF2023_Fredj_Corentin/bin
     ./init_database.sh
 
-Le script bash va dont redémarrer postgres, créer la base de données *database_dev_studiecf* et appliquer les fixtures et les modèles dans la base de données. Si la variable d'environnement du fichier .env NODE_ENV est fixée sur "prod" alors le script ne fonctionnera pas !
+Le script bash va dont redémarrer postgres, créer la base de données *database_dev_studiecf* et appliquer les fixtures et les modèles dans la base de données. Si la variable d'environnement du fichier .env.dev NODE_ENV est fixée sur "test" alors le script ne fonctionnera pas !
 
 ## Lancer l'application en local :
 
