@@ -6,12 +6,16 @@ const bodyParser = require('body-parser')
 const app = express()
 
 // IF USING NPM !
-const port = process.env.PORT
+const port = process.env.prod.PORT
+// const port = process.env.dev.PORT
 //IF USING NODEMON !
 // const port = 3000
 
-console.log(`Ready on ${process.env.NODE_ENV} mode`)
-console.log(`Port listening on ${process.env.PORT} mode`)
+console.log(`Ready on ${process.env.prod.NODE_ENV} mode`)
+console.log(`Port listening on ${process.env.prod.PORT} mode`)
+
+//console.log(`Ready on ${process.env.prod.NODE_ENV} mode`)
+//console.log(`Port listening on ${process.env.prod.PORT} mode`)
 
 // routing initialization
 const userRoute = require("./Routes/user")
