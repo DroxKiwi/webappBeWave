@@ -31,19 +31,19 @@ const appRoute = require("./Routes/app")
 const adminRoute = require("./Routes/dashboard")
 
 
-sslserver.use(express.json())
-sslserver.use(cookieParser())
-sslserver.use(getRolesMiddleware)
+app.use(express.json())
+app.use(cookieParser())
+app.use(getRolesMiddleware)
 // set as view engine 
-sslserver.set('view engine', 'twig')
-sslserver.set('views', './Views')
-sslserver.engine('twig', twig.renderFile);
+app.set('view engine', 'twig')
+app.set('views', './Views')
+app.engine('twig', twig.renderFile);
 
 // used to parse form
-sslserver.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // Setting up static directory
-sslserver.use(express.static('Public'));
+app.use(express.static('Public'));
 
 userRoute(sslserver)
 appRoute(sslserver)
