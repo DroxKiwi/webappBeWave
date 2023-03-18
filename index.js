@@ -4,15 +4,22 @@ const cookieParser = require('cookie-parser')
 const getRolesMiddleware = require("./Utils/getRolesMiddleware")
 const twig = require('twig')
 const bodyParser = require('body-parser')
-
-
-const port = process.env.PORT
 const app = express()
+
+//const port = process.env.PORT
+//const pool = new Pool({
+//    user: process.env.POSTGRES_USER,
+//    host: process.env.HOST,
+//    database: process.env.DATABASE,
+//    password: process.env.PASSWORD,
+//})
+
+const port = 3000
 const pool = new Pool({
-    user: process.env.POSTGRES_USER,
-    host: process.env.HOST,
-    database: process.env.DATABASE,
-    password: process.env.PASSWORD,
+    user: 'postgres',
+    host: 'localhost',
+    database: 'database_dev_studiecf',
+    password: 'psqlpsw'
 })
 
 console.log(`Ready on ${process.env.NODE_ENV} mode`)
@@ -37,9 +44,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Setting up static directory
 app.use(express.static('Public'));
 
-userRoute(app)
-appRoute(app)
-adminRoute(app)
+userRoute(app, pool)
+appRoute(app, pool)
+adminRoute(app, pool)
 
 app.listen(port, () => {
     console.log(`Server app listening on port ${port}`)
