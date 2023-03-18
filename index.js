@@ -38,5 +38,5 @@ appRoute(app)
 adminRoute(app)
 
 app.listen(port, () => {
-    console.log(`Server app listening on port ${port}`)
+    console.log(`Dev app listening on port ${port}`)
 })
