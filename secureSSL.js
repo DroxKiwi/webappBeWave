@@ -19,8 +19,8 @@ console.log(`Port listening on ${process.env.PORT} mode`)
 // SSL certificate implementation
 
 const options ={
-      key:fs.readFileSync(path.join(__dirname,'./cert/key.pem')),
-      cert:fs.readFileSync(path.join(__dirname,'./cert/cert.pem'))
+      key:fs.readFileSync(path.join(__dirname,'./certs/key.pem')),
+      cert:fs.readFileSync(path.join(__dirname,'./certs/cert.pem'))
 }
 const sslserver = https.createServer(options,app)
 
