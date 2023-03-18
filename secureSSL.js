@@ -45,9 +45,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Setting up static directory
 app.use(express.static('Public'));
 
-userRoute(sslserver)
-appRoute(sslserver)
-adminRoute(sslserver)
+userRoute(app)
+appRoute(app)
+adminRoute(app)
 
 sslserver.listen(port, () => {
     console.log(`Secure server listening on port ${port}`)
