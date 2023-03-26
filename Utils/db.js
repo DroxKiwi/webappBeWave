@@ -13,8 +13,8 @@ const { Pool } = require('pg')
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
+    database: 'database_bewaveweb',
+    password: 'psqlpsw'
 })
 
 module.exports = pool

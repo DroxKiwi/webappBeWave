@@ -6,7 +6,7 @@ const bodyParser = require('body-parser')
 const app = express()
 
 // IF USING NPM !
-const port = process.env.PORT
+const port = process.env.PORT || 3000
 //IF USING NODEMON !
 // const port = 3000
 

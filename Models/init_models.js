@@ -6,13 +6,13 @@ const { Pool } = require('pg')
 const pool = new Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'database_dev_studiecf',
+    database: 'database_bewaveweb',
     password: 'psqlpsw',
 })
 
 
 // Read the SQL file
-const usersModel = fs.readFileSync('user.sql').toString()
+const usersModel = fs.readFileSync('users.sql').toString()
 const betatestersModel = fs.readFileSync('betatesters.sql').toString()
 const contactsModel = fs.readFileSync('contacts.sql').toString()
 const logsModel = fs.readFileSync('logs.sql').toString()
