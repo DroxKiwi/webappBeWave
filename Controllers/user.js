@@ -333,7 +333,7 @@ async function userLogin(req, res){
         if (error){
             throw error
         }
-        // If no pseudo matching was found we search with the email
+        // If no pseudo matching was found  we search with the email
         if (!results.rows[0]){
             pool.query(`SELECT * FROM users WHERE email = '${id}'`, (error, results) => {
                 if (error){

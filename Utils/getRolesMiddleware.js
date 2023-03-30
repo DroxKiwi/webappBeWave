@@ -1,12 +1,4 @@
-const { Pool } = require('pg');
-
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'database_dev_studiecf',
-    password: 'psqlpsw',
-})
-
+const pool = require('../Utils/db')
 
 async function getRolesMiddleware(req, res, next){
     if (!req.cookies.userToken){
