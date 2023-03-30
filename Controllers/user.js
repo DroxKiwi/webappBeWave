@@ -1,65 +1,33 @@
 const encryptPassword = require("../Utils/encryptPassword")
-const decryptPassword = require("../Utils/decryptPassword")
-const generateRandomPassword = require ("../Utils/generatePassword")
 const logger = require("../Utils/logger")
-const pool = require('../Utils/db');
+const pool = require('../Utils/db')
 
 // Get all the users stored into the database and send it to the dashboard
-async function usersGet(req, res){
+async function userRead(req, res){
     // ROLE_ADMIN needed to get users in DB
     if (req.role == "ROLE_ADMIN"){
-        // Here we are managing the search bar request 
-        const { searchrequest } = req.body
-        if (!searchrequest){
-            const userToken = req.cookies.userToken.token
-            const id = req.pseudo
-            // We select into the database the preferences in link with the current user connected by checking the token
-            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    const modepreference = results.rows[0].preferences[0]
-                    pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
-                        if (error){
-                            throw error
-                        }
-                        else {
-                            const users = results.rows
-                            // We send the preferences to the twig template 
-                            const templateVars = [id, modepreference, users]
-                            res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
-                        }
-                    })
-                }
-            })
-        }
-        else {
-            const userToken = req.cookies.userToken.token
-            const id = req.pseudo
-            // We select into the database the preferences in link with the current user connected by checking the token
-            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    const modepreference = results.rows[0].preferences[0]
-                    // I define a modele based SQL to use LIKE statement to send every user where an email, pseudo token or even role is matching
-                    const modeleSQL = "%"+searchrequest+"%"
-                    pool.query(`SELECT * FROM users WHERE pseudo LIKE '${modeleSQL}' OR email LIKE '${modeleSQL}' OR token LIKE '${modeleSQL}' OR role LIKE '${modeleSQL}'`, (error, results) => {
-                        if (error){
-                            throw error
-                        }
-                        else{
-                            const length = results.rows.length
-                            const users = results.rows
-                            const templateVars = [id, modepreference, users, length]
-                            res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
-                        }
-                    })
-                }
-            })
-        }
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        // We select into the database the preferences in link with the current user connected by checking the token
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const modepreference = results.rows[0].preferences[0]
+                pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        const users = results.rows
+                        // We send the preferences to the twig template 
+                        const templateVars = [id, modepreference, users]
+                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                    }
+                })
+            }
+        })
     }
     else {
         res.redirect(302, '/')
@@ -118,38 +86,6 @@ async function userCreate(req, res){
                 }
             }
         } )
-    }
-}
-
-// I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
-async function resetPassword(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const { user_id } = req.body
-        const length = 5
-        const password = generateRandomPassword(length)
-        const {token, salt, hash} = encryptPassword(password)
-
-        pool.query(`SELECT pseudo FROM users WHERE user_id = '${user_id}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const pseudo = results.rows[0].pseudo
-                message = "Reset a password for : "+pseudo
-                logger.newLog(req.cookies.userToken.token, message)
-        
-                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        // Here the application is supposed to send the new password to the user
-                        console.log(password)
-                        res.redirect(302, 'dashboard')
-                    }
-                })
-            }
-        })
     }
 }
 
@@ -306,119 +242,5 @@ async function userDelete(req, res){
     }
 }
 
-// Here we set the preferences choosen by the user into the databse
-async function settingsPreferences(req, res){
-    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { colorapp } = req.body
-        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                res.redirect(302, '/settings')
-            }
-        })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
 
-async function userLogin(req, res){
-    const { id, password, remember } = req.body
-
-    // Users can log with an email or pseudo
-    pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
-        if (error){
-            throw error
-        }
-        // If no pseudo matching was found  we search with the email
-        if (!results.rows[0]){
-            pool.query(`SELECT * FROM users WHERE email = '${id}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                if (!results.rows[0]){
-                    return res.send("Aucun utilisateur trouvé ! Contactez un Admin ou vérifiez vos identifiants")
-                }
-                else {
-                    const currentUser = results.rows[0]
-                    // Once an email is found, we decrypt the password to check if it match
-                    const userToken = decryptPassword(currentUser, password)
-                    if (!userToken){
-                        return res.send('Connexion impossible, vérifiez votre mot de passe')
-                    }
-                    else {
-
-                        message = "Log in : "+currentUser.pseudo
-                        logger.newLog(currentUser.token, message)
-
-                        // If the user want to be log in for long time, we create a 1 year token
-                        if (remember){
-                            // token is saved for 1 year
-                            res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
-                            //res.send('Authentication successful');
-                            res.redirect(302, '/')     
-                        }
-                        else {
-                            // token is saved for 25 minutes
-                            res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
-                            //res.send('Authentication successful');
-                            res.redirect(302, '/')
-                        }
-                    }
-                }
-            })
-        }
-        // If the pseudo is found we decrypt the password to check if it match
-        else {
-            const currentUser = results.rows[0]
-            const userToken = decryptPassword(currentUser, password)
-            if (!userToken){
-                return res.send('Connexion impossible, vérifiez votre mot de passe')
-            }
-            else {
-
-                message = "Log in : "+currentUser.pseudo
-                logger.newLog(currentUser.token, message)
-
-                if (remember){
-                    // token is saved for 1 year
-                    res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
-                    //res.send('Authentication successful');
-                    res.redirect(302, '/')
-                }
-                else {
-                    // token is saved for 25 minutes
-                    res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
-                    //res.send('Authentication successful');
-                    res.redirect(302, '/')
-                }
-            }
-        }
-    })
-}
-
-// Used to delete cookies 
-async function userLogout(req, res){
-
-    userToken = req.cookies.userToken.token
-
-    pool.query(`SELECT pseudo FROM users WHERE token = '${userToken}'`, (error, results) => {
-        if (error){
-            throw error
-        }
-        else {
-            pseudo = results.rows[0].pseudo
-            message = "Log out : "+pseudo
-            logger.newLog(req.cookies.userToken.token, message)
-        
-            res.clearCookie('userToken')
-            res.redirect(302, '/')
-            //res.redirect('/')
-        }
-    })
-}
-
-module.exports = { usersGet, userCreate, resetPassword, userUpdate, userDelete, settingsPreferences, userLogin, userLogout }
+module.exports = { userRead, userCreate, userUpdate, userDelete }

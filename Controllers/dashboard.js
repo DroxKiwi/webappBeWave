@@ -144,4 +144,39 @@ async function redirectFormcontact(req, res){
     }
 }
 
-module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact }
+
+async function searchUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        // Here we are managing the search bar request 
+        const { searchrequest } = req.body
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        // We select into the database the preferences in link with the current user connected by checking the token
+        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const modepreference = results.rows[0].preferences[0]
+                // I define a modele based SQL to use LIKE statement to send every user where an email, pseudo token or even role is matching
+                const modeleSQL = "%"+searchrequest+"%"
+                pool.query(`SELECT * FROM users WHERE pseudo LIKE '${modeleSQL}' OR email LIKE '${modeleSQL}' OR token LIKE '${modeleSQL}' OR role LIKE '${modeleSQL}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else{
+                        const length = results.rows.length
+                        const users = results.rows
+                        const templateVars = [id, modepreference, users, length]
+                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                    }
+                })
+            }
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact, searchUser }

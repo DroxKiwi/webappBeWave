@@ -1,4 +1,4 @@
-const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete } = require("../Controllers/app")
+const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword } = require("../Controllers/app")
 
 function appRoute(app){
 
@@ -25,6 +25,16 @@ function appRoute(app){
 
     app.get('/report', redirectReport)
 
+    // Reset the user password with one randomly generated
+    app.post("/resetpassworduser", resetPassword)
+
+    // Set preferences 
+    app.post('/settingsPreferences', settingsPreferences)
+
+    // Login
+    app.post("/userLogin", userLogin)
+    // Logout
+    app.get("/userLogout", userLogout)
 }
 
 module.exports = appRoute

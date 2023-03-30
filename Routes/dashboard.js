@@ -1,4 +1,4 @@
-const { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact } = require("../Controllers/dashboard")
+const { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact, searchUser } = require("../Controllers/dashboard")
 
 function adminRoute(app){
 
@@ -13,6 +13,7 @@ function adminRoute(app){
 
     app.get('/formcontact', redirectFormcontact)
 
+    app.post("/searchuser", searchUser)
 }
 
 module.exports = adminRoute

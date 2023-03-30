@@ -14,7 +14,7 @@ console.log(`Ready on ${process.env.NODE_ENV} mode`)
 console.log(`Port listening on ${process.env.PORT}`)
 
 // routing initialization
-const userRoute = require("./Routes/user")
+const userCRUD = require("./Routes/user")
 const appRoute = require("./Routes/app")
 const adminRoute = require("./Routes/dashboard")
 
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Setting up static directory
 app.use(express.static('Public'));
 
-userRoute(app)
+userCRUD(app)
 appRoute(app)
 adminRoute(app)
 

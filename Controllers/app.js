@@ -1,5 +1,7 @@
-const pool = require('../Utils/db');
+const pool = require('../Utils/db')
 const logger = require("../Utils/logger")
+const decryptPassword = require("../Utils/decryptPassword")
+const generateRandomPassword = require ("../Utils/generatePassword")
 
 
 // Redirection to the landingpage
@@ -301,4 +303,151 @@ async function redirectReport(req, res){
 }
 
 
-module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete }
+// Here we set the preferences choosen by the user into the databse
+async function settingsPreferences(req, res){
+    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const { colorapp } = req.body
+        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                res.redirect(302, '/settings')
+            }
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+async function userLogin(req, res){
+    const { id, password, remember } = req.body
+
+    // Users can log with an email or pseudo
+    pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
+        if (error){
+            throw error
+        }
+        // If no pseudo matching was found  we search with the email
+        if (!results.rows[0]){
+            pool.query(`SELECT * FROM users WHERE email = '${id}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                if (!results.rows[0]){
+                    return res.send("Aucun utilisateur trouvé ! Contactez un Admin ou vérifiez vos identifiants")
+                }
+                else {
+                    const currentUser = results.rows[0]
+                    // Once an email is found, we decrypt the password to check if it match
+                    const userToken = decryptPassword(currentUser, password)
+                    if (!userToken){
+                        return res.send('Connexion impossible, vérifiez votre mot de passe')
+                    }
+                    else {
+
+                        message = "Log in : "+currentUser.pseudo
+                        logger.newLog(currentUser.token, message)
+
+                        // If the user want to be log in for long time, we create a 1 year token
+                        if (remember){
+                            // token is saved for 1 year
+                            res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
+                            //res.send('Authentication successful');
+                            res.redirect(302, '/')     
+                        }
+                        else {
+                            // token is saved for 25 minutes
+                            res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
+                            //res.send('Authentication successful');
+                            res.redirect(302, '/')
+                        }
+                    }
+                }
+            })
+        }
+        // If the pseudo is found we decrypt the password to check if it match
+        else {
+            const currentUser = results.rows[0]
+            const userToken = decryptPassword(currentUser, password)
+            if (!userToken){
+                return res.send('Connexion impossible, vérifiez votre mot de passe')
+            }
+            else {
+
+                message = "Log in : "+currentUser.pseudo
+                logger.newLog(currentUser.token, message)
+
+                if (remember){
+                    // token is saved for 1 year
+                    res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
+                    //res.send('Authentication successful');
+                    res.redirect(302, '/')
+                }
+                else {
+                    // token is saved for 25 minutes
+                    res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
+                    //res.send('Authentication successful');
+                    res.redirect(302, '/')
+                }
+            }
+        }
+    })
+}
+
+// Used to delete cookies 
+async function userLogout(req, res){
+
+    userToken = req.cookies.userToken.token
+
+    pool.query(`SELECT pseudo FROM users WHERE token = '${userToken}'`, (error, results) => {
+        if (error){
+            throw error
+        }
+        else {
+            pseudo = results.rows[0].pseudo
+            message = "Log out : "+pseudo
+            logger.newLog(req.cookies.userToken.token, message)
+        
+            res.clearCookie('userToken')
+            res.redirect(302, '/')
+            //res.redirect('/')
+        }
+    })
+}
+
+// I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
+async function resetPassword(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        const length = 5
+        const password = generateRandomPassword(length)
+        const {token, salt, hash} = encryptPassword(password)
+
+        pool.query(`SELECT pseudo FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const pseudo = results.rows[0].pseudo
+                message = "Reset a password for : "+pseudo
+                logger.newLog(req.cookies.userToken.token, message)
+        
+                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        // Here the application is supposed to send the new password to the user
+                        console.log(password)
+                        res.redirect(302, 'dashboard')
+                    }
+                })
+            }
+        })
+    }
+}
+
+module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword }
