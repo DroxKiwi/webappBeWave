@@ -1,28 +1,32 @@
-const pool = require('../Utils/db');
+const pool = require('../Utils/db')
+const logger = require("../Utils/logger")
+const encryptPassword = require("../Utils/encryptPassword")
+const crudUser = require("../CRUD/user")
 
-
-async function redirectDashboard(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        res.redirect(302, 'usersGet')
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
-async function redirectAdminCreatUser(req, res){
+// Landing page of dashboard
+async function homeDashboard(req, res){
+    console.log(crudUser.get())
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-      
+        // We select into the database the preferences in link with the current user connected by checking the token
         pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
             if (error){
                 throw error
             }
             else {
-                modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
-                res.render('./Templates/AdminDashboard/createuser.html.twig', { templateVars })
+                const modepreference = results.rows[0].preferences[0]
+                pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        const users = results.rows
+                        // We send the preferences to the twig template 
+                        const templateVars = [id, modepreference, users]
+                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
+                    }
+                })
             }
         })
     }
@@ -31,7 +35,127 @@ async function redirectAdminCreatUser(req, res){
     }
 }
 
-async function redirectShowUser(req, res){
+// Create an user from dashboard
+async function adminCreatUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const admincreateuser = req.body
+        if (admincreateuser == "true"){
+            const { pseudo, email, password, role } = req.body
+            const {token, salt, hash} = encryptPassword(password)
+    
+            message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
+            logger.newLog(req.cookies.userToken.token, message)
+    
+            pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    // We check if a user is allready existing with this email or pseudo
+                    if (!results.rows[0]){
+                        pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
+                            if (error) {
+                                throw error
+                            }
+                            res.redirect(302, '/dashboard')
+                        })
+                    }
+                    else {
+                        res.send("Un compte existe déjà avec ses identifiants !")
+                    }
+                }
+            })
+        }
+        else {
+            const userToken = req.cookies.userToken.token
+            const id = req.pseudo
+          
+            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    modepreference = results.rows[0].preferences[0]
+                    const templateVars = [id, modepreference]
+                    res.render('./Templates/AdminDashboard/createuser.html.twig', { templateVars })
+                }
+            })
+        }
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+async function adminUpdateUserAccount(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { pseudo, email, password, role, user_id } = req.body
+        // Here we are updating an user giving by his user_id. Only Admin can do that
+        // To make a difference between an update of his own account or the update of an user account, I implement a value nonselfupdate
+        message = "Update a user : "+pseudo 
+        logger.newLog(req.cookies.userToken.token, message)
+
+        pool.query(`SELECT * FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const currentUser_id = results.rows[0].user_id
+                if (password == ""){
+                    pool.query(`UPDATE users SET pseudo = '${pseudo}', email = '${email}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        else {
+                            res.redirect(302, '/dashboard')
+                        }
+                    })
+                }
+                else {
+                    const {token, salt, hash} = encryptPassword(password)
+                    pool.query(`UPDATE users set pseudo = '${pseudo}', email = '${email}', token = '${token}', salt = '${salt}', hash = '${hash}', role = '${role}' WHERE user_id = '${currentUser_id}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        else {
+                            res.redirect(302, '/dashboard')
+                        }
+                    })
+                }
+            }
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+async function adminDeleteUserAccount(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        pool.query(`SELECT email FROM users WHERE user_id = '${user_id}'`, (error ,results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const email = results.rows[0].email
+                message = "Delete an user : "+email
+                logger.newLog(req.cookies.userToken.token, message)
+                pool.query(`DELETE FROM users WHERE user_id = '${user_id}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    else {
+                        res.redirect(302, "/dashboard")
+                    }
+                })
+            }
+        })
+    }
+}
+
+// Show a user profile
+async function showDetailUser(req, res){
     const { user_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
@@ -86,7 +210,8 @@ async function redirectShowUser(req, res){
     }
 }
 
-async function redirectLogs(req, res){
+// Show the logs
+async function showLogs(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
@@ -115,7 +240,8 @@ async function redirectLogs(req, res){
     }
 }
 
-async function redirectFormcontact(req, res){
+// Show the contact form sent by users
+async function showFormcontact(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
@@ -144,7 +270,7 @@ async function redirectFormcontact(req, res){
     }
 }
 
-
+// Return the search request made
 async function searchUser(req, res){
     if (req.role == "ROLE_ADMIN"){
         // Here we are managing the search bar request 
@@ -179,4 +305,4 @@ async function searchUser(req, res){
     }
 }
 
-module.exports = { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact, searchUser }
+module.exports = { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, showDetailUser, showLogs, showFormcontact, searchUser }

@@ -1,4 +1,4 @@
-const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword } = require("../Controllers/app")
+const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount } = require("../Controllers/app")
 
 function appRoute(app){
 
@@ -16,6 +16,10 @@ function appRoute(app){
     app.get('/login', redirectLogin)
 
     app.get('/createAccount', redirectCreateAccount)
+
+    app.post('/updateaccount', updateUserAccount)
+
+    app.post('/deteleaccount', deleteUserAccount)
 
     // user settings redirection
     app.get('/information', redirectInformation)

@@ -302,26 +302,6 @@ async function redirectReport(req, res){
     }
 }
 
-
-// Here we set the preferences choosen by the user into the databse
-async function settingsPreferences(req, res){
-    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { colorapp } = req.body
-        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                res.redirect(302, '/settings')
-            }
-        })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
 async function userLogin(req, res){
     const { id, password, remember } = req.body
 
@@ -418,6 +398,26 @@ async function userLogout(req, res){
     })
 }
 
+
+// Here we set the preferences choosen by the user into the databse
+async function settingsPreferences(req, res){
+    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const { colorapp } = req.body
+        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                res.redirect(302, '/settings')
+            }
+        })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
 // I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
 async function resetPassword(req, res){
     if (req.role == "ROLE_ADMIN"){
@@ -450,4 +450,89 @@ async function resetPassword(req, res){
     }
 }
 
-module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword }
+
+async function updateUserAccount(req, res){
+    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
+        const { pseudo, email, password } = req.body
+        // Here we are updating the user account itself (the one beeing connected)
+        const userToken = req.cookies.userToken.token
+        message = "Update is account pseudo : "+pseudo
+        logger.newLog(req.cookies.userToken.token, message)
+        // To verify which form is send we check if pseudo, email or password is true (not null)
+        if (pseudo){
+            const row = "pseudo"
+            const value = pseudo
+            pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                res.redirect(302, '/information')
+            });
+        }
+        if (email){
+            const row = "email"
+            const value = email
+            pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                res.redirect(302, '/information')
+            });
+        }
+        if (password){
+            const value = password
+            pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
+                if (error){
+                    throw error
+                }
+                const user_id = results.rows[0].user_id
+                if (!user_id){
+                    return res.send("Aucun compte trouvé ! Contacter un Admin si nécessaire")
+                }
+                const {token, salt, hash} = encryptPassword(value)
+                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
+                    if (error){
+                        throw error
+                    }
+                    res.redirect(302, '/information')
+                })
+            })
+        }
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+// Delete a user by token selection
+async function deleteUserAccount(req, res){
+    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        // first we check if the current token is matching an user_id 
+        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
+            if (error){
+                throw error
+            }
+            else {
+                const selectedUserId = results.rows[0].user_id
+                const pseudo = req.pseudo
+                if (!selectedUserId){
+                    return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
+                }
+                else {
+                    message = "Delete his account : "+pseudo
+                    logger.newLog(req.cookies.userToken.token, message)
+                    // If yes, we delete it
+                    pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
+                        if (error){
+                            throw error
+                        }
+                        res.redirect(302, '/')
+                    })
+                }
+            }
+        })
+    }
+}
+
+module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount }

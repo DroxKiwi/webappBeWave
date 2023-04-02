@@ -1,17 +1,21 @@
-const { redirectDashboard, redirectAdminCreatUser, redirectShowUser, redirectLogs, redirectFormcontact, searchUser } = require("../Controllers/dashboard")
+const { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, showDetailUser, showLogs, showFormcontact, searchUser } = require("../Controllers/dashboard")
 
 function adminRoute(app){
 
     // Dashboard and redirection
-    app.get('/dashboard', redirectDashboard)
+    app.get('/dashboard', homeDashboard)
 
-    app.get('/makeuser', redirectAdminCreatUser)
+    app.get('/makeuser', adminCreatUser)
 
-    app.post('/showuser', redirectShowUser)
+    app.post('/adminupdateuser', adminUpdateUserAccount)
 
-    app.get('/logs', redirectLogs)
+    app.post('/admindeleteuser', adminDeleteUserAccount)
 
-    app.get('/formcontact', redirectFormcontact)
+    app.post('/showuser', showDetailUser)
+
+    app.get('/logs', showLogs)
+
+    app.get('/formcontact', showFormcontact)
 
     app.post("/searchuser", searchUser)
 }
