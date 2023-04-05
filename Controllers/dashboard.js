@@ -1,11 +1,10 @@
 const pool = require('../Utils/db')
 const logger = require("../Utils/logger")
 const encryptPassword = require("../Utils/encryptPassword")
-const crudUser = require("../CRUD/user")
+const userCRUD = require("../CRUD/user")
 
 // Landing page of dashboard
 async function homeDashboard(req, res){
-    console.log(crudUser.get())
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
