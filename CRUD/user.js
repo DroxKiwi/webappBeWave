@@ -4,15 +4,20 @@ const query = require("../Utils/query")
 const table = 'users'
 
 // Get all the users stored into the database and send it to the dashboard
-async function get(rows = '*'){
-    return await query.select(rows, table)    
+async function get(rows = '*', rowsToCompare = "", valueToCompare = ""){
+    if (rowsToCompare == "" && valueToCompare == ""){
+        return await query.select(rows, table)    
+    }
+    else {
+        return await query.selectEqual(rows, table, rowsToCompare, valueToCompare)
+    }
 }
 
 // Creat a new user
 async function create(pseudo, email, password, role){
     const {token, salt, hash} = encryptPassword(password)
-    const checkUserExistByEmail = await query.selectEqual('email', table, 'email', "'"+email+"'")
-    const checkUserExistByPseudo = await query.selectEqual('pseudo', table, 'pseudo', "'"+pseudo+"'")
+    const checkUserExistByPseudo = await query.selectEqual('pseudo', table, 'pseudo', pseudo)
+    const checkUserExistByEmail = await query.selectEqual('email', table, 'email', email)
     const rows = "(pseudo, email, token, salt, hash, role, preferences)"
     const preferences = '{"darkmode"}'
     const values = query.prepareValues([pseudo, email, token, salt, hash, role, preferences])

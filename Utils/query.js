@@ -35,7 +35,7 @@ async function select(rows, table){
 async function selectEqual(rows, table, rowsToCompare, valueToCompare){
     let answer = ""
     try {
-        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} = ${valueToCompare}`)
+        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} = '${valueToCompare}'`)
         .then(results => {
             answer = results.rows
         })
@@ -50,7 +50,7 @@ async function selectEqual(rows, table, rowsToCompare, valueToCompare){
 async function selectLike(rows, table, rowsToCompare, valueToCompare){
     let answer = ""
     try {
-        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} LIKE ${valueToCompare}`)
+        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} LIKE '${valueToCompare}'`)
         .then((results, error) => {
             if (error){
                 throw error
@@ -78,7 +78,7 @@ async function insert(rows, table, values){
 
 async function update(row, table, value, rowToCompare, valueToCompare){
     try {
-        await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = ${valueToCompare}`)
+        await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = '${valueToCompare}'`)
     }
     catch(err){
         throw err
@@ -87,7 +87,7 @@ async function update(row, table, value, rowToCompare, valueToCompare){
 
 async function remove(table, rowToCompare, valueToCompare){
     try {
-        await pool.query(`DELETE FROM ${table} WHERE ${rowToCompare} = ${valueToCompare}`)
+        await pool.query(`DELETE FROM ${table} WHERE ${rowToCompare} = '${valueToCompare}'`)
     }
     catch(err){
         throw err

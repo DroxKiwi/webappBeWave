@@ -6,6 +6,7 @@ function adminRoute(app){
     app.get('/dashboard', homeDashboard)
 
     app.get('/makeuser', adminCreatUser)
+    app.post('/makeuser', adminCreatUser)
 
     app.post('/adminupdateuser', adminUpdateUserAccount)
 

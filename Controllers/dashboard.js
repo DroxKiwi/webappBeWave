@@ -2,32 +2,19 @@ const pool = require('../Utils/db')
 const logger = require("../Utils/logger")
 const encryptPassword = require("../Utils/encryptPassword")
 const userCRUD = require("../CRUD/user")
+const { query } = require('express')
 
 // Landing page of dashboard
 async function homeDashboard(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-        // We select into the database the preferences in link with the current user connected by checking the token
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const modepreference = results.rows[0].preferences[0]
-                pool.query(`SELECT user_id, pseudo, email, role FROM users`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        const users = results.rows
-                        // We send the preferences to the twig template 
-                        const templateVars = [id, modepreference, users]
-                        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
-                    }
-                })
-            }
-        })
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preferences = preferencesTab[0].preferences[0]
+        const usersList = await userCRUD.get()
+        // We send the preferences to the twig template 
+        const templateVars = [id, preferences, usersList]
+        res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -37,48 +24,23 @@ async function homeDashboard(req, res){
 // Create an user from dashboard
 async function adminCreatUser(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const admincreateuser = req.body
+        const { admincreateuser } = req.body
         if (admincreateuser == "true"){
             const { pseudo, email, password, role } = req.body
-            const {token, salt, hash} = encryptPassword(password)
     
-            message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
+            const message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
             logger.newLog(req.cookies.userToken.token, message)
     
-            pool.query(`SELECT pseudo, email FROM users WHERE pseudo = '${pseudo}' OR email = '${email}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    // We check if a user is allready existing with this email or pseudo
-                    if (!results.rows[0]){
-                        pool.query(`INSERT INTO users (pseudo, email, token, salt, hash, role, preferences) VALUES ('${pseudo}', '${email}','${token}','${salt}', '${hash}', '${role}', '{"darkmode"}')`, (error, results) => {
-                            if (error) {
-                                throw error
-                            }
-                            res.redirect(302, '/dashboard')
-                        })
-                    }
-                    else {
-                        res.send("Un compte existe déjà avec ses identifiants !")
-                    }
-                }
-            })
+            await userCRUD.create(pseudo, email, password, role)
+            res.redirect(302, '/dashboard')
         }
         else {
             const userToken = req.cookies.userToken.token
             const id = req.pseudo
-          
-            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    modepreference = results.rows[0].preferences[0]
-                    const templateVars = [id, modepreference]
-                    res.render('./Templates/AdminDashboard/createuser.html.twig', { templateVars })
-                }
-            })
+            const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+            const preferences = preferencesTab[0].preferences[0]
+            const templateVars = [id, preferences]
+            res.render('./Templates/AdminDashboard/createuser.html.twig', { templateVars })
         }
     }
     else {
