@@ -3,25 +3,21 @@ const logger = require("../Utils/logger")
 const decryptPassword = require("../Utils/decryptPassword")
 const generateRandomPassword = require ("../Utils/generatePassword")
 
+const userCRUD = require("../CRUD/user")
+const contactCRUD = require("../CRUD/contact")
+const betatesterCRUD = require("../CRUD/betatesteur")
+
 
 // Redirection to the landingpage
 async function redirectHomepage(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-        // We select into the database the preferences in link with the current user connected by checking the token
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                // We send the preferences to the twig template 
-                modepreference = results.rows[0].preferences[0]
-                const role = req.role
-                const templateVars = [id, modepreference, role]
-                res.render('./Templates/home.html.twig', { templateVars })
-            }
-        })
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preference = preferencesTab[0].preferences[0]
+        const role = req.role
+        const templateVars = [id, preference, role]
+        res.render('./Templates/home.html.twig', { templateVars })
     }
     else {
         // This variable "id" allowed the twig template to adapt what it need to show (connection button, create account button, ...)
@@ -35,53 +31,26 @@ async function redirectContact(req, res){
     const { sendContact, message, type } = req.body
     if ( sendContact == "true" ){
         const userToken = req.cookies.userToken.token
-        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const user_id = results.rows[0].user_id
-                pool.query(`INSERT INTO contacts (user_id, type, message) VALUES ('${user_id}', '${type}', '${message}')`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        const userToken = req.cookies.userToken.token
-                        const id = req.pseudo
-                        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                            if (error){
-                                throw error
-                            }
-                            else {
-                                // We send the preferences to the twig template 
-                                modepreference = results.rows[0].preferences[0]
-                                const role = req.role
-                                const formSend = "Votre formulaire a bien été pris en compte !"
-                                const templateVars = [id, modepreference, role, formSend]
-                                res.render('./Templates/contact.html.twig', { templateVars })
-                            }
-                        })
-                    }
-                })
-            }
-        })
+        const answer_user_id = await userCRUD.get('user_id', 'token', userToken)
+        const user_id = answer_user_id[0].user_id
+        await contactCRUD.create(user_id, type, message)
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preference = preferencesTab[0].preferences[0]
+        const id = req.pseudo
+        const role = req.role
+        const formSend = "Votre formulaire a bien été pris en compte !"
+        const templateVars = [id, preference, role, formSend]
+        res.render('./Templates/contact.html.twig', { templateVars })
     }
     else {
         if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
             const userToken = req.cookies.userToken.token
             const id = req.pseudo
-            pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    // We send the preferences to the twig template 
-                    modepreference = results.rows[0].preferences[0]
-                    const role = req.role
-                    const templateVars = [id, modepreference, role]
-                    res.render('./Templates/contact.html.twig', { templateVars })
-                }
-            })
+            const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+            const preference = preferencesTab[0].preferences[0]
+            const role = req.role
+            const templateVars = [id, preference, role]
+            res.render('./Templates/contact.html.twig', { templateVars })
         }
         else {
             const id = "unauthentificated"
@@ -96,42 +65,23 @@ async function redirectSuscribe(req, res){
     if (suscribeBeta == "true"){
         const userToken = req.cookies.userToken.token
         const pseudo = req.pseudo
-        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const user_id = results.rows[0].user_id
-                message = pseudo+" : suscribe to beta tester"
-                logger.newLog(req.cookies.userToken.token, message)
-                pool.query(`INSERT INTO betatesters (user_id, firstname, name, dob, adress, phone) VALUES ('${user_id}', '${firstname}', '${name}', '${dob}', '${adress}', '${phone}')`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        res.redirect(302, '/')
-                    }
-                })
-            }
-        })
+        const answer_user_id = await userCRUD.get('user_id', 'token', userToken)
+        const user_id = answer_user_id[0].user_id
+        message = pseudo+" : suscribe to beta tester"
+        logger.newLog(req.cookies.userToken.token, message)
+        await betatesterCRUD.create(user_id, firstname, name, dob, adress, phone)
+        res.redirect(302, '/')
     }
     else {
         if (!consent){
             if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
                 const userToken = req.cookies.userToken.token
                 const id = req.pseudo
-                pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        // We send the preferences to the twig template 
-                        modepreference = results.rows[0].preferences[0]
-                        const role = req.role
-                        const templateVars = [id, modepreference, role]
-                        res.render('./Templates/suscribe.html.twig', { templateVars })
-                    }
-                })
+                const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+                const preference = preferencesTab[0].preferences[0]
+                const role = req.role
+                const templateVars = [id, preference, role]
+                res.render('./Templates/suscribe.html.twig', { templateVars })
             }
             else {
                 const id = "unauthentificated"
@@ -142,18 +92,11 @@ async function redirectSuscribe(req, res){
             if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
                 const userToken = req.cookies.userToken.token
                 const id = req.pseudo
-                pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        // We send the preferences to the twig template 
-                        modepreference = results.rows[0].preferences[0]
-                        const role = req.role
-                        const templateVars = [id, modepreference, role]
-                        res.render('./Templates/createbetatester.html.twig', { templateVars })
-                    }
-                })
+                const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+                const preference = preferencesTab[0].preferences[0]
+                const role = req.role
+                const templateVars = [id, preference, role]
+                res.render('./Templates/createbetatester.html.twig', { templateVars })
             }
             else {
                 const id = "unauthentificated"
@@ -169,38 +112,21 @@ async function redirectBetatesterDelete(req, res){
         if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
             const userToken = req.cookies.userToken.token
             const pseudo = req.pseudo
-            pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                else {
-                    const user_id = results.rows[0].user_id
-                    message = pseudo+" : delete his account from beta tester"
-                    logger.newLog(req.cookies.userToken.token, message)
-                    pool.query(`DELETE FROM betatesters WHERE user_id = '${user_id}'`, (error, results) => {
-                        if (error){
-                            throw error
-                        }
-                        else {
-                            res.redirect(302, '/information')
-                        }
-                    })
-                }
-            })
+            message = pseudo+" : delete his account from beta tester"
+            logger.newLog(req.cookies.userToken.token, message)
+            const betatester_id = await betatesterCRUD.get('betatester_id', 'user_id', user_id)
+            await betatesterCRUD.remove(betatester_id[0].betatester_id)
+            res.redirect(302, '/information')
         }
     }
     else {
         const pseudo = req.pseudo
         message = pseudo+" : delete "+userPseudo+" account from beta tester"
         logger.newLog(req.cookies.userToken.token, message)
-        pool.query(`DELETE FROM betatesters WHERE user_id = '${user_id}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                res.redirect(302, '/dashboard')
-            }
-        })
+        const answer_betatester_id = await betatesterCRUD.get('betatester_id', 'user_id', user_id)
+        const betatester_id = answer_betatester_id[0].betatester_id
+        await betatesterCRUD.remove(betatester_id)
+        res.redirect(302, '/dashboard')
     }
 }
 
@@ -219,40 +145,22 @@ async function redirectInformation(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                modepreference = results.rows[0].preferences[0]
-                pool.query(`SELECT user_id, pseudo, email FROM users WHERE token = '${userToken}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        const user_id = results.rows[0].user_id
-                        const pseudo = results.rows[0].pseudo
-                        const email = results.rows[0].email
-                        pool.query(`SELECT * FROM betatesters WHERE user_id = '${user_id}'`, (error, results) => {
-                            if (error){
-                                throw error
-                            }
-                            else {
-                                if (!results.rows[0]){
-                                    const templateVars = [id, modepreference, pseudo, email]
-                                    res.render('./Templates/information.html.twig', { templateVars })
-                                }
-                                else {
-                                    const betatesters_info = results.rows[0]
-                                    const templateVars = [id, modepreference, pseudo, email, betatesters_info]
-                                    res.render('./Templates/information.html.twig', { templateVars })
-                                }
-                            }
-                        })
-                    }
-                })
-            }
-        })
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preference = preferencesTab[0].preferences[0]
+        const answer_user_param = await userCRUD.get('user_id, pseudo, email', 'token', userToken)
+        const user_id = answer_user_param[0].user_id
+        const pseudo = answer_user_param[0].pseudo
+        const email = answer_user_param[0].email
+        const answer_betatester = await betatesterCRUD.get('*', 'user_id', user_id)
+        if (!answer_betatester[0]){
+            const templateVars = [id, preference, pseudo, email]
+            res.render('./Templates/information.html.twig', { templateVars })
+        }
+        else {
+            const betatesters_info = answer_betatester[0]
+            const templateVars = [id, preference, pseudo, email, betatesters_info]
+            res.render('./Templates/information.html.twig', { templateVars })
+        }
     }
     // If the user is not loged, we redirect him to the landingpage
     else {
@@ -265,37 +173,10 @@ async function redirectSettings(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const id = req.pseudo
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
-                res.render('./Templates/settings.html.twig', { templateVars })
-            }
-        })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
-// Redirection to the report page
-async function redirectReport(req, res){
-    if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const id = req.pseudo
-        pool.query(`SELECT preferences FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                modepreference = results.rows[0].preferences[0]
-                const templateVars = [id, modepreference]
-                res.render('./Templates/report.html.twig', { templateVars })
-            }
-        })
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preference = preferencesTab[0].preferences[0]
+        const templateVars = [id, preference]
+        res.render('./Templates/settings.html.twig', { templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -304,67 +185,29 @@ async function redirectReport(req, res){
 
 async function userLogin(req, res){
     const { id, password, remember } = req.body
-
-    // Users can log with an email or pseudo
-    pool.query(`SELECT * FROM users WHERE pseudo = '${id}'`, (error, results) => {
-        if (error){
-            throw error
+    const answer_user_pseudo = await userCRUD.get('*', 'pseudo', id)
+    const verif_user_pseudo = answer_user_pseudo[0]
+    if (!verif_user_pseudo){
+        const answer_user_email = await userCRUD.get('*', 'email', id)
+        const verif_user_email = answer_user_email[0]
+        if (!verif_user_email){
+            return res.send("Aucun utilisateur trouvé ! Contactez un Admin ou vérifiez vos identifiants")
         }
-        // If no pseudo matching was found  we search with the email
-        if (!results.rows[0]){
-            pool.query(`SELECT * FROM users WHERE email = '${id}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                if (!results.rows[0]){
-                    return res.send("Aucun utilisateur trouvé ! Contactez un Admin ou vérifiez vos identifiants")
-                }
-                else {
-                    const currentUser = results.rows[0]
-                    // Once an email is found, we decrypt the password to check if it match
-                    const userToken = decryptPassword(currentUser, password)
-                    if (!userToken){
-                        return res.send('Connexion impossible, vérifiez votre mot de passe')
-                    }
-                    else {
-
-                        message = "Log in : "+currentUser.pseudo
-                        logger.newLog(currentUser.token, message)
-
-                        // If the user want to be log in for long time, we create a 1 year token
-                        if (remember){
-                            // token is saved for 1 year
-                            res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
-                            //res.send('Authentication successful');
-                            res.redirect(302, '/')     
-                        }
-                        else {
-                            // token is saved for 25 minutes
-                            res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
-                            //res.send('Authentication successful');
-                            res.redirect(302, '/')
-                        }
-                    }
-                }
-            })
-        }
-        // If the pseudo is found we decrypt the password to check if it match
         else {
-            const currentUser = results.rows[0]
+            const currentUser = verif_user_email
             const userToken = decryptPassword(currentUser, password)
             if (!userToken){
                 return res.send('Connexion impossible, vérifiez votre mot de passe')
             }
             else {
-
-                message = "Log in : "+currentUser.pseudo
+                message = "Log in : "+currentUser.email
                 logger.newLog(currentUser.token, message)
-
+                // If the user want to be log in for long time, we create a 1 year token
                 if (remember){
                     // token is saved for 1 year
                     res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
                     //res.send('Authentication successful');
-                    res.redirect(302, '/')
+                    res.redirect(302, '/')     
                 }
                 else {
                     // token is saved for 25 minutes
@@ -374,28 +217,41 @@ async function userLogin(req, res){
                 }
             }
         }
-    })
+    }
+    else {
+        const currentUser = verif_user_pseudo
+        const userToken = decryptPassword(currentUser, password)
+        if (!userToken){
+            return res.send('Connexion impossible, vérifiez votre mot de passe')
+        }
+        else {
+            message = "Log in : "+currentUser.pseudo
+            logger.newLog(currentUser.token, message)
+            if (remember){
+                // token is saved for 1 year
+                res.cookie('userToken', userToken, { maxAge: 15552000000, httpOnly: true });
+                //res.send('Authentication successful');
+                res.redirect(302, '/')
+            }
+            else {
+                // token is saved for 25 minutes
+                res.cookie('userToken', userToken, { maxAge: 900000, httpOnly: true });
+                //res.send('Authentication successful');
+                res.redirect(302, '/')
+            }
+        }
+    }
 }
 
 // Used to delete cookies 
 async function userLogout(req, res){
-
     userToken = req.cookies.userToken.token
-
-    pool.query(`SELECT pseudo FROM users WHERE token = '${userToken}'`, (error, results) => {
-        if (error){
-            throw error
-        }
-        else {
-            pseudo = results.rows[0].pseudo
-            message = "Log out : "+pseudo
-            logger.newLog(req.cookies.userToken.token, message)
-        
-            res.clearCookie('userToken')
-            res.redirect(302, '/')
-            //res.redirect('/')
-        }
-    })
+    const answer_pseudo = await userCRUD.get('pseudo', 'token', userToken)
+    const pseudo = answer_pseudo[0].pseudo
+    message = "Log out : "+pseudo
+    logger.newLog(req.cookies.userToken.token, message)
+    res.clearCookie('userToken')
+    res.redirect(302, '/')
 }
 
 
@@ -404,49 +260,30 @@ async function settingsPreferences(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const { colorapp } = req.body
-        pool.query(`UPDATE users SET preferences[0] = '${colorapp}' WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                res.redirect(302, '/settings')
-            }
-        })
+        const answer_user_id = await userCRUD.get('user_id', 'token', userToken)
+        const user_id = answer_user_id[0].user_id
+        await userCRUD.update(user_id, '', '', '', '', colorapp)
+        res.redirect(302, '/settings')
     }
     else {
         res.redirect(302, '/')
     }
 }
 
+
+// Fonction qui doit migrer vers Dashboard
 // I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
 async function resetPassword(req, res){
     if (req.role == "ROLE_ADMIN"){
         const { user_id } = req.body
-        const length = 5
+        const length = 10
         const password = generateRandomPassword(length)
-        const {token, salt, hash} = encryptPassword(password)
-
-        pool.query(`SELECT pseudo FROM users WHERE user_id = '${user_id}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const pseudo = results.rows[0].pseudo
-                message = "Reset a password for : "+pseudo
-                logger.newLog(req.cookies.userToken.token, message)
-        
-                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    else {
-                        // Here the application is supposed to send the new password to the user
-                        console.log(password)
-                        res.redirect(302, 'dashboard')
-                    }
-                })
-            }
-        })
+        const answer_user_pseudo = await userCRUD.get('pseudo', 'user_id', user_id)
+        const pseudo = answer_user_pseudo[0].pseudo
+        message = "Reset a password for : "+pseudo+" new password : "+password
+        logger.newLog(req.cookies.userToken.token, message)
+        await userCRUD.update(user_id, '', '', password, '', '')
+        res.redirect(302, 'dashboard')
     }
 }
 
@@ -535,4 +372,4 @@ async function deleteUserAccount(req, res){
     }
 }
 
-module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount }
+module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount }

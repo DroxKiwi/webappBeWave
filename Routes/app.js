@@ -1,4 +1,4 @@
-const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectReport, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount } = require("../Controllers/app")
+const { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount } = require("../Controllers/app")
 
 function appRoute(app){
 
@@ -26,8 +26,6 @@ function appRoute(app){
 
     // Account settings are managed by the user controller
     app.get('/settings', redirectSettings)
-
-    app.get('/report', redirectReport)
 
     // Reset the user password with one randomly generated
     app.post("/resetpassworduser", resetPassword)

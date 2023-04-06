@@ -145,7 +145,7 @@ async function searchUser(req, res){
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
         const preference = preferencesTab[0].preferences[0]
         const modeleSQL = "%"+searchrequest+"%"
-        const usersSearchAnswer = await userCRUD.get('*', ['pseudo', 'email', 'token', 'role'], "", true, modeleSQL, 'OR')
+        const usersSearchAnswer = await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
         const templateVars = [id, preference, usersSearchAnswer, usersSearchAnswer.length]
         res.render('./Templates/AdminDashboard/dashboard.html.twig', { templateVars })
     }

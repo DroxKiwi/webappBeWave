@@ -105,6 +105,7 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
 async function insert(rows, table, values){
     try {
         const preparedValues = prepareValues(values)
+        console.log(preparedValues)
         await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues}`)
     }
     catch(err){
@@ -130,4 +131,4 @@ async function remove(table, rowToCompare, valueToCompare){
     }
 }
 
-module.exports = { prepareValues, select, selectEqual, selectLike,insert, update, remove }
+module.exports = { select, selectEqual, selectLike,insert, update, remove }

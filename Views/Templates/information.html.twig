@@ -48,6 +48,13 @@
                   {% if templateVars[4] %}
                     <form action="/betatesterDelete" method="post">
                       <p>Vous êtes Bêta testeur</p>
+                      <ul>
+                      {% for infos in templateVars[4] %}
+                          <li>
+                            {{infos}}
+                          </li>
+                      {% endfor %}
+                      </ul>
                       <button type="submit" class="btn btn-outline-warning">Se retirer</button>
                     </form>
                   {% endif %}
@@ -166,11 +173,6 @@
                 <div class="col-12">
                   <button onclick="location.href = '/information'" type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
                 </div>
-                {% if templateVars[2] == "ROLE_USER" %}
-                  <div class="col-12">
-                    <button type="button" onclick="location.href = '/report'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Rapport d'erreur</button>
-                  </div>
-                {% endif %}
                 <div class="col-12">
                   <button type="button" onclick="location.href = '/settings'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Préferences de compte</button>
                 </div>
