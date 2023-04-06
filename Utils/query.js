@@ -46,23 +46,58 @@ async function selectEqual(rows, table, rowsToCompare, valueToCompare){
     }
 }
 
-// Used to select from a table where we want to compare with LIKE operator
-async function selectLike(rows, table, rowsToCompare, valueToCompare){
-    let answer = ""
-    try {
-        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} LIKE '${valueToCompare}'`)
-        .then((results, error) => {
-            if (error){
-                throw error
-            }
-            else {
-                answer = results.rows
-            }
-        })
-        return answer
+function prepareSeveralLike(rowsToPrepare, model, operator){
+    let preparedQuery = ""
+    for (let i = 0; i < rowsToPrepare.length; i++){
+        if (i < rowsToPrepare.length-1){
+            preparedQuery+=rowsToPrepare[i]+' '+'LIKE'+' '+"'"+model+"'"+' '+operator+' '
+        }
+        else {
+            preparedQuery+=rowsToPrepare[i]+' '+"LIKE"+' '+"'"+model+"'"
+        }
     }
-    catch(err){
-        throw err
+    console.log(preparedQuery)
+    return preparedQuery
+}
+
+// Used to select from a table where we want to compare with LIKE operator
+async function selectLike(rows, table, rowsToCompare, valueToCompare, several = false, model = undefined, operator = undefined){
+    if (several){
+        const preparedQuery = prepareSeveralLike(rowsToCompare, model, operator)
+        let answer = ""
+        try {
+            await pool.query(`SELECT ${rows} FROM ${table} WHERE ${preparedQuery}`)
+            .then((results, error) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    answer = results.rows
+                }
+            })
+            return answer
+        }
+        catch(err){
+            throw err
+        }    
+    }
+    else {
+        let answer = ""
+        try {
+            await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} LIKE '${valueToCompare}'`)
+            .then((results, error) => {
+                if (error){
+                    throw error
+                }
+                else {
+                    answer = results.rows
+                }
+            })
+            return answer
+        }
+        catch(err){
+            throw err
+        }
     }
 }
 
@@ -80,7 +115,7 @@ async function update(row, table, value, rowToCompare, valueToCompare){
     try {
         await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = '${valueToCompare}'`)
     }
-    catch(err){
+    catch(err){ 
         throw err
     }
 }

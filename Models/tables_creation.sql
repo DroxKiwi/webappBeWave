@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS logs (
 );
 
 CREATE TABLE IF NOT EXISTS contacts (
+    contact_id serial PRIMARY KEY,
     user_id int,
     type varchar(80),
     message varchar(500),
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS contacts (
 );
 
 CREATE TABLE IF NOT EXISTS betatesters (
-    betatesters_id serial PRIMARY KEY,
+    betatester_id serial PRIMARY KEY,
     user_id int,
     firstname varchar(80) NOT NULL,
     name varchar(80) NOT NULL,
