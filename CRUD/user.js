@@ -29,8 +29,8 @@ async function create(pseudo, email, password, role){
     const checkUserExistByEmail = await query.selectEqual('email', table, 'email', email)
     const rows = "(pseudo, email, token, salt, hash, role, preferences)"
     const preferences = '{"darkmode"}'
-    const values = query.prepareValues([pseudo, email, token, salt, hash, role, preferences])
     if (!checkUserExistByEmail[0] && !checkUserExistByPseudo[0]){
+        const values = [pseudo, email, token, salt, hash, role, preferences]
         query.insert(rows, table, values)
     }
 }

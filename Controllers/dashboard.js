@@ -1,6 +1,4 @@
-const pool = require('../Utils/db')
 const logger = require("../Utils/logger")
-const encryptPassword = require("../Utils/encryptPassword")
 const userCRUD = require("../CRUD/user")
 const logCRUD = require("../CRUD/log")
 const betatesterCRUD = require("../CRUD/betatesteur")

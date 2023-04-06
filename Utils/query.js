@@ -104,7 +104,8 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
 // Used to insert a nuplet into a table
 async function insert(rows, table, values){
     try {
-        await pool.query(`INSERT INTO ${table} ${rows} VALUES ${values}`)
+        const preparedValues = prepareValues(values)
+        await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues}`)
     }
     catch(err){
         throw err
