@@ -3,6 +3,8 @@ const userCRUD = require("../CRUD/user")
 const logCRUD = require("../CRUD/log")
 const betatesterCRUD = require("../CRUD/betatesteur")
 const contactCRUD = require("../CRUD/contact")
+const generateRandomPassword = require ("../Utils/generatePassword")
+
 
 // Landing page of dashboard
 async function homeDashboard(req, res){
@@ -71,6 +73,20 @@ async function adminDeleteUserAccount(req, res){
         logger.newLog(req.cookies.userToken.token, message)
         userCRUD.remove(user_id)
         res.redirect(302, "/dashboard")
+    }
+}
+
+async function adminResetUserPassword(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        const length = 10
+        const password = generateRandomPassword(length)
+        const answer_user_pseudo = await userCRUD.get('pseudo', 'user_id', user_id)
+        const pseudo = answer_user_pseudo[0].pseudo
+        message = "Reset a password for : "+pseudo+" new password : "+password
+        logger.newLog(req.cookies.userToken.token, message)
+        await userCRUD.update(user_id, '', '', password, '', '')
+        res.redirect(302, 'dashboard')
     }
 }
 
@@ -154,4 +170,4 @@ async function searchUser(req, res){
     }
 }
 
-module.exports = { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, showDetailUser, showLogs, showFormcontact, searchUser }
+module.exports = { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, searchUser }

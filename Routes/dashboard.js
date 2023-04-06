@@ -1,4 +1,4 @@
-const { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, showDetailUser, showLogs, showFormcontact, searchUser } = require("../Controllers/dashboard")
+const { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, searchUser } = require("../Controllers/dashboard")
 
 function adminRoute(app){
 
@@ -11,6 +11,9 @@ function adminRoute(app){
     app.post('/adminupdateuser', adminUpdateUserAccount)
 
     app.post('/admindeleteuser', adminDeleteUserAccount)
+
+    // Reset the user password with one randomly generated
+    app.post("/resetpassworduser", adminResetUserPassword)
 
     app.post('/showuser', showDetailUser)
 

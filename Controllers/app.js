@@ -1,8 +1,6 @@
 const pool = require('../Utils/db')
 const logger = require("../Utils/logger")
 const decryptPassword = require("../Utils/decryptPassword")
-const generateRandomPassword = require ("../Utils/generatePassword")
-
 const userCRUD = require("../CRUD/user")
 const contactCRUD = require("../CRUD/contact")
 const betatesterCRUD = require("../CRUD/betatesteur")
@@ -271,69 +269,34 @@ async function settingsPreferences(req, res){
 }
 
 
-// Fonction qui doit migrer vers Dashboard
-// I had to make an other function and form for a request of password resest because the tag "<input type='checkbox' isn't working"
-async function resetPassword(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const { user_id } = req.body
-        const length = 10
-        const password = generateRandomPassword(length)
-        const answer_user_pseudo = await userCRUD.get('pseudo', 'user_id', user_id)
-        const pseudo = answer_user_pseudo[0].pseudo
-        message = "Reset a password for : "+pseudo+" new password : "+password
-        logger.newLog(req.cookies.userToken.token, message)
-        await userCRUD.update(user_id, '', '', password, '', '')
-        res.redirect(302, 'dashboard')
-    }
-}
-
-
 async function updateUserAccount(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const { pseudo, email, password } = req.body
         // Here we are updating the user account itself (the one beeing connected)
         const userToken = req.cookies.userToken.token
+        const answer_user_id = await userCRUD.get('user_id', 'token', userToken)
+        const user_id = answer_user_id[0].user_id
         message = "Update is account pseudo : "+pseudo
         logger.newLog(req.cookies.userToken.token, message)
         // To verify which form is send we check if pseudo, email or password is true (not null)
         if (pseudo){
-            const row = "pseudo"
-            const value = pseudo
-            pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                res.redirect(302, '/information')
-            });
+            await userCRUD.update(user_id, pseudo, '', '', '', '')
+            res.redirect(302, '/information')
         }
         if (email){
-            const row = "email"
-            const value = email
-            pool.query(`UPDATE users SET ${row} = '${value}' WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
+            const answer_exist_user_email = await userCRUD.get('email', 'email', email)
+            const exist_user_email = answer_exist_user_email[0].email
+            if (!exist_user_email){
+                await userCRUD.update(user_id, '', email, '', '', '')
                 res.redirect(302, '/information')
-            });
+            }
+            else {
+                res.send("An account already exist with this email")
+            }
         }
         if (password){
-            const value = password
-            pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-                if (error){
-                    throw error
-                }
-                const user_id = results.rows[0].user_id
-                if (!user_id){
-                    return res.send("Aucun compte trouvé ! Contacter un Admin si nécessaire")
-                }
-                const {token, salt, hash} = encryptPassword(value)
-                pool.query(`UPDATE users SET token = '${token}', salt = '${salt}', hash = '${hash}' WHERE user_id = '${user_id}'`, (error, results) => {
-                    if (error){
-                        throw error
-                    }
-                    res.redirect(302, '/information')
-                })
-            })
+            await userCRUD.update(user_id, '', '', password, '', '')
+            res.redirect(302, '/information')
         }
     }
     else {
@@ -345,31 +308,17 @@ async function updateUserAccount(req, res){
 async function deleteUserAccount(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
-        // first we check if the current token is matching an user_id 
-        pool.query(`SELECT user_id FROM users WHERE token = '${userToken}'`, (error, results) => {
-            if (error){
-                throw error
-            }
-            else {
-                const selectedUserId = results.rows[0].user_id
-                const pseudo = req.pseudo
-                if (!selectedUserId){
-                    return res.json('Aucun utilisateur trouvé via vos identifiants de compte ! Contactez un Admin')
-                }
-                else {
-                    message = "Delete his account : "+pseudo
-                    logger.newLog(req.cookies.userToken.token, message)
-                    // If yes, we delete it
-                    pool.query(`DELETE FROM users WHERE user_id = '${selectedUserId}'`, (error, results) => {
-                        if (error){
-                            throw error
-                        }
-                        res.redirect(302, '/')
-                    })
-                }
-            }
-        })
+        const pseudo = req.pseudo
+        const answer_user_id = await userCRUD.get('user_id', 'token', userToken)
+        const user_id = answer_user_id[0].user_id
+        message = "Delete his account : "+pseudo
+        logger.newLog(req.cookies.userToken.token, message)
+        const answer_betatester_id = await betatesterCRUD.get('betatester_id', 'user_id', user_id)
+        const betatester_id = answer_betatester_id[0].betatester_id
+        await betatesterCRUD.remove(betatester_id)
+        await userCRUD.remove(user_id)
+        res.redirect(302, '/')
     }
 }
 
-module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, resetPassword, updateUserAccount, deleteUserAccount }
+module.exports = { redirectHomepage, redirectContact, redirectSuscribe, redirectLogin, redirectCreateAccount, redirectInformation, redirectSettings, redirectBetatesterDelete, settingsPreferences, userLogin, userLogout, updateUserAccount, deleteUserAccount }
