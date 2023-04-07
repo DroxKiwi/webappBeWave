@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS places (
     place_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
     description varchar(500),
-    adresse varchar(256),
+    adress varchar(256),
     image_id int,
     external_media_id int,
     city_id int,
@@ -108,6 +108,7 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE TABLE IF NOT EXISTS events_artists(
+    event_artist_id serial PRIMARY KEY,
     event_id int NOT NULL,
     artist_id int NOT NULL,
     FOREIGN KEY (event_id)
@@ -117,6 +118,7 @@ CREATE TABLE IF NOT EXISTS events_artists(
 );
 
 CREATE TABLE IF NOT EXISTS events_places(
+    event_place_id serial PRIMARY KEY,
     event_id int NOT NULL,
     place_id int NOT NULL,
     FOREIGN KEY (event_id)
@@ -126,6 +128,7 @@ CREATE TABLE IF NOT EXISTS events_places(
 );
 
 CREATE TABLE IF NOT EXISTS events_images(
+    event_image_id serial PRIMARY KEY,
     event_id int NOT NULL,
     image_id int NOT NULL,
     FOREIGN KEY (event_id)
@@ -135,6 +138,7 @@ CREATE TABLE IF NOT EXISTS events_images(
 );
 
 CREATE TABLE IF NOT EXISTS events_external_medias(
+    events_external_media_id serial PRIMARY KEY,
     event_id int NOT NULL,
     external_media_id int NOT NULL,
     FOREIGN KEY (event_id)

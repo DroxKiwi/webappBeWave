@@ -1,4 +1,4 @@
-const { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, searchUser } = require("../Controllers/dashboard")
+const { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, showCruds, searchUser } = require("../Controllers/dashboard")
 
 function adminRoute(app){
 
@@ -22,6 +22,8 @@ function adminRoute(app){
     app.get('/formcontact', showFormcontact)
 
     app.post("/searchuser", searchUser)
+
+    app.get('/showcruds', showCruds)
 }
 
 module.exports = adminRoute

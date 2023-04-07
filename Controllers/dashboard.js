@@ -151,6 +151,20 @@ async function showFormcontact(req, res){
     }
 }
 
+async function showCruds(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const id = req.pseudo
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const preference = preferencesTab[0].preferences[0]
+        const templateVars = [ id, preference ]
+        res.render('./Templates/AdminDashboard/showcruds.html.twig', {templateVars})
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
 // Return the search request made
 async function searchUser(req, res){
     if (req.role == "ROLE_ADMIN"){
@@ -170,4 +184,4 @@ async function searchUser(req, res){
     }
 }
 
-module.exports = { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, searchUser }
+module.exports = { homeDashboard, adminCreatUser, adminUpdateUserAccount, adminDeleteUserAccount, adminResetUserPassword, showDetailUser, showLogs, showFormcontact, showCruds, searchUser }

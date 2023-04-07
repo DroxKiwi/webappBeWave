@@ -2,12 +2,23 @@ const pool = require("../Utils/db")
 
 // Used to concatenate string of values for a query
 function prepareValues(values){
-    var preparedValues = "('"
+    var preparedValues = "("
     for (let i = 0; i < values.length-1; i++){
-        preparedValues+=values[i]+"', '"
+        if (values[i] == 'NULL'){
+            preparedValues+=values[i]+", "
+        }
+        else {
+            preparedValues+="'"+values[i]+"', "
+        }
     }
-    preparedValues+=values[values.length-1]
-    preparedValues+="')"
+    if (values[values.length-1] == 'NULL'){
+        preparedValues+=values[values.length-1]
+    }
+    else {
+        preparedValues+="'"+values[values.length-1]+"'"
+    }
+    preparedValues+=")"
+    console.log(preparedValues)
     return preparedValues
 }
 
@@ -56,7 +67,6 @@ function prepareSeveralLike(rowsToPrepare, model, operator){
             preparedQuery+=rowsToPrepare[i]+' '+"LIKE"+' '+"'"+model+"'"
         }
     }
-    console.log(preparedQuery)
     return preparedQuery
 }
 
@@ -105,7 +115,6 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
 async function insert(rows, table, values){
     try {
         const preparedValues = prepareValues(values)
-        console.log(preparedValues)
         await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues}`)
     }
     catch(err){
