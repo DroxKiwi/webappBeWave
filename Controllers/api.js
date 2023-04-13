@@ -1,26 +1,25 @@
-const artistCRUD = require("../CRUD/artists")
+const cityCRUD = require("../CRUD/city")
 
 async function getTest(req, res){
-    const answer = await artistCRUD.get()
+    const answer = await cityCRUD.get()
     res.json(answer)
 }
 
-
 async function createTest(req, res){
-    const { name, desc, img, extm } = req.body
-    const answer = await artistCRUD.create(name, desc, img, extm)
+    const { name, postcode } = req.body
+    const answer = await cityCRUD.create(name, postcode)
     res.json(answer)
 }
 
 async function updateTest(req, res){
-    const { artist_id, name, description, image_id, external_media_id } = req.body
-    const answer = await artistCRUD.update(artist_id, name, description, image_id, external_media_id)
+    const { city_id, name, postcode } = req.body
+    const answer = await artistCRUD.update(city_id, name, postcode)
     res.json(answer)
 }
 
 async function removeTest(req, res){
-    const { artist_id } = req.body
-    const answer = await artistCRUD.remove(artist_id)
+    const { city_id } = req.body
+    const answer = await artistCRUD.remove(city_id)
     res.json(answer)
 }
 

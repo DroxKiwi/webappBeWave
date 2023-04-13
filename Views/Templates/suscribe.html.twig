@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% set modepreference = templateVars[1] %}
+{% set modepreference = preference %}
 
 <!DOCTYPE html>
 
@@ -12,7 +12,7 @@
             </h1>
             <ul class="nav nav-tabs justify-content-center">
               <li>
-                {% if templateVars[2] == "ROLE_ADMIN" %}
+                {% if role == "ROLE_ADMIN" %}
                   <button onclick="location.href = '/dashboard'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Tableau de bord</button>
                 {% endif %}
               </li>
@@ -37,7 +37,7 @@
               </li>
             {% else %}
               <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
+                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
               </li>
             {% endif %}
             </ul>

@@ -5,6 +5,7 @@
 
 <html>
   {% block content %}
+
         <div class="container-fluid text-center">
           <header>
             <h1>
@@ -20,8 +21,9 @@
             </ul>
           </header>
           <h2>
-            Liste place
+            {{ name }}
           </h2>
+
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -37,7 +39,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -66,9 +68,58 @@
               <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link" href="/showcrudplace">Places</a>
+              <a class="nav-link active" aria-current="page" href="/showcrudplace">Places</a>
             </li>
           </ul>
+
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Informations media platform</th>
+                <th scope="col">Accès</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <form action="/updateplace" method="post">
+                <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
+                <tr>
+                  <td>Identifiant BDD : {{ place_id }}</td>
+                  <td>Refusé</td>
+                </tr>
+                <tr>
+                  <td>name : {{ name }}</td>
+                  <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+                </tr>
+                <tr>
+                  <td>description : {{ description }}</td>
+                  <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
+                </tr>
+                <tr>
+                  <td>adress : {{ adress }}</td>
+                  <td><input type="text" class="form-control" id="adress" name="adress" value="{{ adress }}" required></td>
+                </tr>
+                <tr>
+                  <td>image_id : {{ image_id }}</td>
+                  <td><input type="text" class="form-control" id="image_id" name="image_id" value="{{ image_id }}"></td>
+                </tr>
+                <tr>
+                  <td>external_media_id : {{ external_media_id }}</td>
+                  <td><input type="text" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media_id }}"></td>
+                </tr>
+                <tr>
+                  <td>city_id : {{ city_id }}</td>
+                  <td><input type="text" class="form-control" id="city_id" name="city_id" value="{{ city_id }}"></td>
+                </tr>
+                <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
+              </form>
+            </tbody>
+          </table>
+          <form action="/deleteplace" method="post">
+            <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
+            <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+          </form>
 
 
         <!-- OffCanvas and hidden elements -->
@@ -92,5 +143,6 @@
               </div>
             </div>
           </div>
+        </div>
   {% endblock %}
 </html>

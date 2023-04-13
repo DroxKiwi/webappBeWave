@@ -41,7 +41,7 @@ async function update(city_id, name, postal_code){
 
 // Delete a user by token selection
 async function remove(city_id){
-    query.remove(table, 'artist_id', artist_id)
+    query.remove(table, 'city_id', city_id  )
 }
 
 

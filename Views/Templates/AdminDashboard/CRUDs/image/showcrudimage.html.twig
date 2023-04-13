@@ -25,7 +25,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Liste utilisateurs</a>
+              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
@@ -37,7 +37,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link" href="/showcruds">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -45,27 +45,60 @@
             </form>
           </ul>
 
+
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudartist">Artists</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudcity">Cities</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudevent">Events</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link active" aria-current="page"  href="/showcrudimage">Images</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link" href="/showcrudplace">Places</a>
+            </li>
+          </ul>
+
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+            Ajouter
+          </button>
+
+
+
+
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">user_id</th>
-                <th scope="col">Pseudo</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
+                <th scope="col">image_id</th>
+                <th scope="col">name</th>
+                <th scope="col">path_</th>
+                <th scope="col">extension</th>
                 <th scope="col"></th>
               </tr>
             </thead>
 
             <tbody>
-              {% for user in userList %}
-                <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
-                  <td>{{ user.user_id }}</td>
-                  <td>{{ user.pseudo }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>{{ user.role }}</td>
+              {% for image in images %}
+                <tr class="table-info ">
+                  <td>{{ image.image_id }}</td>
+                  <td>{{ image.name }}</td>
+                  <td>{{ image.path_ }}</td>
+                  <td>{{ image.extension }}</td>
                   <td>
-                    <form action="/showuser" method="post"> 
-                      <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
+                    <form action="/showimage" method="post"> 
+                      <input type="hidden" class="form-control" id="image_id" name="image_id" value="{{ image.image_id }}">
                       <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
                     </form>
                   </td>
@@ -75,8 +108,30 @@
           </table>
 
 
-        <!-- OffCanvas and hidden elements -->
 
+          <!-- Modal -->
+          <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form action="/addimage" method="post">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="url" required>
+                    <input type="text" class="form-control" id="path" name="path" placeholder="path" required>
+                    <input type="text" class="form-control" id="extension" name="extension" placeholder="extension" required>
+                    <button type="submit" class="btn btn-outline-info">Valider</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- OffCanvas and hidden elements -->
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>

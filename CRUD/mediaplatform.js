@@ -30,15 +30,15 @@ async function create(name){
 
 
 // Update an existing user
-async function update(mdeia_platform_id, name){
+async function update(media_platform_id, name){
     if (name != ""){
-        query.update('name', table, name, 'mdeia_platform_id', mdeia_platform_id)
+        query.update('name', table, name, 'media_platform_id', media_platform_id)
     }
 }
 
 // Delete a user by token selection
-async function remove(mdeia_platform_id){
-    query.remove(table, 'mdeia_platform_id', mdeia_platform_id)
+async function remove(media_platform_id){
+    query.remove(table, 'media_platform_id', media_platform_id)
 }
 
 

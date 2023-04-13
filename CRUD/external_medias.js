@@ -24,7 +24,7 @@ async function get(rows = '*', rowsToCompare = "", valueToCompare = "", operator
 // Creat a new user
 async function create(url, media_platform_id){
     const rows = "(url, media_platform_id)"
-    const values = [name, content, format]
+    const values = [url, media_platform_id]
     query.insert(rows, table, values)
 }
 

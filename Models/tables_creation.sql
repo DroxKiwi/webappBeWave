@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS media_platform(
 CREATE TABLE IF NOT EXISTS images(
     image_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
-    content varchar NOT NULL,
-    format varchar(256)
+    path_ varchar(256) NOT NULL,
+    extension varchar(256) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS external_medias(
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS artists (
 CREATE TABLE IF NOT EXISTS cities (
     city_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
-    postal_code int NOT NULL
+    postal_code varchar(5) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS places (

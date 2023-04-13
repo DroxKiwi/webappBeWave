@@ -20,7 +20,7 @@
             </ul>
           </header>
           <h2>
-            Liste place
+            Liste utilisateurs
           </h2>
 
           <ul class="nav nav-tabs">
@@ -37,7 +37,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -66,13 +66,81 @@
               <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link" href="/showcrudplace">Places</a>
+              <a class="nav-link active" aria-current="page" href="/showcrudplace">Places</a>
             </li>
           </ul>
 
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+            Ajouter
+          </button>
+
+
+
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">place_id</th>
+                <th scope="col">name</th>
+                <th scope="col">description</th>
+                <th scope="col">adress</th>
+                <th scope="col">image_id</th>
+                <th scope="col">external_media_id</th>
+                <th scope="col">city_id</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for place in places %}
+                <tr class="table-info ">
+                  <td>{{ place.place_id }}</td>
+                  <td>{{ place.name }}</td>
+                  <td>{{ place.description }}</td>
+                  <td>{{ place.adress }}</td>
+                  <td>{{ place.image_id }}</td>
+                  <td>{{ place.external_media_id }}</td>
+                  <td>{{ place.city_id }}</td>
+                  <td>
+                    <form action="/showplace" method="post"> 
+                      <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place.place_id }}">
+                      <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form action="/addplace" method="post">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="description">
+                    <input type="text" class="form-control" id="adress" name="adress" placeholder="adress" required>
+                    <input type="text" class="form-control" id="image_id" name="image_id" placeholder="image_id" value="NULL">
+                    <input type="text" class="form-control" id="external_media_id" name="external_media_id" placeholder="external_media_id" value="NULL">
+                    <input type="text" class="form-control" id="city_id" name="city_id" placeholder="city_id" value="NULL">
+                    <button type="submit" class="btn btn-outline-info">Valider</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
 
         <!-- OffCanvas and hidden elements -->
-
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>

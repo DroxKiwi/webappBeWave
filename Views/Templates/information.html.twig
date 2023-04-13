@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% set modepreference = templateVars[1] %}
+{% set modepreference = preference %}
 
 <!DOCTYPE html>
 
@@ -25,7 +25,7 @@
                 <a class="nav-link" href="/forum">Forum</a>
               </li>
               <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
+                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
               </li>
             </ul>
           </header>
@@ -35,21 +35,21 @@
           <div class="row">
             <div class="col">
               <h3>
-                  pseudo : {{ templateVars[2] }}
+                  pseudo : {{ pseudo }}
                   <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#pseudoModal">Modifier</button>
 
                   <br>
-                  email : {{ templateVars[3] }}
+                  email : {{ email }}
                   <button type="button" style="margin-top: 10px;" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#emailModal">Modifier</button>
                   <br>
                   password : ***********
                   <button type="button" style="margin-top: 10px;" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#passwordModal">Modifier</button>
                   <br>
-                  {% if templateVars[4] %}
+                  {% if betatesterInfo %}
                     <form action="/betatesterDelete" method="post">
                       <p>Vous êtes Bêta testeur</p>
                       <ul>
-                      {% for infos in templateVars[4] %}
+                      {% for infos in betatesterInfo %}
                           <li>
                             {{infos}}
                           </li>

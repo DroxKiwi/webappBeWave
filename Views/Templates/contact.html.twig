@@ -1,8 +1,7 @@
 {% extends 'base.html.twig' %}
-{% set modepreference = templateVars[1] %}
+{% set modepreference = preference %}
 
 <!DOCTYPE html>
-
 <html>
   {% block content %}
         <div class="container-fluid text-center">
@@ -12,7 +11,7 @@
             </h1>
             <ul class="nav nav-tabs justify-content-center">
               <li>
-                {% if templateVars[2] == "ROLE_ADMIN" %}
+                {% if role == "ROLE_ADMIN" %}
                   <button onclick="location.href = '/dashboard'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Tableau de bord</button>
                 {% endif %}
               </li>
@@ -37,7 +36,7 @@
               </li>
             {% else %}
               <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
+                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
               </li>
             {% endif %}
             </ul>
@@ -50,15 +49,15 @@
           <br>
           <div class="row">
             <div class="col">
-            {% if templateVars[3] %}
-              <h3>{{templateVars[3]}}</h3>
+            {% if formSend %}
+              <h3>{{ formSend }}</h3>
             {% else %}
               {% if id == "unauthentificated" %}
                 <h3>Vous devez créer un compte ou vous connecter pour nous contacter !</h3>
               {% else %}
                 <form action="/contact" method="post">
                   <br>
-                  <input type="hidden" class="form-control" id="sendContact" name="sendContact" value="true">
+                  <input type="hidden" class="form-control" id="sent" name="sent" value="true">
                   <select id="type" name="type" required>
                     <option value="userBug">Bug sur la plateforme</option>
                     <option value="appBug">Bug sur l'application mobile</option>

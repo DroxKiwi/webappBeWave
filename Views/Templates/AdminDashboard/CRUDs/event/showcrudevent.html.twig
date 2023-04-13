@@ -20,7 +20,7 @@
             </ul>
           </header>
           <h2>
-            Liste place
+            Liste utilisateurs
           </h2>
 
           <ul class="nav nav-tabs">
@@ -37,7 +37,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -54,7 +54,7 @@
               <a class="nav-link" href="/showcrudcity">Cities</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/showcrudevent">Events</a>
+              <a class="nav-link active" aria-current="page" href="/showcrudevent">Events</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
@@ -70,9 +70,83 @@
             </li>
           </ul>
 
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+            Ajouter
+          </button>
+
+
+
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">event_id</th>
+                <th scope="col">author_id</th>
+                <th scope="col">name</th>
+                <th scope="col">description</th>
+                <th scope="col">banner_id</th>
+                <th scope="col">display_map</th>
+                <th scope="col">start_date</th>
+                <th scope="col">end_date</th>
+                <th scope="col">price</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for event in events %}
+                <tr class="table-info ">
+                  <td>{{ event.event_id }}</td>
+                  <td>{{ event.author_id }}</td>
+                  <td>{{ event.name }}</td>
+                  <td>{{ event.description }}</td>
+                  <td>{{ event.banner_id }}</td>
+                  <td>{{ event.display_map }}</td>
+                  <td>{{ event.start_date }}</td>
+                  <td>{{ event.end_date }}</td>
+                  <td>{{ event.price }}</td>
+                  <td>
+                    <form action="/showevent" method="post"> 
+                      <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event.event_id }}">
+                      <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form action="/addEvent" method="post">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+                    <input type="text" class="form-control" id="banner_id" name="banner_id" placeholder="bannière" value="NULL">
+                    <label for="display_map" style="color: black;">sur la map ?</label>
+                    <input type="checkbox" id="display_map" name="display_map">
+                    <input type="date" class="form-control" id="start_date" name="start_date" placeholder="date de début" required="true">
+                    <input type="date" class="form-control" id="end_date" name="end_date" placeholder="date de fin" required="true">
+                    <input type="number" class="form-control" id="price" name="price" placeholder="prix" required="true">
+                    <button type="submit" class="btn btn-outline-info">Valider</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+              </div>
+            </div>
+          </div>
 
         <!-- OffCanvas and hidden elements -->
-
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>

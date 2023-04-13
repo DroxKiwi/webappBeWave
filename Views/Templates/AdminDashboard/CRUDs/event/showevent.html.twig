@@ -5,6 +5,7 @@
 
 <html>
   {% block content %}
+
         <div class="container-fluid text-center">
           <header>
             <h1>
@@ -20,8 +21,9 @@
             </ul>
           </header>
           <h2>
-            Liste place
+            {{ name }}
           </h2>
+
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -37,7 +39,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -54,7 +56,7 @@
               <a class="nav-link" href="/showcrudcity">Cities</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/showcrudevent">Events</a>
+              <a class="nav-link active" aria-current="page" href="/showcrudevent">Events</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
@@ -69,6 +71,64 @@
               <a class="nav-link" href="/showcrudplace">Places</a>
             </li>
           </ul>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Informations utilisateur</th>
+                <th scope="col">Accès</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <form action="/updateevent" method="post">
+                <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event_id }}">
+                <tr>
+                  <td>Identifiant BDD : {{ event_id }}</td>
+                  <td>Refusé</td>
+                </tr>
+                <input type="hidden" class="form-control" id="author_id" name="author_id" value="{{ author_id }}">
+                <tr>
+                  <td>author_id : {{ author_id }}</td>
+                  <td>Refusé</td>
+                </tr>
+                <tr>
+                  <td>name : {{ name }}</td>
+                  <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+                </tr>
+                <tr>
+                  <td>description : {{ description }}</td>
+                  <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
+                </tr>
+                <tr>
+                  <td>banner_id : {{ banner_id }}</td>
+                  <td><input type="text" class="form-control" id="banner_id" name="banner_id" value="{{ banner_id }}"></td>
+                </tr>
+                <tr>
+                  <td>display_map : {{ display_map }}</td>
+                  <td><input type="checkbox" {% if display_map == true %} checked {% endif %} id="display_map" name="display_map"></td>
+                </tr>
+                <tr>
+                  <td>start_date : {{ start_date }}</td>
+                  <td><input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" required></td>
+                </tr>
+                <tr>
+                  <td>end_date : {{ end_date }}</td>
+                  <td><input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required></td>
+                </tr>
+                <tr>
+                  <td>price : {{ price }}</td>
+                  <td><input type="number" class="form-control" id="price" name="price" value="{{ price }}" required></td>
+                </tr>
+                <tr>
+                  <button type="submit" class="btn btn-outline-warning">Enregistrer modificaiton</button>
+              </form>
+            </tbody>
+          </table>
+          <form action="/deleteevent" method="post">
+            <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event_id }}">
+            <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+          </form>
 
 
         <!-- OffCanvas and hidden elements -->
@@ -92,5 +152,6 @@
               </div>
             </div>
           </div>
+        </div>
   {% endblock %}
 </html>

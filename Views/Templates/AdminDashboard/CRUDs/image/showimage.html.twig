@@ -5,6 +5,7 @@
 
 <html>
   {% block content %}
+
         <div class="container-fluid text-center">
           <header>
             <h1>
@@ -20,12 +21,13 @@
             </ul>
           </header>
           <h2>
-            Liste utilisateurs
+            {{ name }}
           </h2>
+
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Liste utilisateurs</a>
+              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
@@ -37,7 +39,7 @@
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link" href="/showcruds">CRUDs</a>
+              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/searchuser" method="post" class="d-flex" role="search">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
@@ -45,34 +47,67 @@
             </form>
           </ul>
 
+
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudartist">Artists</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudcity">Cities</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudevent">Events</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link active" aria-current="page" href="/showcrudimage">Images</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
+            </li>
+            <li calss="nav-item">
+              <a class="nav-link" href="/showcrudplace">Places</a>
+            </li>
+          </ul>
+
+
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">user_id</th>
-                <th scope="col">Pseudo</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
-                <th scope="col"></th>
+                <th scope="col">Informations images</th>
+                <th scope="col">Accès</th>
               </tr>
             </thead>
 
             <tbody>
-              {% for user in userList %}
-                <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
-                  <td>{{ user.user_id }}</td>
-                  <td>{{ user.pseudo }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>{{ user.role }}</td>
-                  <td>
-                    <form action="/showuser" method="post"> 
-                      <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
-                      <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
-                    </form>
-                  </td>
+              <form action="/updateimage" method="post">
+                <input type="hidden" class="form-control" id="image_id" name="image_id" value="{{ image_id }}">
+                <tr>
+                  <td>Identifiant BDD : {{ image_id }}</td>
+                  <td>Refusé</td>
                 </tr>
-              {% endfor %}
+                <tr>
+                  <td>name : {{ name }}</td>
+                  <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+                </tr>
+                <tr>
+                  <td>path_ : {{ path_ }}</td>
+                  <td><input type="text" class="form-control" id="path_" name="path_" value="{{ path_ }}"></td>
+                </tr>
+                <tr>
+                  <td>extension : {{ extension }}</td>
+                  <td><input type="text" class="form-control" id="extension" name="extension" value="{{ extension }}"></td>
+                </tr>
+                <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
+              </form>
             </tbody>
           </table>
+          <form action="/deleteimage" method="post">
+            <input type="hidden" class="form-control" id="image_id" name="image_id" value="{{ image_id }}">
+            <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+          </form>
 
 
         <!-- OffCanvas and hidden elements -->
@@ -96,5 +131,6 @@
               </div>
             </div>
           </div>
+        </div>
   {% endblock %}
 </html>
