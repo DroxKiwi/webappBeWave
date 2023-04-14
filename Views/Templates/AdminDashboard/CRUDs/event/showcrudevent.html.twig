@@ -39,7 +39,8 @@
             <li calss="nav-item">
               <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
-            <form action="/searchuser" method="post" class="d-flex" role="search">
+            <form action="/search" method="post" class="d-flex" role="search">
+              <input type="hidden" id="searchtable" name="searchtable" value="event">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
               <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
             </form>
@@ -47,6 +48,9 @@
 
 
           <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link"href="/showcruduser">Users</a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="/showcrudartist">Artists</a>
             </li>

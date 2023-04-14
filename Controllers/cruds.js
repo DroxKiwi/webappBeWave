@@ -7,9 +7,203 @@ const externalMediaCRUD = require("../CRUD/external_medias")
 const imageCRUD = require("../CRUD/image")
 const MPCRUD = require("../CRUD/mediaplatform")
 const placeCRUD = require("../CRUD/place")
+const logCRUD = require("../CRUD/log")
+const betatesterCRUD = require("../CRUD/betatesteur")
+const generateRandomPassword = require ("../Utils/generatePassword")
+
+
+// Return the search request made
+async function search(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { searchtable } = req.body
+        const { searchrequest } = req.body
+        const modeleSQL = "%"+searchrequest+"%"
+        // Here we are managing the search bar request 
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "users": await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
+        }
+        switch (searchtable) {
+            case 'user':
+                templateVars.users = await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+                break
+            case 'artist':
+                templateVars.artists = await artistCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
+                break
+            case 'city':
+                templateVars.cities = await cityCRUD.get('*', ['name', 'postal_code'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/city/showcrudcity.html.twig', { ...templateVars })
+                break
+            case 'event':
+                templateVars.events = await eventCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
+                break
+            case 'external_media':
+                templateVars.external_medias = await externalMediaCRUD.get('*', ['url'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
+                break
+            case 'image':
+                templateVars.images = await imageCRUD.get('*', ['name', 'path_', 'extension'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
+                break
+            case 'mp':
+                templateVars.MPs = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showcrudmediaplatform.html.twig', { ...templateVars })
+                break
+            case 'place':
+                templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
+                break
+        }
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+// Management of users 
+
+
+// Landing page of dashboard
+async function showUsers(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        // We send the preferences to the twig template 
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "users": await userCRUD.get()
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+// Show a user profile
+async function showDetailUser(req, res){
+    const { user_id } = req.body
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const userToShow = await userCRUD.get('*', 'user_id', user_id)
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "user_id": user_id,
+            "pseudo": userToShow[0].pseudo,
+            "email": userToShow[0].email,
+            "token": userToShow[0].token,
+            "role": userToShow[0].role,
+            "userLogs": await logCRUD.get('*', 'user_id', user_id),
+            "betatesterInfo": await betatesterCRUD.get('*', 'user_id', user_id)
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showuser.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+
+// Create an user from dashboard
+async function addUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { pseudo, email, password, role } = req.body
+        const message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
+        logger.newLog(req.cookies.userToken.token, message)
+        await userCRUD.create(pseudo, email, password, role)
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        // We send the preferences to the twig template 
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "userList": await userCRUD.get()
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+async function deleteUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        const email = await userCRUD.get('email', 'user_id', user_id)
+        message = "Delete an user : "+email
+        logger.newLog(req.cookies.userToken.token, message)
+        userCRUD.remove(user_id)
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        // We send the preferences to the twig template 
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "userList": await userCRUD.get()
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
+async function updateUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { pseudo, email, password, role, user_id } = req.body
+        // Here we are updating an user giving by his user_id. Only Admin can do that
+        // To make a difference between an update of his own account or the update of an user account, I implement a value nonselfupdate
+        const message = "Update a user : "+pseudo 
+        logger.newLog(req.cookies.userToken.token, message)
+        await userCRUD.update(user_id, pseudo, email, password, role)
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        // We send the preferences to the twig template 
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "userList": await userCRUD.get()
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+        }
+    else {
+        res.redirect(302, '/')
+    }
+}
+
+async function resetPasswordUser(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const { user_id } = req.body
+        const length = 10
+        const password = generateRandomPassword(length)
+        const answer_user_pseudo = await userCRUD.get('pseudo', 'user_id', user_id)
+        const pseudo = answer_user_pseudo[0].pseudo
+        message = "Reset a password for : "+pseudo+" new password : "+password
+        logger.newLog(req.cookies.userToken.token, message)
+        await userCRUD.update(user_id, '', '', password, '', '')
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        // We send the preferences to the twig template 
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "userList": await userCRUD.get()
+        }
+        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+    }
+}
+
 
 // Management Artist
-
 async function showArtists(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
@@ -601,7 +795,9 @@ async function updatePlace(req, res){
     }
 }
 
-module.exports = { showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist, 
+module.exports = { search,
+    showUsers, showDetailUser, addUser, deleteUser, updateUser, resetPasswordUser,
+    showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist,
     showCities, showDetailCity, addCity, deleteCity, updateCity,
     showEvents, showDetailEvent, addEvent, deleteEvent, updateEvent,
     showExternalMedias, showDetailExternalMedia, addExternalMedia, deleteExternalMedia, updateExternalMedia,

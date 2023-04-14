@@ -1,4 +1,6 @@
-const { showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist, 
+const { search,
+    showUsers, showDetailUser, addUser, deleteUser, updateUser, resetPasswordUser,
+    showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist,
     showCities, showDetailCity, addCity, deleteCity, updateCity,
     showEvents, showDetailEvent, addEvent, deleteEvent, updateEvent,
     showExternalMedias, showDetailExternalMedia, addExternalMedia, deleteExternalMedia, updateExternalMedia,
@@ -7,6 +9,15 @@ const { showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist,
     showPlaces,showDetailPlace, addPlace, deletePlace, updatePlace } = require("../Controllers/cruds")
 
 function crudRoute(app){
+
+    app.post('/search', search)
+
+    app.get('/showcruduser', showUsers)
+    app.post('/showuser', showDetailUser)
+    app.post('/adduser', addUser)
+    app.post('/deleteuser', deleteUser)
+    app.post('/updateuser', updateUser)
+    app.post('/resetpassworduser', resetPasswordUser)
 
     app.get('/showcrudartist', showArtists)
     app.post('/showartist', showDetailArtist)

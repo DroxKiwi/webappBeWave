@@ -25,7 +25,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
+              <a class="nav-link" href="#">Liste utilisateurs</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
@@ -40,16 +40,15 @@
               <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
             </li>
             <form action="/search" method="post" class="d-flex" role="search">
-              <input type="hidden" id="searchtable" name="searchtable" value="place">
+              <input type="hidden" id="searchtable" name="searchtable" value="user">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
               <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
             </form>
           </ul>
 
-
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link"href="/showcruduser">Users</a>
+              <a class="nav-link active" aria-current="page" href="/showcruduser">Users</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/showcrudartist">Artists</a>
@@ -70,7 +69,7 @@
               <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="/showcrudplace">Places</a>
+              <a class="nav-link" href="/showcrudplace">Places</a>
             </li>
           </ul>
 
@@ -79,36 +78,27 @@
             Ajouter
           </button>
 
-
-
-
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">place_id</th>
-                <th scope="col">name</th>
-                <th scope="col">description</th>
-                <th scope="col">adress</th>
-                <th scope="col">image_id</th>
-                <th scope="col">external_media_id</th>
-                <th scope="col">city_id</th>
+                <th scope="col">user_id</th>
+                <th scope="col">Pseudo</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
                 <th scope="col"></th>
               </tr>
             </thead>
 
             <tbody>
-              {% for place in places %}
-                <tr class="table-info ">
-                  <td>{{ place.place_id }}</td>
-                  <td>{{ place.name }}</td>
-                  <td>{{ place.description }}</td>
-                  <td>{{ place.adress }}</td>
-                  <td>{{ place.image_id }}</td>
-                  <td>{{ place.external_media_id }}</td>
-                  <td>{{ place.city_id }}</td>
+              {% for user in users %}
+                <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
+                  <td>{{ user.user_id }}</td>
+                  <td>{{ user.pseudo }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role }}</td>
                   <td>
-                    <form action="/showplace" method="post"> 
-                      <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place.place_id }}">
+                    <form action="/showuser" method="post"> 
+                      <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
                       <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
                     </form>
                   </td>
@@ -116,7 +106,6 @@
               {% endfor %}
             </tbody>
           </table>
-
 
 
           <!-- Modal -->
@@ -128,13 +117,14 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <form action="/addplace" method="post">
-                    <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
-                    <input type="text" class="form-control" id="description" name="description" placeholder="description">
-                    <input type="text" class="form-control" id="adress" name="adress" placeholder="adress" required>
-                    <input type="text" class="form-control" id="image_id" name="image_id" placeholder="image_id" value="NULL">
-                    <input type="text" class="form-control" id="external_media_id" name="external_media_id" placeholder="external_media_id" value="NULL">
-                    <input type="text" class="form-control" id="city_id" name="city_id" placeholder="city_id" value="NULL">
+                  <form action="/adduser" method="post">
+                    <input type="text" class="form-control" id="pseudo" name="pseudo" placeholder="pseudo" required>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="email" required>
+                    <input type="text" class="form-control" id="password" name="password" placeholder="password" required>
+                    <select id="role" name="role" required>
+                      <option value="ROLE_USER">Utilisateur</option>
+                      <option value="ROLE_ADMIN">Administrateur</option>
+                    </select>
                     <button type="submit" class="btn btn-outline-info">Valider</button>
                   </form>
                 </div>
@@ -145,6 +135,7 @@
           </div>
 
         <!-- OffCanvas and hidden elements -->
+
           <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>
