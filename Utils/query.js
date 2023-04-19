@@ -115,7 +115,8 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
 async function insert(rows, table, values){
     try {
         const preparedValues = prepareValues(values)
-        await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues}`)
+        const answer = await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues} RETURNING *`)
+        return answer
     }
     catch(err){
         throw err

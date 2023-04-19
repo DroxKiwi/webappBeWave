@@ -1,4 +1,3 @@
-const logger = require("../Utils/logger")
 const artistCRUD = require("../CRUD/artists")
 const userCRUD = require("../CRUD/user")
 const cityCRUD = require("../CRUD/city")
@@ -9,7 +8,12 @@ const MPCRUD = require("../CRUD/mediaplatform")
 const placeCRUD = require("../CRUD/place")
 const logCRUD = require("../CRUD/log")
 const betatesterCRUD = require("../CRUD/betatesteur")
+const eventimageCRUD = require("../CRUD/event_image")
+const logger = require("../Utils/logger")
 const generateRandomPassword = require ("../Utils/generatePassword")
+const fs = require('fs')
+const path = require('path')
+const easyimg = require('easyimage')
 
 
 // Return the search request made
@@ -48,7 +52,7 @@ async function search(req, res){
                 res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
                 break
             case 'image':
-                templateVars.images = await imageCRUD.get('*', ['name', 'path_', 'extension'], "", true, modeleSQL, 'OR')
+                templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
                 res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
                 break
             case 'mp':
@@ -370,7 +374,9 @@ async function showEvents(req, res){
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
-            "events": await eventCRUD.get()
+            "events": await eventCRUD.get(),
+            "images": await imageCRUD.get(),
+            "events_images": await eventimageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
     }
@@ -407,10 +413,9 @@ async function showDetailEvent(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "event_id": event_id,
-            "author_id": eventToShow[0].author_id,
+            "author_name": eventToShow[0].author_name,
             "name": eventToShow[0].name,
             "description": eventToShow[0].description,
-            "banner_id": eventToShow[0].banner_id,
             "display_map": eventToShow[0].display_map,
             "start_date": start_date,
             "end_date": end_date,
@@ -423,19 +428,22 @@ async function showDetailEvent(req, res){
     }
 }
 
+
 async function addEvent(req, res){
-    const { name, description, banner_id, display_map, start_date, end_date, price } = req.body
+    const { author_name, name, description, images, display_map, start_date, end_date, price } = req.body
     if (display_map == undefined){
         var display_map_value = false
     }
     else {
         var display_map_value = true
     }
-    console.log(display_map_value)
     if (req.role == "ROLE_ADMIN"){
-        const answer_user_id = await userCRUD.get("user_id", "pseudo", req.pseudo)
-        const user_id = answer_user_id[0].user_id
-        await eventCRUD.create(user_id, name, description, banner_id, display_map_value, start_date, end_date, price)
+        const answer_insert = await eventCRUD.create(author_name, name, description, display_map_value, start_date, end_date, price, true)
+        const event_id_created = answer_insert.rows[0].event_id
+        const image_id_tab = images.split('-')
+        for(let i = 0; i < image_id_tab.length; i++){
+            await eventimageCRUD.create(event_id_created, image_id_tab[i])
+        }
         res.redirect(302, '/showcrudevent')
     }
 }
@@ -488,6 +496,12 @@ async function showExternalMedias(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "external_medias": await externalMediaCRUD.get()
+        }
+        for (let i = 0; i < templateVars.external_medias.length; i++){
+            if (templateVars.external_medias[i].media_platform_id != null){
+                var temp_answer = await MPCRUD.get('name', 'media_platform_id', templateVars.external_medias[i].media_platform_id)
+                templateVars.external_medias[i].media_platform_name = temp_answer[0].name
+            }
         }
         res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
     }
@@ -585,7 +599,6 @@ async function showDetailImage(req, res){
             "preference": preferencesTab[0].preferences[0],
             "image_id": imageToShow[0].image_id,
             "name": imageToShow[0].name,
-            "path_": imageToShow[0].path_,
             "extension": imageToShow[0].extension
         }
         res.render('./Templates/AdminDashboard/CRUDs/image/showimage.html.twig', { ...templateVars })
@@ -596,42 +609,85 @@ async function showDetailImage(req, res){
 }
 
 async function addImage(req, res){
-    const { name, path, extension } = req.body
     if (req.role == "ROLE_ADMIN"){
-        await imageCRUD.create(name, path, extension)
-        res.redirect(302, '/showcrudimage')
+        const { image } = req.files
+        if (!image) {
+            res.send("Ce n'est pas une image !");
+        }
+        if (!(/^image/.test(image.mimetype))) {
+            res.send("Ce n'est pas un format acceptable !");
+        }
+        const answer_imgname_exist = await imageCRUD.get('*', 'name', image.name)
+        if (answer_imgname_exist[0]){
+            res.send("Une image avec un nom identique existe déjà !")
+        }
+        else {
+            image.mv('./Public/Uploads/' + image.name)
+            const ext = '.'+image.name.split('.')[1]
+            const name = image.name.split('.')[0]
+            await imageCRUD.create(name, ext)
+            res.redirect(302, '/showcrudimage')
+        }
+    }
+    else {
+        res.redirect(302, '/login')
     }
 }
 
 async function deleteImage(req, res){
     const { image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        await imageCRUD.remove(image_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "images": await imageCRUD.get()
+        const answer_events = await eventCRUD.get('*', 'banner_id', image_id)
+        const answer_places = await placesCRUD.get('*', 'image_id', image_id)
+        if (answer_places[0]){
+            res.send("Des places sont liées à cette image ! Impossible de supprimer l'image")
         }
-        res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
+        if (answer_events[0]){
+            res.send("Des evenements sont liées à cette image ! Impossible de supprimer l'image")
+        }
+        else {
+            try {
+                await imageCRUD.remove(image_id)
+            }
+            catch(err){
+                throw err
+            }
+            const answer_name = await imageCRUD.get('*', 'image_id', image_id)
+            const name = answer_name[0].name
+            const ext = answer_name[0].extension
+            const filePath = './Public/Uploads/'+name+ext
+            fs.unlinkSync(filePath)
+            res.redirect(302, '/showcrudimage')
+        }
     }
 }
 
 async function updateImage(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { image_id, name, path_, extension } = req.body
-        const message = "Update an image : "+name
-        logger.newLog(req.cookies.userToken.token, message)
-        await imageCRUD.update(image_id, name, path_, extension)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "images": await imageCRUD.get()
+        const { image_id, oldname, name, oldext, extension } = req.body
+        if (oldext != extension){
+            const tmp_path = './Public/Uploads/'+oldname+oldext
+            const tmp_extless = tmp_path.replace(oldext,extension)
+            await easyimg.convert({src: tmp_path, dst: tmp_extless, quality: 100}, (error) => { 
+                if(error){
+                    throw error
+                }
+            })
+            fs.unlinkSync('./Public/Uploads/'+oldname+oldext)
         }
-        res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
+        if (oldname != name){
+            fs.copyFile('./Public/Uploads/'+oldname+extension, './Public/Uploads/'+name+extension, 
+            (error) => {
+                if (error) {
+                    throw error
+                }
+            })
+            fs.unlinkSync('./Public/Uploads/'+oldname+extension)
+        }
+        const message = "Update an image : "+name+extension
+        logger.newLog(req.cookies.userToken.token, message)
+        await imageCRUD.update(image_id, name, extension)
+        res.redirect(302, '/showcrudimage')
     }
 }
 
@@ -684,6 +740,10 @@ async function addMP(req, res){
 async function deleteMP(req, res){
     const { media_platform_id } = req.body
     if (req.role == "ROLE_ADMIN"){
+        const answer_external_media = await externalmediaCRUD.get('*', 'media_platform_id', media_platform_id)
+        if (answer_external_media[0]){
+            res.send("Des media externes sont liés à cette plateform de média ! Impossible de supprimer la plateform de média")
+        }
         const userToken = req.cookies.userToken.token
         await MPCRUD.remove(media_platform_id)
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
@@ -723,6 +783,10 @@ async function showPlaces(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "places": await placeCRUD.get()
+        }
+        for (let i = 0; i < templateVars.events.length; i++){
+            var temp_answer = await imageCRUD.get("name, extension", "image_id", templateVars.events[i].banner_id)
+            templateVars.events[i].image_fullname = temp_answer[0].name + temp_answer[0].extension
         }
         res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
     }

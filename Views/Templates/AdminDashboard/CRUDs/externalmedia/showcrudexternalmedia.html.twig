@@ -25,10 +25,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
+              <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logs">Logs</a>
@@ -87,7 +84,7 @@
               <tr>
                 <th scope="col">external_media_id</th>
                 <th scope="col">url</th>
-                <th scope="col">media_platform_id</th>
+                <th scope="col">media_platform_name</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -97,7 +94,7 @@
                 <tr class="table-info ">
                   <td>{{ external_media.external_media_id }}</td>
                   <td>{{ external_media.url }}</td>
-                  <td>{{ external_media.media_platform_id }}</td>
+                  <td>{{ external_media.media_platform_name }}</td>
                   <td>
                     <form action="/showexternalmedia" method="post"> 
                       <input type="hidden" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media.external_media_id }}">

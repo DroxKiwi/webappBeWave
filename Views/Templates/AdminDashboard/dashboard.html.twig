@@ -25,10 +25,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Liste utilisateurs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
+              <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logs">Logs</a>
@@ -39,40 +36,7 @@
             <li calss="nav-item">
               <a class="nav-link" href="/showcruds">CRUDs</a>
             </li>
-            <form action="/searchuser" method="post" class="d-flex" role="search">
-              <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
-              <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
-            </form>
-          </ul>
-
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">user_id</th>
-                <th scope="col">Pseudo</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for user in userList %}
-                <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
-                  <td>{{ user.user_id }}</td>
-                  <td>{{ user.pseudo }}</td>
-                  <td>{{ user.email }}</td>
-                  <td>{{ user.role }}</td>
-                  <td>
-                    <form action="/showuser" method="post"> 
-                      <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
-                      <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
-                    </form>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+ 
 
 
         <!-- OffCanvas and hidden elements -->

@@ -25,16 +25,19 @@
     "cookie-parser": "^1.4.6",
     "cookieparser": "^0.1.0",
     "crypto-js": "^4.1.1",
+    "easyimage": "^3.1.1",
     "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
     "fs": "^0.0.1-security",
     "jquery": "^3.6.4",
+    "path": "^0.12.7",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
     "twig": "^1.16.0",
     "uid2": "^1.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21",
-    "env-cmd": "^10.1.0"
+    "env-cmd": "^10.1.0",
+    "nodemon": "^2.0.21"
   }
 }

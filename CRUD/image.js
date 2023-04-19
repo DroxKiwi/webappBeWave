@@ -22,20 +22,17 @@ async function get(rows = '*', rowsToCompare = "", valueToCompare = "", operator
 }
 
 // Creat a new user
-async function create(name, path_, extension){
-    const rows = "(name, path_, extension)"
-    const values = [name, path_, extension]
+async function create(name, extension){
+    const rows = "(name, extension)"
+    const values = [name, extension]
     query.insert(rows, table, values)
 }
 
 
 // Update an existing user
-async function update(image_id, name, path_, extension){
+async function update(image_id, name, extension){
     if (name != ""){
         query.update('name', table, name, 'image_id', image_id)
-    }
-    if (path_ != ""){
-        query.update('path_', table, path_, 'image_id', image_id)
     }
     if (extension != ""){
         query.update('extension', table, extension, 'image_id', image_id)

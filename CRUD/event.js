@@ -22,26 +22,24 @@ async function get(rows = '*', rowsToCompare = "", valueToCompare = "", operator
 }
 
 // Creat a new user
-async function create(author_id, name, description, banner_id, display_map, start_date, end_date, price){
-    const rows = "(author_id, name, description, banner_id, display_map, start_date, end_date, price)"
-    const values = [author_id, name, description, banner_id, display_map, start_date, end_date, price]
-    query.insert(rows, table, values)
+async function create(author_name, name, description, display_map, start_date, end_date, price){
+    const rows = "(author_name, name, description, display_map, start_date, end_date, price)"
+    const values = [author_name, name, description, display_map, start_date, end_date, price]
+    const answer = query.insert(rows, table, values)
+    return answer
 }
 
 
 // Update an existing user
-async function update(event_id, author_id, name, description, banner_id, display_map, start_date, end_date, price){
-    if (author_id != ""){
-        query.update('author_id', table, author_id, 'event_id', event_id)
+async function update(event_id, author_name, name, description, display_map, start_date, end_date, price){
+    if (author_name != ""){
+        query.update('author_name', table, author_name, 'event_id', event_id)
     }
     if (name != ""){
         query.update('name', table, name, 'event_id', event_id)
     }
     if (description != ""){
         query.update('description', table, description, 'event_id', event_id)
-    }
-    if (banner_id != ""){
-        query.update('banner_id', table, banner_id, 'event_id', event_id)
     }
     if (display_map != ""){
         query.update('display_map', table, display_map, 'event_id', event_id)

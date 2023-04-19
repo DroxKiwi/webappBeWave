@@ -25,10 +25,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
+              <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logs">Logs</a>
@@ -86,10 +83,10 @@
             <thead>
               <tr>
                 <th scope="col">event_id</th>
-                <th scope="col">author_id</th>
+                <th scope="col">author name</th>
                 <th scope="col">name</th>
                 <th scope="col">description</th>
-                <th scope="col">banner_id</th>
+                <th scope="col">images</th>
                 <th scope="col">display_map</th>
                 <th scope="col">start_date</th>
                 <th scope="col">end_date</th>
@@ -102,10 +99,14 @@
               {% for event in events %}
                 <tr class="table-info ">
                   <td>{{ event.event_id }}</td>
-                  <td>{{ event.author_id }}</td>
+                  <td>{{ event.author_name }}</td>
                   <td>{{ event.name }}</td>
                   <td>{{ event.description }}</td>
-                  <td>{{ event.banner_id }}</td>
+                  <td>
+                    {% for ei in events_images %}
+                      <td><img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" /></td>
+                    {% endfor %}
+                  </td>
                   <td>{{ event.display_map }}</td>
                   <td>{{ event.start_date }}</td>
                   <td>{{ event.end_date }}</td>
@@ -133,9 +134,18 @@
                 </div>
                 <div class="modal-body">
                   <form action="/addEvent" method="post">
+                    <input type="hidden" id="author_name" name="author_name" value="{{ id }}">
                     <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
                     <input type="text" class="form-control" id="description" name="description" placeholder="Description">
-                    <input type="text" class="form-control" id="banner_id" name="banner_id" placeholder="bannière" value="NULL">
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
+                      {% for image in images %}
+                        <option value="{{ image.image_id }}" onclick="addimage(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedimages">
+                    </div>
+                    <input type="hidden" value="" name="images" id="images"/>
                     <label for="display_map" style="color: black;">sur la map ?</label>
                     <input type="checkbox" id="display_map" name="display_map">
                     <input type="date" class="form-control" id="start_date" name="start_date" placeholder="date de début" required="true">
@@ -170,5 +180,68 @@
               </div>
             </div>
           </div>
+
+      <script>
+        // this JS script as for goal to manage the image selection system and creating the value for the input sent to the BackOffice
+        function addimage(e){
+          const image_path = e.target.id
+          const image_id = e.target.value
+          var image_selected_zone = document.getElementById("addedimages")
+          var imagesInputValue = document.getElementById("images")
+          var nodes = image_selected_zone.childNodes
+          var images_id_tab = ""
+          var exist = false
+          for (let i = 1; i < nodes.length; i++){
+            if (nodes[i].id == image_id){
+              exist = true
+            }
+          }
+          if (!exist){
+            var newChild = document.createElement("img")
+            newChild.src = image_path
+            newChild.id = image_id
+            newChild.style.height = "100px"
+            newChild.style.width = "100px"
+            newChild.addEventListener('mouseenter', () => {
+              document.body.style.cursor = "pointer"
+              newChild.style.opacity = 0.5
+            })
+            newChild.addEventListener('mouseleave', () => {
+              document.body.style.cursor = "default"
+              newChild.style.opacity = 1
+            })
+            newChild.addEventListener('click', (event) => {
+              event.target.remove()
+              var imagesTab = document.getElementById("images")
+              var image_selected_zone = document.getElementById("addedimages")
+              var nodes = image_selected_zone.childNodes
+              var images_id_tab = ""
+              for (let i = 1; i < nodes.length; i++){
+                if (i < nodes.length-1){
+                  images_id_tab += nodes[i].id + "-"
+                }
+                else {
+                  images_id_tab += nodes[i].id
+                }
+              }
+              imagesInputValue.value = images_id_tab
+            })
+            image_selected_zone.appendChild(newChild)
+            for (let i = 1; i < nodes.length; i++){
+              if (i < nodes.length-1){
+                images_id_tab += nodes[i].id + "-"
+              }
+              else {
+                images_id_tab += nodes[i].id
+              }
+            }
+            imagesInputValue.value = images_id_tab
+          }
+          var optionImage = document.getElementById("optionImage")
+          optionImage.selected = "0"
+        }
+      </script>
+
   {% endblock %}
+
 </html>

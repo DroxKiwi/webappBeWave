@@ -27,10 +27,7 @@
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Liste utilisateurs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/makeuser">Nouvel utilisateur</a>
+              <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/logs">Logs</a>
@@ -92,16 +89,22 @@
                   <td>Refusé</td>
                 </tr>
                 <tr>
+                  <td>Image : </td>
+                  <td><img src="/Uploads/{{name ~ extension}}" alt="img" style="height: 100px; width: 100px;" /></td>
+                </tr>
+                <tr>
                   <td>name : {{ name }}</td>
+                  <input type="hidden" id="oldname" name="oldname" value={{ name }}>
                   <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
                 </tr>
                 <tr>
-                  <td>path_ : {{ path_ }}</td>
-                  <td><input type="text" class="form-control" id="path_" name="path_" value="{{ path_ }}"></td>
-                </tr>
-                <tr>
                   <td>extension : {{ extension }}</td>
-                  <td><input type="text" class="form-control" id="extension" name="extension" value="{{ extension }}"></td>
+                  <input type="hidden" id="oldext" name="oldext" value={{ extension }}>
+                  <td><select class="form-control" id="extension" name="extension">
+                        <option {% if extension == '.jpg' %} selected="selected" {% endif %} value=".jpg">jpg</option>
+                        <option {% if extension == '.png' %} selected="selected" {% endif %} value=".png">png</option>
+                      </select>
+                  </td>
                 </tr>
                 <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
               </form>

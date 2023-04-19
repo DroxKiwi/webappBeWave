@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS media_platform(
 CREATE TABLE IF NOT EXISTS images(
     image_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
-    path_ varchar(256) NOT NULL,
     extension varchar(256) NOT NULL
 );
 
@@ -93,18 +92,13 @@ CREATE TABLE IF NOT EXISTS places (
 
 CREATE TABLE IF NOT EXISTS events (
     event_id serial PRIMARY KEY,
-    author_id int NOT NULL,
+    author_name varchar(256) NOT NULL,
     name varchar(256) NOT NULL,
     description varchar(500),
-    banner_id int,
     display_map boolean NOT NULL,
     start_date date NOT NULL,
     end_date date NOT NULL,
-    price float,
-    FOREIGN KEY (author_id)
-        REFERENCES users (user_id),
-    FOREIGN KEY (banner_id)
-        REFERENCES images (image_id)
+    price float
 );
 
 CREATE TABLE IF NOT EXISTS events_artists(

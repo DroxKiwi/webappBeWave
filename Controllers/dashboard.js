@@ -38,7 +38,6 @@ async function showLogs(req, res){
         res.redirect(302, "/")
     }
 }
-
 // Show the contact form sent by users
 async function showFormcontact(req, res){
     if (req.role == "ROLE_ADMIN"){
