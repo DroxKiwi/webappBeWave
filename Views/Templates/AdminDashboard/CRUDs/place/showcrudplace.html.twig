@@ -86,9 +86,8 @@
                 <th scope="col">name</th>
                 <th scope="col">description</th>
                 <th scope="col">adress</th>
-                <th scope="col">image_id</th>
-                <th scope="col">external_media_id</th>
-                <th scope="col">city_id</th>
+                <th scope="col">image</th>
+                <th scope="col">city</th>
                 <th scope="col"></th>
               </tr>
             </thead>
@@ -100,9 +99,20 @@
                   <td>{{ place.name }}</td>
                   <td>{{ place.description }}</td>
                   <td>{{ place.adress }}</td>
-                  <td>{{ place.image_id }}</td>
-                  <td>{{ place.external_media_id }}</td>
-                  <td>{{ place.city_id }}</td>
+                  <td>
+                    {% for image in images %}
+                      {% if image.image_id == place.image_id %}
+                        <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for city in cities %}
+                      {% if place.city_id == city.city_id %}
+                        {{ city.name }}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
                   <td>
                     <form action="/showplace" method="post"> 
                       <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place.place_id }}">
@@ -129,9 +139,17 @@
                     <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
                     <input type="text" class="form-control" id="description" name="description" placeholder="description">
                     <input type="text" class="form-control" id="adress" name="adress" placeholder="adress" required>
-                    <input type="text" class="form-control" id="image_id" name="image_id" placeholder="image_id" value="NULL">
-                    <input type="text" class="form-control" id="external_media_id" name="external_media_id" placeholder="external_media_id" value="NULL">
-                    <input type="text" class="form-control" id="city_id" name="city_id" placeholder="city_id" value="NULL">
+                    <select name="image_id" class="form-control">
+                      <option selected="selected" value="NULL">Selectionner une image</option>
+                      {% for image in images %}
+                        <option value="{{ image.image_id }}">{{ image.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <select name="city_id" class="form-control">
+                      {% for city in cities %}
+                        <option value="{{ city.city_id }}">{{ city.name }}</option>
+                      {% endfor %}
+                    </select>
                     <button type="submit" class="btn btn-outline-info">Valider</button>
                   </form>
                 </div>

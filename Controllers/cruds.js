@@ -215,7 +215,8 @@ async function showArtists(req, res){
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
-            "artists": await artistCRUD.get()
+            "artists": await artistCRUD.get(),
+            "images": await imageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
     }
@@ -237,7 +238,7 @@ async function showDetailArtist(req, res){
             "name": artistToShow[0].name,
             "description": artistToShow[0].description,
             "image_id": artistToShow[0].image_id,
-            "external_media_id": artistToShow[0].external_media_id
+            "images": await imageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/artist/showartist.html.twig', { ...templateVars })
     }
@@ -247,9 +248,9 @@ async function showDetailArtist(req, res){
 }
 
 async function addArtist(req, res){
-    const { name, description, image_id, external_media_id } = req.body
+    const { name, description, image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        await artistCRUD.create(name, description, image_id, external_media_id)
+        await artistCRUD.create(name, description, image_id)
         res.redirect(302, '/showcrudartist')
     }
 }
@@ -257,32 +258,18 @@ async function addArtist(req, res){
 async function deleteArtist(req, res){
     const { artist_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         await artistCRUD.remove(artist_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "artists": await artistCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudartist')
     }
 }
 
 async function updateArtist(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { artist_id, name, description, image_id, external_media_id } = req.body
+        const { artist_id, name, description, image_id } = req.body
         const message = "Update an artist : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        await artistCRUD.update(artist_id, name, description, image_id, external_media_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "artists": await artistCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
+        await artistCRUD.update(artist_id, name, description, image_id)
+        res.redirect(302, '/showcrudartist')
     }
 }
 
@@ -780,11 +767,9 @@ async function showPlaces(req, res){
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
-            "places": await placeCRUD.get()
-        }
-        for (let i = 0; i < templateVars.events.length; i++){
-            var temp_answer = await imageCRUD.get("name, extension", "image_id", templateVars.events[i].banner_id)
-            templateVars.events[i].image_fullname = temp_answer[0].name + temp_answer[0].extension
+            "places": await placeCRUD.get(),
+            "cities": await cityCRUD.get(),
+            "images": await imageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
     }
@@ -807,8 +792,9 @@ async function showDetailPlace(req, res){
             "description": placeToShow[0].description,
             "adress": placeToShow[0].adress,
             "image_id": placeToShow[0].image_id,
-            "external_media_id": placeToShow[0].external_media_id,
-            "city_id": placeToShow[0].city_id
+            "city_id": placeToShow[0].city_id,
+            "cities": await cityCRUD.get(),
+            "images": await imageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/place/showplace.html.twig', { ...templateVars })
     }
@@ -818,9 +804,9 @@ async function showDetailPlace(req, res){
 }
 
 async function addPlace(req, res){
-    const { name, description, adress, image_id, external_media_id, city_id } = req.body
+    const { name, description, adress, image_id, city_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        await placeCRUD.create(name, description, adress, image_id, external_media_id, city_id)
+        await placeCRUD.create(name, description, adress, image_id, city_id)
         res.redirect(302, '/showcrudplace')
     }
 }
@@ -828,32 +814,18 @@ async function addPlace(req, res){
 async function deletePlace(req, res){
     const { place_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         await placeCRUD.remove(place_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "places": await placeCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudplace')
     }
 }
 
 async function updatePlace(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { place_id, name, description, adress, image_id, external_media_id, city_id } = req.body
-        const message = "Update an image : "+name
+        const { place_id, name, description, adress, image_id, city_id } = req.body
+        const message = "Update a place : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        await placeCRUD.update(place_id, name, description, adress, image_id, external_media_id, city_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "places": await placeCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
+        await placeCRUD.update(place_id, name, description, adress, image_id, city_id)
+        res.redirect(302, '/showcrudplace')
     }
 }
 

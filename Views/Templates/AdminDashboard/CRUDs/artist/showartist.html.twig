@@ -76,7 +76,7 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">Informations utilisateur</th>
+                <th scope="col">Informations artiste</th>
                 <th scope="col">Accès</th>
               </tr>
             </thead>
@@ -89,6 +89,22 @@
                   <td>Refusé</td>
                 </tr>
                 <tr>
+                  <td>image :
+                    {% for image in images %}
+                      {% if image.image_id == image_id %}
+                        <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <select name="image_id" class="form-control">
+                      <option selected="selected" value="NULL" id="optionImage">Modifier l'image</option>
+                      {% for image in images %}
+                        <option value="{{ image.image_id }}">{{ image.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                <tr>
                   <td>name : {{ name }}</td>
                   <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
                 </tr>
@@ -96,15 +112,7 @@
                   <td>description : {{ description }}</td>
                   <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
                 </tr>
-                <tr>
-                  <td>image_id : {{ image_id }}</td>
-                  <td><input type="text" class="form-control" id="image_id" name="image_id" value="{{ image_id }}"></td>
-                </tr>
-                <tr>
-                  <td>external_media_id : {{ external_media_id }}</td>
-                  <td><input type="text" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media_id }}"></td>
-                </tr>
-                  <button type="submit" class="btn btn-outline-warning">Enregistrer modificaiton</button>
+                <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
               </form>
             </tbody>
           </table>

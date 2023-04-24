@@ -61,11 +61,8 @@ CREATE TABLE IF NOT EXISTS artists (
     name varchar(256) NOT NULL,
     description varchar(500),
     image_id int,
-    external_media_id int,
     FOREIGN KEY (image_id)
-        REFERENCES images (image_id),
-    FOREIGN KEY (external_media_id)
-        REFERENCES external_medias (external_media_id)
+        REFERENCES images (image_id)
 );
 
 CREATE TABLE IF NOT EXISTS cities (
@@ -80,12 +77,9 @@ CREATE TABLE IF NOT EXISTS places (
     description varchar(500),
     adress varchar(256),
     image_id int,
-    external_media_id int,
     city_id int,
     FOREIGN KEY (image_id)
         REFERENCES images (image_id),
-    FOREIGN KEY (external_media_id)
-        REFERENCES external_medias (external_media_id),
     FOREIGN KEY (city_id)
         REFERENCES cities (city_id)
 );

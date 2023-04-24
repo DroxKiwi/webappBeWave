@@ -21,14 +21,14 @@ async function get(rows = '*', rowsToCompare = "", valueToCompare = "", operator
     }
 }
 
-async function create(name, description, image_id, external_media_id){
-    const rows = "(name, description, image_id, external_media_id)"
-    const values = [name, description, image_id, external_media_id]
+async function create(name, description, image_id){
+    const rows = "(name, description, image_id)"
+    const values = [name, description, image_id]
     query.insert(rows, table, values)
 }
 
 
-async function update(artist_id, name, description, image_id, external_media_id){
+async function update(artist_id, name, description, image_id){
     if (name != ""){
         query.update('name', table, name, 'artist_id', artist_id)
     }
@@ -37,9 +37,6 @@ async function update(artist_id, name, description, image_id, external_media_id)
     }
     if (image_id != ""){
         query.update('image_id', table, image_id, 'artist_id', artist_id)
-    }
-    if (external_media_id != ""){
-        query.update('external_media_id', table, external_media_id, 'artist_id', artist_id)
     }
 }
 

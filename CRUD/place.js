@@ -22,15 +22,15 @@ async function get(rows = '*', rowsToCompare = "", valueToCompare = "", operator
 }
 
 // Creat a new user
-async function create(name, description, adress, image_id, external_media_id, city_id){
-    const rows = "(name, description, adress, image_id, external_media_id, city_id)"
-    const values = [name, description, adress, image_id, external_media_id, city_id]
+async function create(name, description, adress, image_id, city_id){
+    const rows = "(name, description, adress, image_id, city_id)"
+    const values = [name, description, adress, image_id, city_id]
     query.insert(rows, table, values)
 }
 
 
 // Update an existing user
-async function update(place_id, name, description, adress, image_id, external_media_id, city_id){
+async function update(place_id, name, description, adress, image_id, city_id){
     if (name != ""){
         query.update('name', table, name, 'place_id', place_id)
     }
@@ -42,9 +42,6 @@ async function update(place_id, name, description, adress, image_id, external_me
     }
     if (image_id != ""){
         query.update('image_id', table, image_id, 'place_id', place_id)
-    }
-    if (external_media_id != ""){
-        query.update('external_media_id', table, external_media_id, 'place_id', place_id)
     }
     if (city_id != ""){
         query.update('city_id', table, city_id, 'place_id', place_id)

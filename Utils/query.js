@@ -125,7 +125,12 @@ async function insert(rows, table, values){
 
 async function update(row, table, value, rowToCompare, valueToCompare){
     try {
-        await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = '${valueToCompare}'`)
+        if (value == "NULL"){
+            await pool.query(`UPDATE ${table} SET ${row} = ${value} WHERE ${rowToCompare} = '${valueToCompare}'`)
+        }
+        else {
+            await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = '${valueToCompare}'`)
+        }
     }
     catch(err){ 
         throw err

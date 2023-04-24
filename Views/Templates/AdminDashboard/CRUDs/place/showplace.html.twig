@@ -101,17 +101,52 @@
                   <td><input type="text" class="form-control" id="adress" name="adress" value="{{ adress }}" required></td>
                 </tr>
                 <tr>
-                  <td>image_id : {{ image_id }}</td>
-                  <td><input type="text" class="form-control" id="image_id" name="image_id" value="{{ image_id }}"></td>
-                </tr>
+                  <td>image :
+                    {% for image in images %}
+                      {% if image.image_id == image_id %}
+                        <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <select name="image_id" class="form-control">
+                      <option selected="selected" value="{{ image_id }}">
+                        {% for image in images %}
+                          {% if image.image_id == image_id %}
+                            {{ image.name }}
+                          {% endif %}
+                        {% endfor %}
+                      </option>
+                      <option value="NULL">Aucune</option>
+                      {% for image in images %}
+                        <option value="{{ image.image_id }}">{{ image.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
                 <tr>
-                  <td>external_media_id : {{ external_media_id }}</td>
-                  <td><input type="text" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media_id }}"></td>
-                </tr>
                 <tr>
-                  <td>city_id : {{ city_id }}</td>
-                  <td><input type="text" class="form-control" id="city_id" name="city_id" value="{{ city_id }}"></td>
-                </tr>
+                  <td>city :
+                    {% for city in cities %}
+                      {% if city.city_id == city_id %}
+                        {{ city.name }}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <select name="city_id" class="form-control">
+                      <option selected="selected" value="{{ city_id }}">
+                        {% for city in cities %}
+                          {% if city.city_id == city_id %}
+                            {{ city.name }}
+                          {% endif %}
+                        {% endfor %}
+                      </option>
+                      {% for city in cities %}
+                        <option value="{{ city.city_id }}">{{ city.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                <tr>
                 <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
               </form>
             </tbody>
