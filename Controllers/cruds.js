@@ -420,6 +420,8 @@ async function showDetailEvent(req, res){
             "start_date": start_date,
             "end_date": end_date,
             "price": eventToShow[0].price,
+            "images_id": await eventimageCRUD.get('image_id', 'event_id', event_id),
+            "images": await imageCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/event/showevent.html.twig', { ...templateVars })
     }
@@ -440,9 +442,8 @@ async function addEvent(req, res){
     if (req.role == "ROLE_ADMIN"){
         const answer_insert = await eventCRUD.create(author_name, name, description, display_map_value, start_date, end_date, price, true)
         const event_id_created = answer_insert.rows[0].event_id
-        const image_id_tab = images.split('-')
-        for(let i = 0; i < image_id_tab.length; i++){
-            await eventimageCRUD.create(event_id_created, image_id_tab[i])
+        for(let i = 0; i < images.length; i++){
+            await eventimageCRUD.create(event_id_created, images[i])
         }
         res.redirect(302, '/showcrudevent')
     }
@@ -451,38 +452,35 @@ async function addEvent(req, res){
 async function deleteEvent(req, res){
     const { event_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        await eventCRUD.remove(event_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "events": await eventCRUD.get()
+        const answer_event_image_id = await eventimageCRUD.get("event_image_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_image_id.length; i++){
+            await eventimageCRUD.remove(answer_event_image_id[i].event_image_id)
         }
-        res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
+        await eventCRUD.remove(event_id)
+        res.redirect(302, '/showcrudevent')
     }
 }
 
 async function updateEvent(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const { event_id, author_id, name, description, banner_id, display_map, start_date, end_date, price } = req.body
+        const { event_id, author_id, name, description, images, display_map, start_date, end_date, price } = req.body
         if (display_map == undefined){
             var display_map_value = false
         }
         else {
             var display_map_value = true
         }
+        await eventCRUD.update(event_id, author_id, name, description, display_map_value, start_date, end_date, price)
+        const answer_event_image_id = await eventimageCRUD.get("event_image_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_image_id.length; i++){
+            await eventimageCRUD.remove(answer_event_image_id[i].event_image_id)
+        }
+        for(let i = 0; i < images.length; i++){
+            await eventimageCRUD.create(event_id, images[i])
+        }
         const message = "Update an event : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        await eventCRUD.update(event_id, author_id, name, description, banner_id, display_map_value, start_date, end_date, price)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "events": await eventCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudevent')
     }
 }
 

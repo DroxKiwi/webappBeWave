@@ -101,6 +101,28 @@
                   <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
                 </tr>
                 <tr>
+                  <td>images :
+                  </td>
+                  <td>
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
+                      {% for image in images %}
+                        <option value="{{ image.image_id }}" onclick="addimage(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedimages">
+                      {% for image_id in images_id %}
+                        {% for image in images %}
+                          {% if image.image_id == image_id.image_id %}
+                            <img id="{{image.image_id}}" src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                    <input type="hidden" value="" name="images" id="images"/>
+                  </td>
+                </tr>
+                <tr>
                   <td>display_map : {{ display_map }}</td>
                   <td><input type="checkbox" {% if display_map == true %} checked {% endif %} id="display_map" name="display_map"></td>
                 </tr>
@@ -149,5 +171,101 @@
             </div>
           </div>
         </div>
+
+
+
+      <script>
+        var loaded = false
+        if (!loaded){
+          var image_selected_zone = document.getElementById("addedimages")
+          var imagesInputValue = document.getElementById("images")
+          var nodes = image_selected_zone.childNodes
+          var images_id_tab = ""
+          for (let i = 1; i < nodes.length; i++){
+            if (nodes[i].id != undefined){
+              images_id_tab += nodes[i].id
+            }
+          }
+          imagesInputValue.value = images_id_tab
+          for (let i = 0; i < nodes.length; i++){
+            nodes[i].addEventListener('mouseenter', (event) => {
+              document.body.style.cursor = "pointer"
+              event.target.style.opacity = 0.5
+            })
+            nodes[i].addEventListener('mouseleave', (event) => {
+              document.body.style.cursor = "default"
+              event.target.style.opacity = 1
+            })
+            nodes[i].addEventListener('click', (event) => {
+              event.target.remove()
+              var imagesTab = document.getElementById("images")
+              var image_selected_zone = document.getElementById("addedimages")
+              var nodes = image_selected_zone.childNodes
+              var images_id_tab = ""
+              for (let i = 1; i < nodes.length; i++){
+                if (nodes[i].id != undefined){
+                  images_id_tab += nodes[i].id
+                }
+              }
+              imagesInputValue.value = images_id_tab
+            })
+          }
+          console.log("fully loaded")
+          loaded = true
+        }
+        // this JS script as for goal to manage the image selection system and creating the value for the input sent to the BackOffice
+        function addimage(e){
+          const image_path = e.target.id
+          const image_id = e.target.value
+          var image_selected_zone = document.getElementById("addedimages")
+          var imagesInputValue = document.getElementById("images")
+          var nodes = image_selected_zone.childNodes
+          var images_id_tab = ""
+          var exist = false
+          for (let i = 1; i < nodes.length; i++){
+            if (nodes[i].id == image_id){
+              exist = true
+            }
+          }
+          if (!exist){
+            var newChild = document.createElement("img")
+            newChild.src = image_path
+            newChild.id = image_id
+            newChild.style.height = "100px"
+            newChild.style.width = "100px"
+            newChild.addEventListener('mouseenter', (event) => {
+              document.body.style.cursor = "pointer"
+              event.target.style.opacity = 0.5
+            })
+            newChild.addEventListener('mouseleave', (event) => {
+              document.body.style.cursor = "default"
+              event.target.style.opacity = 1
+            })
+            newChild.addEventListener('click', (event) => {
+              event.target.remove()
+              var imagesTab = document.getElementById("images")
+              var image_selected_zone = document.getElementById("addedimages")
+              var nodes = image_selected_zone.childNodes
+              var images_id_tab = ""
+              for (let i = 1; i < nodes.length; i++){
+                if (nodes[i].id != undefined){
+                  images_id_tab += nodes[i].id
+                }
+              }
+              imagesInputValue.value = images_id_tab
+            })
+            image_selected_zone.appendChild(newChild)
+            for (let i = 1; i < nodes.length; i++){
+              if (nodes[i].id != undefined){
+                images_id_tab += nodes[i].id
+              }
+            }
+            imagesInputValue.value = images_id_tab
+          }
+          var optionImage = document.getElementById("optionImage")
+          optionImage.selected = "0"
+        }
+      </script>
+
   {% endblock %}
 </html>

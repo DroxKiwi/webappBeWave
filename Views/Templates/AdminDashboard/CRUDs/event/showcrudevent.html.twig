@@ -104,7 +104,13 @@
                   <td>{{ event.description }}</td>
                   <td>
                     {% for ei in events_images %}
-                      <td><img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" /></td>
+                      {% if ei.event_id == event.event_id %}
+                        {% for image in images %}
+                          {% if image.image_id == ei.image_id %}
+                            <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
                     {% endfor %}
                   </td>
                   <td>{{ event.display_map }}</td>
@@ -217,23 +223,13 @@
               var nodes = image_selected_zone.childNodes
               var images_id_tab = ""
               for (let i = 1; i < nodes.length; i++){
-                if (i < nodes.length-1){
-                  images_id_tab += nodes[i].id + "-"
-                }
-                else {
-                  images_id_tab += nodes[i].id
-                }
+                images_id_tab += nodes[i].id
               }
               imagesInputValue.value = images_id_tab
             })
             image_selected_zone.appendChild(newChild)
             for (let i = 1; i < nodes.length; i++){
-              if (i < nodes.length-1){
-                images_id_tab += nodes[i].id + "-"
-              }
-              else {
-                images_id_tab += nodes[i].id
-              }
+              images_id_tab += nodes[i].id
             }
             imagesInputValue.value = images_id_tab
           }
