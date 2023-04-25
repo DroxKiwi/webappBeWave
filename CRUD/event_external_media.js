@@ -30,18 +30,18 @@ async function create(event_id, external_media_id){
 
 
 // Update an existing user
-async function update(events_external_media_id, event_id, external_media_id){
+async function update(event_external_media_id, event_id, external_media_id){
     if (event_id != ""){
-        query.update('event_id', table, event_id, 'events_external_media_id', events_external_media_id)
+        query.update('event_id', table, event_id, 'event_external_media_id', event_external_media_id)
     }
     if (external_media_id != ""){
-        query.update('external_media_id', table, external_media_id, 'events_external_media_id', events_external_media_id)
+        query.update('external_media_id', table, external_media_id, 'event_external_media_id', event_external_media_id)
     }
 }
 
 // Delete a user by token selection
-async function remove(events_external_media_id){
-    query.remove(table, 'events_external_media_id', events_external_media_id)
+async function remove(event_external_media_id){
+    query.remove(table, 'event_external_media_id', event_external_media_id)
 }
 
 

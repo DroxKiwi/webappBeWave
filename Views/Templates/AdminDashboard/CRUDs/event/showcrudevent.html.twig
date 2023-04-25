@@ -87,6 +87,9 @@
                 <th scope="col">name</th>
                 <th scope="col">description</th>
                 <th scope="col">images</th>
+                <th scope="col">artists</th>
+                <th scope="col">places</th>
+                <th scope="col">médias</th>
                 <th scope="col">display_map</th>
                 <th scope="col">start_date</th>
                 <th scope="col">end_date</th>
@@ -108,6 +111,39 @@
                         {% for image in images %}
                           {% if image.image_id == ei.image_id %}
                             <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for ea in events_artists %}
+                      {% if ea.event_id == event.event_id %}
+                        {% for artist in artists %}
+                          {% if artist.artist_id == ea.artist_id %}
+                            {{ artist.name }}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for ep in events_places %}
+                      {% if ep.event_id == event.event_id %}
+                        {% for place in places %}
+                          {% if place.place_id == ep.place_id %}
+                            {{ place.name }}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for eem in events_external_medias %}
+                      {% if eem.event_id == event.event_id %}
+                        {% for external_media in external_medias %}
+                          {% if external_media.external_media_id == eem.external_media_id %}
+                            {{ external_media.url }}
                           {% endif %}
                         {% endfor %}
                       {% endif %}
@@ -143,15 +179,47 @@
                     <input type="hidden" id="author_name" name="author_name" value="{{ id }}">
                     <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
                     <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+
                     <select class="form-control">
-                      <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
+                      <option selected="selected" value="NULL" id="optionImage">Ajouter des images</option>
                       {% for image in images %}
-                        <option value="{{ image.image_id }}" onclick="addimage(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+                        <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
                       {% endfor %}
                     </select>
                     <div id="addedimages">
                     </div>
                     <input type="hidden" value="" name="images" id="images"/>
+
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionArtist">Ajouter des artistes (laissez si aucun)</option>
+                      {% for artist in artists %}
+                        <option value="{{ artist.artist_id }}" name="optionArtist" onclick="add(event)" id="{{ artist.name }}">{{ artist.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedartists">
+                    </div>
+                    <input type="hidden" value="" name="artists" id="artists"/>
+
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionPlace">Ajouter des lieux (laissez si aucun)</option>
+                      {% for place in places %}
+                        <option value="{{ place.place_id }}" name="optionPlace" onclick="add(event)" id="{{ place.name }}">{{ place.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedplaces">
+                    </div>
+                    <input type="hidden" value="" name="places" id="places"/>
+
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionExternal_media">Ajouter des médias externes (laissez si aucun)</option>
+                      {% for external_media in external_medias %}
+                        <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedexternal_medias">
+                    </div>
+                    <input type="hidden" value="" name="external_medias" id="external_medias"/>
+
                     <label for="display_map" style="color: black;">sur la map ?</label>
                     <input type="checkbox" id="display_map" name="display_map">
                     <input type="date" class="form-control" id="start_date" name="start_date" placeholder="date de début" required="true">
@@ -187,56 +255,7 @@
             </div>
           </div>
 
-      <script>
-        // this JS script as for goal to manage the image selection system and creating the value for the input sent to the BackOffice
-        function addimage(e){
-          const image_path = e.target.id
-          const image_id = e.target.value
-          var image_selected_zone = document.getElementById("addedimages")
-          var imagesInputValue = document.getElementById("images")
-          var nodes = image_selected_zone.childNodes
-          var images_id_tab = ""
-          var exist = false
-          for (let i = 1; i < nodes.length; i++){
-            if (nodes[i].id == image_id){
-              exist = true
-            }
-          }
-          if (!exist){
-            var newChild = document.createElement("img")
-            newChild.src = image_path
-            newChild.id = image_id
-            newChild.style.height = "100px"
-            newChild.style.width = "100px"
-            newChild.addEventListener('mouseenter', () => {
-              document.body.style.cursor = "pointer"
-              newChild.style.opacity = 0.5
-            })
-            newChild.addEventListener('mouseleave', () => {
-              document.body.style.cursor = "default"
-              newChild.style.opacity = 1
-            })
-            newChild.addEventListener('click', (event) => {
-              event.target.remove()
-              var imagesTab = document.getElementById("images")
-              var image_selected_zone = document.getElementById("addedimages")
-              var nodes = image_selected_zone.childNodes
-              var images_id_tab = ""
-              for (let i = 1; i < nodes.length; i++){
-                images_id_tab += nodes[i].id
-              }
-              imagesInputValue.value = images_id_tab
-            })
-            image_selected_zone.appendChild(newChild)
-            for (let i = 1; i < nodes.length; i++){
-              images_id_tab += nodes[i].id
-            }
-            imagesInputValue.value = images_id_tab
-          }
-          var optionImage = document.getElementById("optionImage")
-          optionImage.selected = "0"
-        }
-      </script>
+      <script src="/js/crudevent_add.js"></script>
 
   {% endblock %}
 

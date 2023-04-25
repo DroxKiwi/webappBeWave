@@ -9,6 +9,9 @@ const placeCRUD = require("../CRUD/place")
 const logCRUD = require("../CRUD/log")
 const betatesterCRUD = require("../CRUD/betatesteur")
 const eventimageCRUD = require("../CRUD/event_image")
+const eventartistCRUD = require("../CRUD/event_artist")
+const eventplaceCRUD = require("../CRUD/event_place")
+const eventexternalMediaCRUD = require("../CRUD/event_external_media")
 const logger = require("../Utils/logger")
 const generateRandomPassword = require ("../Utils/generatePassword")
 const fs = require('fs')
@@ -362,8 +365,14 @@ async function showEvents(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "events": await eventCRUD.get(),
+            "events_images": await eventimageCRUD.get(),
             "images": await imageCRUD.get(),
-            "events_images": await eventimageCRUD.get()
+            "events_artists": await eventartistCRUD.get(),
+            "artists": await artistCRUD.get(),
+            "events_places": await eventplaceCRUD.get(),
+            "places": await placeCRUD.get(),
+            "events_external_medias": await eventexternalMediaCRUD.get(),
+            "external_medias": await externalMediaCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
     }
@@ -408,7 +417,13 @@ async function showDetailEvent(req, res){
             "end_date": end_date,
             "price": eventToShow[0].price,
             "images_id": await eventimageCRUD.get('image_id', 'event_id', event_id),
-            "images": await imageCRUD.get()
+            "images": await imageCRUD.get(),
+            "artists_id": await eventartistCRUD.get('artist_id', 'event_id', event_id),
+            "artists": await artistCRUD.get(),
+            "places_id": await eventplaceCRUD.get('place_id', 'event_id', event_id),
+            "places": await placeCRUD.get(),
+            "external_medias_id": await eventexternalMediaCRUD.get('external_media_id', 'event_id', event_id),
+            "external_medias": await externalMediaCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/event/showevent.html.twig', { ...templateVars })
     }
@@ -419,7 +434,7 @@ async function showDetailEvent(req, res){
 
 
 async function addEvent(req, res){
-    const { author_name, name, description, images, display_map, start_date, end_date, price } = req.body
+    const { author_name, name, description, images, artists, places, external_medias, display_map, start_date, end_date, price } = req.body
     if (display_map == undefined){
         var display_map_value = false
     }
@@ -432,6 +447,15 @@ async function addEvent(req, res){
         for(let i = 0; i < images.length; i++){
             await eventimageCRUD.create(event_id_created, images[i])
         }
+        for(let i = 0; i < artists.length; i++){
+            await eventartistCRUD.create(event_id_created, artists[i])
+        }
+        for(let i = 0; i < places.length; i++){
+            await eventplaceCRUD.create(event_id_created, places[i])
+        }
+        for(let i = 0; i < external_medias.length; i++){
+            await eventexternalMediaCRUD.create(event_id_created, external_medias[i])
+        }
         res.redirect(302, '/showcrudevent')
     }
 }
@@ -443,6 +467,18 @@ async function deleteEvent(req, res){
         for (let i = 0; i < answer_event_image_id.length; i++){
             await eventimageCRUD.remove(answer_event_image_id[i].event_image_id)
         }
+        const answer_event_artist_id = await eventartistCRUD.get("event_artist_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_artist_id.length; i++){
+            await eventartistCRUD.remove(answer_event_artist_id[i].event_artist_id)
+        }
+        const answer_event_place_id = await eventplaceCRUD.get("event_place_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_place_id.length; i++){
+            await eventplaceCRUD.remove(answer_event_place_id[i].event_place_id)
+        }
+        const answer_event_externalMedia_id = await eventexternalMediaCRUD.get("event_external_media_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_externalMedia_id.length; i++){
+            await eventexternalMediaCRUD.remove(answer_event_externalMedia_id[i].event_external_media_id)
+        }
         await eventCRUD.remove(event_id)
         res.redirect(302, '/showcrudevent')
     }
@@ -450,7 +486,7 @@ async function deleteEvent(req, res){
 
 async function updateEvent(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const { event_id, author_id, name, description, images, display_map, start_date, end_date, price } = req.body
+        const { event_id, author_id, name, description, images, artists, places, external_medias, display_map, start_date, end_date, price } = req.body
         if (display_map == undefined){
             var display_map_value = false
         }
@@ -458,12 +494,37 @@ async function updateEvent(req, res){
             var display_map_value = true
         }
         await eventCRUD.update(event_id, author_id, name, description, display_map_value, start_date, end_date, price)
+        // Update images link to the event selected for update
         const answer_event_image_id = await eventimageCRUD.get("event_image_id", "event_id", event_id)
         for (let i = 0; i < answer_event_image_id.length; i++){
             await eventimageCRUD.remove(answer_event_image_id[i].event_image_id)
         }
         for(let i = 0; i < images.length; i++){
             await eventimageCRUD.create(event_id, images[i])
+        }
+        // Update artists link to the event selected for update
+        const answer_event_artist_id = await eventartistCRUD.get("event_artist_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_artist_id.length; i++){
+            await eventartistCRUD.remove(answer_event_artist_id[i].event_artist_id)
+        }
+        for(let i = 0; i < artists.length; i++){
+            await eventartistCRUD.create(event_id, artists[i])
+        }
+        // Update places link to the event selected for update
+        const answer_event_place_id = await eventplaceCRUD.get("event_place_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_place_id.length; i++){
+            await eventplaceCRUD.remove(answer_event_place_id[i].event_place_id)
+        }
+        for(let i = 0; i < places.length; i++){
+            await eventplaceCRUD.create(event_id, places[i])
+        }
+        // Update places link to the event selected for update
+        const answer_event_externalMedia_id = await eventexternalMediaCRUD.get("event_external_media_id", "event_id", event_id)
+        for (let i = 0; i < answer_event_externalMedia_id.length; i++){
+            await eventexternalMediaCRUD.remove(answer_event_externalMedia_id[i].event_external_media_id)
+        }
+        for(let i = 0; i < external_medias.length; i++){
+            await eventexternalMediaCRUD.create(event_id, external_medias[i])
         }
         const message = "Update an event : "+name
         logger.newLog(req.cookies.userToken.token, message)

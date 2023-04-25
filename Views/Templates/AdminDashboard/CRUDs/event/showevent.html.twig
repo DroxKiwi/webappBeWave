@@ -107,7 +107,7 @@
                     <select class="form-control">
                       <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
                       {% for image in images %}
-                        <option value="{{ image.image_id }}" onclick="addimage(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+                        <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
                       {% endfor %}
                     </select>
                     <div id="addedimages">
@@ -120,6 +120,72 @@
                       {% endfor %}
                     </div>
                     <input type="hidden" value="" name="images" id="images"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td>artistes :
+                  </td>
+                  <td>
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionArtist">Ajouter un artiste</option>
+                      {% for artist in artists %}
+                        <option value="{{ artist.artist_id }}" name="optionArtist" onclick="add(event)" id="{{ artist.name }}">{{ artist.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedartists">
+                      {% for artist_id in artists_id %}
+                        {% for artist in artists %}
+                          {% if artist.artist_id == artist_id.artist_id %}
+                            <p id="{{ artist.artist_id }}">{{ artist.name }}</p>
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                    <input type="hidden" value="" name="artists" id="artists"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td>lieux :
+                  </td>
+                  <td>
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionPlace">Ajouter un artiste</option>
+                      {% for place in places %}
+                        <option value="{{ place.place_id }}" name="optionPlace" onclick="add(event)" id="{{ place.name }}">{{ place.name }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedplaces">
+                      {% for place_id in places_id %}
+                        {% for place in places %}
+                          {% if place.place_id == place_id.place_id %}
+                            <p id="{{ place.place_id }}">{{ place.name }}</p>
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                    <input type="hidden" value="" name="places" id="places"/>
+                  </td>
+                </tr>
+                <tr>
+                  <td>médias externes :
+                  </td>
+                  <td>
+                    <select class="form-control">
+                      <option selected="selected" value="NULL" id="optionExternal_media">Ajouter un média externe</option>
+                      {% for external_media in external_medias %}
+                        <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
+                      {% endfor %}
+                    </select>
+                    <div id="addedexternal_medias">
+                      {% for external_media_id in external_medias_id %}
+                        {% for external_media in external_medias %}
+                          {% if external_media.external_media_id == external_media_id.external_media_id %}
+                            <p id="{{ external_media.external_media_id }}">{{ external_media.url }}</p>
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                    <input type="hidden" value="" name="external_medias" id="external_medias"/>
                   </td>
                 </tr>
                 <tr>
@@ -174,98 +240,8 @@
 
 
 
-      <script>
-        var loaded = false
-        if (!loaded){
-          var image_selected_zone = document.getElementById("addedimages")
-          var imagesInputValue = document.getElementById("images")
-          var nodes = image_selected_zone.childNodes
-          var images_id_tab = ""
-          for (let i = 1; i < nodes.length; i++){
-            if (nodes[i].id != undefined){
-              images_id_tab += nodes[i].id
-            }
-          }
-          imagesInputValue.value = images_id_tab
-          for (let i = 0; i < nodes.length; i++){
-            nodes[i].addEventListener('mouseenter', (event) => {
-              document.body.style.cursor = "pointer"
-              event.target.style.opacity = 0.5
-            })
-            nodes[i].addEventListener('mouseleave', (event) => {
-              document.body.style.cursor = "default"
-              event.target.style.opacity = 1
-            })
-            nodes[i].addEventListener('click', (event) => {
-              event.target.remove()
-              var imagesTab = document.getElementById("images")
-              var image_selected_zone = document.getElementById("addedimages")
-              var nodes = image_selected_zone.childNodes
-              var images_id_tab = ""
-              for (let i = 1; i < nodes.length; i++){
-                if (nodes[i].id != undefined){
-                  images_id_tab += nodes[i].id
-                }
-              }
-              imagesInputValue.value = images_id_tab
-            })
-          }
-          console.log("fully loaded")
-          loaded = true
-        }
-        // this JS script as for goal to manage the image selection system and creating the value for the input sent to the BackOffice
-        function addimage(e){
-          const image_path = e.target.id
-          const image_id = e.target.value
-          var image_selected_zone = document.getElementById("addedimages")
-          var imagesInputValue = document.getElementById("images")
-          var nodes = image_selected_zone.childNodes
-          var images_id_tab = ""
-          var exist = false
-          for (let i = 1; i < nodes.length; i++){
-            if (nodes[i].id == image_id){
-              exist = true
-            }
-          }
-          if (!exist){
-            var newChild = document.createElement("img")
-            newChild.src = image_path
-            newChild.id = image_id
-            newChild.style.height = "100px"
-            newChild.style.width = "100px"
-            newChild.addEventListener('mouseenter', (event) => {
-              document.body.style.cursor = "pointer"
-              event.target.style.opacity = 0.5
-            })
-            newChild.addEventListener('mouseleave', (event) => {
-              document.body.style.cursor = "default"
-              event.target.style.opacity = 1
-            })
-            newChild.addEventListener('click', (event) => {
-              event.target.remove()
-              var imagesTab = document.getElementById("images")
-              var image_selected_zone = document.getElementById("addedimages")
-              var nodes = image_selected_zone.childNodes
-              var images_id_tab = ""
-              for (let i = 1; i < nodes.length; i++){
-                if (nodes[i].id != undefined){
-                  images_id_tab += nodes[i].id
-                }
-              }
-              imagesInputValue.value = images_id_tab
-            })
-            image_selected_zone.appendChild(newChild)
-            for (let i = 1; i < nodes.length; i++){
-              if (nodes[i].id != undefined){
-                images_id_tab += nodes[i].id
-              }
-            }
-            imagesInputValue.value = images_id_tab
-          }
-          var optionImage = document.getElementById("optionImage")
-          optionImage.selected = "0"
-        }
-      </script>
+      <script src="/js/crudevent_load.js"></script>
+      <script src="/js/crudevent_add.js"></script>
 
   {% endblock %}
 </html>

@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS events_images(
 );
 
 CREATE TABLE IF NOT EXISTS events_external_medias(
-    events_external_media_id serial PRIMARY KEY,
+    event_external_media_id serial PRIMARY KEY,
     event_id int NOT NULL,
     external_media_id int NOT NULL,
     FOREIGN KEY (event_id)
