@@ -20,7 +20,7 @@
             </ul>
           </header>
           <h2>
-            Liste place
+            Gestion des CRUDs
           </h2>
 
           <ul class="nav nav-tabs">
@@ -36,7 +36,11 @@
             <li calss="nav-item">
               <a class="nav-link active" aria-current="page" href="#">CRUDs</a>
             </li>
-            <form action="/searchuser" method="post" class="d-flex" role="search">
+            <li calss="nav-item">
+              <a class="nav-link" href="/apimanagement">API</a>
+            </li>
+            <form action="/search" method="post" class="d-flex" role="search">
+              <input type="hidden" id="searchtable" name="searchtable" value="all">
               <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
               <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
             </form>
@@ -69,6 +73,154 @@
               <a class="nav-link" href="/showcrudplace">Places</a>
             </li>
           </ul>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" colspan="3"><h3>Utilisateurs</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Pseudo</td>
+                <td scope="col">Email</td>
+                <td scope="col">Role</td>
+              </tr>
+              {% for user in users %}
+                <tr class="table">
+                  <td>{{ user.pseudo }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.role }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"><h3>Artistes</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Nom</td>
+              </tr>
+              {% for artist in artists %}
+                <tr class="table">
+                  <td>{{ artist.name }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" colspan="2"><h3>Villes</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Nom</td>
+                <td scope="col">Code postal</td>
+              </tr>
+              {% for city in cities %}
+                <tr class="table">
+                  <td>{{ city.name }}</td>
+                  <td>{{ city.postal_code }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"><h3>Evénements</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Nom</td>
+              </tr>
+              {% for event in events %}
+                <tr class="table">
+                  <td>{{ event.name }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"><h3>Médias externes</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">URL</td>
+              </tr>
+              {% for external_media in external_medias %}
+                <tr class="table">
+                  <td>{{ external_media.url }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" cospan="2"><h3>images</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Image</td>
+                <td scope="col">Extension</td>
+              </tr>
+              {% for image in images %}
+                <tr class="table">
+                  <td><img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" /></td>
+                  <td>{{ image.extension }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col"><h3>Plateformes de média</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Nom</td>
+              </tr>
+              {% for media_platform in media_platforms %}
+                <tr class="table">
+                  <td>{{ media_platform.name }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" colspan="2"><h3>Lieux</h3></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td scope="col">Nom</td>
+                <td scope="col">Adresse</td>
+              </tr>
+              {% for place in places %}
+                <tr class="table">
+                  <td>{{ place.name }}</td>
+                  <td>{{ place.adress }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
 
 
         <!-- OffCanvas and hidden elements -->

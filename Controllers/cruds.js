@@ -34,6 +34,17 @@ async function search(req, res){
             "users": await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
         }
         switch (searchtable) {
+            case 'all': 
+                templateVars.users = await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
+                templateVars.artists = await artistCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                templateVars.cities = await cityCRUD.get('*', ['name', 'postal_code'], "", true, modeleSQL, 'OR')
+                templateVars.events = await eventCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                templateVars.external_medias = await externalMediaCRUD.get('*', ['url'], "", true, modeleSQL, 'OR')
+                templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
+                templateVars.media_platforms = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
+                templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
+                res.render('./Templates/AdminDashboard/showcruds.html.twig', { ...templateVars })
+                break
             case 'user':
                 templateVars.users = await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
                 res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })

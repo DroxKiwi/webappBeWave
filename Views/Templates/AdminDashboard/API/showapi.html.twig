@@ -5,7 +5,6 @@
 
 <html>
   {% block content %}
-
         <div class="container-fluid text-center">
           <header>
             <h1>
@@ -21,16 +20,15 @@
             </ul>
           </header>
           <h2>
-            Historique de logs
+            Gestion API
           </h2>
-
 
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Logs</a>
+              <a class="nav-link" href="/logs">Logs</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/formcontact">formulaire de contacts</a>
@@ -39,29 +37,11 @@
               <a class="nav-link" href="/showcruds">CRUDs</a>
             </li>
             <li calss="nav-item">
-              <a class="nav-link" href="/apimanagement">API</a>
+              <a class="nav-link active" aria-current="page" href="/apimanagement">API</a>
             </li>
           </ul>
+ 
 
-          <table class="table">
-            <thead>
-              <tr>
-                  logs :
-              </tr>
-            </thead>
-            <tbody>
-                {% for logs in logsList %}
-                <tr>
-                  <td>
-                  {% for log in logs %}
-                    <td>
-                      {{ log }}
-                    </td>
-                  {% endfor %}
-                  </td>
-                </tr>
-                {% endfor %}
-            </tbody>
 
         <!-- OffCanvas and hidden elements -->
 
@@ -84,8 +64,5 @@
               </div>
             </div>
           </div>
-
-        </div>
-
   {% endblock %}
 </html>

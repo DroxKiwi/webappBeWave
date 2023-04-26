@@ -1,4 +1,4 @@
-const { homeDashboard, showLogs, showFormcontact, showCruds } = require("../Controllers/dashboard")
+const { homeDashboard, showLogs, showFormcontact, showCruds, showAPI } = require("../Controllers/dashboard")
 
 function adminRoute(app){
 
@@ -10,6 +10,8 @@ function adminRoute(app){
     app.get('/formcontact', showFormcontact)
 
     app.get('/showcruds', showCruds)
+
+    app.get('/apimanagement', showAPI)
 }
 
 module.exports = adminRoute
