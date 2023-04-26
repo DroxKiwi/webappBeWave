@@ -93,8 +93,27 @@
                   <td><input type="text" class="form-control" id="url" name="url" value="{{ url }}" required></td>
                 </tr>
                 <tr>
-                  <td>media_platform_id : {{ media_platform_id }}</td>
-                  <td><input type="text" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ media_platform_id }}"></td>
+                  <td>plateforme de média :
+                    {% for media_platform in media_platforms %}
+                      {% if media_platform.media_platform_id == media_platform_id %}
+                        {{ media_platform.name }}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <select name="media_platform_id" class="form-control">
+                      <option selected="selected" value="{{ media_platform_id }}">
+                        {% for media_platform in media_platforms %}
+                          {% if media_platform.media_platform_id == media_platform_id %}
+                            {{ media_platform.name }}
+                          {% endif %}
+                        {% endfor %}
+                      </option>
+                      {% for media_platform in media_platforms %}
+                        <option value="{{ media_platform.media_platform_id }}">{{ media_platform.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
                 </tr>
                 <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
               </form>

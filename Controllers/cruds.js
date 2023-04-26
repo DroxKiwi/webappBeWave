@@ -127,15 +127,7 @@ async function addUser(req, res){
         const message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.create(pseudo, email, password, role)
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        // We send the preferences to the twig template 
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "userList": await userCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+        res.redirect(302, '/showcruduser')
     }
     else {
         res.redirect(302, '/')
@@ -149,15 +141,7 @@ async function deleteUser(req, res){
         message = "Delete an user : "+email
         logger.newLog(req.cookies.userToken.token, message)
         userCRUD.remove(user_id)
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        // We send the preferences to the twig template 
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "userList": await userCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+        res.redirect(302, '/showcruduser')
     }
     else {
         res.redirect(302, "/")
@@ -172,16 +156,8 @@ async function updateUser(req, res){
         const message = "Update a user : "+pseudo 
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.update(user_id, pseudo, email, password, role)
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        // We send the preferences to the twig template 
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "userList": await userCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
-        }
+        res.redirect(302, '/showcruduser')
+    }
     else {
         res.redirect(302, '/')
     }
@@ -197,15 +173,7 @@ async function resetPasswordUser(req, res){
         message = "Reset a password for : "+pseudo+" new password : "+password
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.update(user_id, '', '', password, '', '')
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        // We send the preferences to the twig template 
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "userList": await userCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+        res.redirect(302, '/showcruduser')
     }
 }
 
@@ -541,7 +509,8 @@ async function showExternalMedias(req, res){
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
-            "external_medias": await externalMediaCRUD.get()
+            "external_medias": await externalMediaCRUD.get(),
+            "media_platforms": await MPCRUD.get()
         }
         for (let i = 0; i < templateVars.external_medias.length; i++){
             if (templateVars.external_medias[i].media_platform_id != null){
@@ -567,7 +536,8 @@ async function showDetailExternalMedia(req, res){
             "preference": preferencesTab[0].preferences[0],
             "external_media_id": externalMediaToShow[0].external_media_id,
             "url": externalMediaToShow[0].url,
-            "media_platform_id": externalMediaToShow[0].media_platform_id
+            "media_platform_id": externalMediaToShow[0].media_platform_id,
+            "media_platforms": await MPCRUD.get()
         }
         res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showexternalmedia.html.twig', { ...templateVars })
     }
@@ -587,32 +557,18 @@ async function addExternalMedia(req, res){
 async function deleteExternalMedia(req, res){
     const { external_media_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         await externalMediaCRUD.remove(external_media_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "external_medias": await externalMediaCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudexternalmedia')
     }
 }
 
 async function updateExternalMedia(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         const { external_media_id, url, media_platform_id } = req.body
         const message = "Update an artist : "+url
         logger.newLog(req.cookies.userToken.token, message)
         await externalMediaCRUD.update(external_media_id, url, media_platform_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "external_medias": await externalMediaCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudexternalmedia')
     }
 }
 

@@ -77,7 +77,7 @@
             </thead>
 
             <tbody>
-              <form action="/adminupdateuser" method="post">
+              <form action="/updateuser" method="post">
                 <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
                 <input type="hidden" class="form-control" id="password" name="password" value="">
                 <tr>
@@ -117,7 +117,7 @@
             </tbody>
           </table>
 
-          <form action="/admindeleteuser" method="post">
+          <form action="/deleteuser" method="post">
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
             <button type="submit" class="btn btn-outline-danger">Supprimer utilisateur</button>
           </form>
