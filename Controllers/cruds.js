@@ -294,32 +294,18 @@ async function addCity(req, res){
 async function deleteCity(req, res){
     const { city_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         await cityCRUD.remove(city_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "cities": await cityCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/city/showcrudcity.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudcity')
     }
 }
 
 async function updateCity(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         const { city_id, name, postal_code } = req.body
         const message = "Update a city : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await cityCRUD.update(city_id, name, postal_code)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "cities": await cityCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/city/showcrudcity.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudcity')
     }
 }
 
@@ -746,32 +732,18 @@ async function deleteMP(req, res){
         if (answer_external_media[0]){
             res.send("Des media externes sont liés à cette plateform de média ! Impossible de supprimer la plateform de média")
         }
-        const userToken = req.cookies.userToken.token
         await MPCRUD.remove(media_platform_id)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "MPs": await MPCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showcrudmediaplatform.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudmediaplatform')
     }
 }
 
 async function updateMP(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
         const { media_platform_id, name } = req.body
         const message = "Update an image : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await MPCRUD.update(media_platform_id, name)
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "MPs": await MPCRUD.get()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showcrudmediaplatform.html.twig', { ...templateVars })
+        res.redirect(302, '/showcrudmediaplatform')
     }
 }
 
