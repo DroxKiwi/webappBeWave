@@ -53,7 +53,7 @@ export ftp_proxy='http://127.0.0.1:7080/proxy.pac'
 export no_proxy='127.0.0.1,localhost'
 HEREDOC
 
-cd /home/tux/studiECF2023_Fredj_Corentin
+cd /home/tux/webappBeWave
 # Installation of npm package
 apt install npm
 # Updating ingoring packages from git
