@@ -60,5 +60,5 @@ apt install npm
 npm install
 # Installing postgresql
 apt-get install postgresql
-# I set up a new user tux into psql and give it "login" and "superuser" role
-# I also modifiy the password for postgres to "psqlpsw"
+# Installing Crontab for automatic backup 
+apt-get install cron

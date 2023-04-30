@@ -5,9 +5,10 @@
 
 <html>
   {% block content %}
-        <div class="container-fluid text-center">
+        <div class="container-fluid">
           <header>
             <h1>
+            <br>
               Bienvenu sur l'application !
             </h1>
             <ul class="nav nav-tabs justify-content-center">
@@ -40,7 +41,98 @@
               <a class="nav-link active" aria-current="page" href="/apimanagement">API</a>
             </li>
           </ul>
- 
+
+
+        <h2>Documentation API</h2>
+        <h3>Events</h3>
+        <pre>
+          <code>
+            [
+              {
+                  "event_id": 3,
+                  "author_name": "admin",
+                  "name": "Nom de l'événement",
+                  "description": "Dexscription de l'événement!",
+                  "display_map": false,
+                  "start_date": "2023-04-11T22:00:00.000Z",
+                  "end_date": "2023-04-28T22:00:00.000Z",
+                  "price": 0,
+                  "artists": {
+                      "0": [
+                          {
+                              "artist_id": 2,
+                              "name": "Angel",
+                              "description": "Descritption de l'artiste",
+                              "image_id": null
+                          }
+                      ],
+                      "1": [
+                          {
+                              "artist_id": 1,
+                              "name": "Shakira",
+                              "description": "Descritption de l'artiste",
+                              "image_id": null
+                          }
+                      ]
+                  },
+                  "images": {
+                      "0": [
+                          {
+                              "image_id": 1,
+                              "name": "budhaball",
+                              "extension": ".jpg"
+                          }
+                      ]
+                  },
+                  "externalmedias": {
+                      "0": [
+                          {
+                              "external_media_id": 1,
+                              "url": "www.test.com",
+                              "media_platform_id": null
+                          }
+                      ]
+                  }
+              }
+            ]
+          </code>
+        </pre>
+        <p>/api/getevents => Retourne tous les événements</p>
+        <p>/api/getevents/:event_id => Retoune les infors d'un événement</p>
+        <p>/api/getevents/city/:city_id => Retourne tous les événements d'une ville</p>
+        <h3>Places</h3>
+        <pre>
+          <code>
+            [
+              {
+                "place_id": 1,
+                "name": "Angers 1",
+                "description": "un eve",
+                "adress": "une adresse",
+                "image_id": null,
+                "city_id": 1
+              }
+            ]
+          </code>
+        </pre>
+        <p>/api/getplaces => Retourne tous les lieux d'événements</p>
+        <p>/api/getplaces/:place_id => Retourne les infos d'un lieu</p>
+        <p>/api/getplaces/city/:city_id => Retourne tous les lieux d'une ville</p>
+        <h3>Artists</h3>
+        <pre>
+          <code>
+            [
+              {
+                "artist_id": 1,
+                "name": "Shakira",
+                "description": "ba tmtc",
+                "image_id": null
+              }
+            ]
+          </code>
+        </pre>
+        <p>/api/artists => Retourne tos les artistes</p>
+        <p>/api/artists/:artist_id => Retourne les infos d'un artiste</p>
 
 
         <!-- OffCanvas and hidden elements -->
