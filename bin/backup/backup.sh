@@ -9,7 +9,7 @@ cd ./../../
 # Get Symfony environment variables
 source .env.prod
 
-cd backupDB
+cd bin/backup
 FILE_NAME="$(date -Ins).sql"
 sudo --user postgres pg_dump $DATABASE > database.$DATABASE.sql
 cp database.$DATABASE.sql "$FILE_NAME"
