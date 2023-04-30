@@ -11,5 +11,5 @@ source .env.prod
 
 cd bin/backup
 FILE_NAME="$(date -Ins).sql"
-postgres pg_dump $DATABASE > database.$DATABASE.sql
+sudo --user postgres pg_dump $DATABASE > database.$DATABASE.sql
 cp database.$DATABASE.sql "$FILE_NAME"
