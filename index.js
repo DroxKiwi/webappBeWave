@@ -5,6 +5,7 @@ const twig = require('twig')
 const bodyParser = require('body-parser')
 const app = express()
 const fileUpload = require('express-fileupload')
+const cors = require('cors')
 
 
 // IF USING NPM !
@@ -21,6 +22,7 @@ const adminRoute = require("./Routes/dashboard")
 const apiRoute = require("./Routes/api")
 const crudRoute = require("./Routes/cruds")
 
+app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 app.use(getRolesMiddleware)

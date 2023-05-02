@@ -1,5 +1,5 @@
 
-#!/bin/bash
+#!/usr/bin/env /bin/bash
 # Dump the current database
 
 # Diplay commands and end script at first command fail or use of an unset variable
