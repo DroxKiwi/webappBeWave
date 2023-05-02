@@ -5,9 +5,8 @@
 # Diplay commands and end script at first command fail or use of an unset variable
 set -o errexit -o nounset -o xtrace -o pipefail
 
-# Go to the backend
-cd ./../../
-# Get Symfony environment variables
+cd /home/dev/gitrepo/webappBeWave
+# Get Express environment variables
 source .env.prod
 
 cd bin/backup
