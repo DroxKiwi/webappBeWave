@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # Dump the current database
 
