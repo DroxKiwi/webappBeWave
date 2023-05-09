@@ -1,18 +1,20 @@
 body {
-  background-color: rgb(68, 68, 68);
-  color: white;
+  background-color: rgb(36, 36, 36);
+  color: rgb(214, 214, 214);
 }
 
-.colortest1 {
-  background-color: red;
+table, th, tr {
+  border: 1px solid rgb(138, 138, 138);
+  background-color: rgb(53, 53, 53) !important;
+  color: rgb(187, 187, 187);
 }
 
-table, th, td, tr {
-  border: 1px solid white;
-  background-color: rgb(60, 66, 104) !important;
-  color: white;
+td {
+  border: 1px solid rgb(36, 36, 36);
+  background-color: rgb(61, 61, 61) !important;
+  color: rgb(134, 138, 206);
 }
 
-.userselect:hover {
-  background-color: rgb(53, 88, 53) !important;
+a {
+  color: rgb(131, 131, 131) !important;
 }/*# sourceMappingURL=styledark.css.map */
