@@ -6,36 +6,6 @@
   </head>
     {% block content %}
       <div class="container-fluid text-center">
-
-        <header>
-        <h1>
-            Bienvenu sur l'application !
-        </h1>
-        <ul class="nav nav-tabs justify-content-center">
-            <li class="nav-item">
-            <a class="nav-link" href="#">App</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="/contact">Besoin d'aide ?</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/forum">Forum</a>
-            </li>
-            <li>
-            <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
-            </li>
-            <li>
-            <button onclick="location.href = '/createAccount'" type="button" style="margin-left: 10px;" class="btn btn-outline-primary">Créer un compte</button>
-            </li>
-        </ul>
-        </header>
-
-
-
-
         <div class="row justify-content-center">
           <div class="col-6">
             <form action="/userLogin" method="post">

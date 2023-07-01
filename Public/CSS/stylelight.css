@@ -1,6 +1,7 @@
 body {
   background-color: rgb(212, 212, 212);
   color: rgb(48, 48, 48);
+  font-family: system-ui;
 }
 
 table, th, tr {

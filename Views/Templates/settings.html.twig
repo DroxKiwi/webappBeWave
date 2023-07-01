@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% set modepreference = templateVars[1] %}
+{% set modepreference = preference %}
 
 <!DOCTYPE html>
 
@@ -7,28 +7,6 @@
   {% block content %}
 
         <div class="container-fluid text-center">
-          <header>
-            <h1>
-              Bienvenu sur l'application !
-            </h1>
-            <ul class="nav nav-tabs justify-content-center">
-              <li class="nav-item">
-                <a class="nav-link" href="/">App</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/contact">Besoin d'aide ?</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/forum">Forum</a>
-              </li>
-              <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ templateVars[0] }}</button>
-              </li>
-            </ul>
-          </header>
           <h2>
             Page de paramètre de compte utilisateur
           </h2>
@@ -55,27 +33,7 @@
             </div>
           </div>
 
-        <!-- OffCanvas and hidden elements -->
-
-          <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <div class="row justify-content-center">
-                <div class="col-12">
-                  <button onclick="location.href = '/information'" type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
-                </div>
-                <div class="col-12">
-                  <button type="button" onclick="location.href = '/settings'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Préferences de compte</button>
-                </div>
-                <div class="col-12">
-                  <button onclick="location.href = '/userLogout'" style="margin-bottom: 10px;" type="button" class="btn btn-outline-warning">Déconnexion</button>
-                </div>
-              </div>
-            </div>
-          </div>
+          {% include 'Components/sidemenu.html.twig' %}
 
         </div>
   {% endblock %}

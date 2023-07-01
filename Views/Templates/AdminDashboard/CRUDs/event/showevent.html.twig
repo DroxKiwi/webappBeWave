@@ -5,246 +5,222 @@
 
 <html>
   {% block content %}
-
-        <div class="container-fluid text-center">
-          <header>
-            <h1>
-              Bienvenu sur l'application !
-            </h1>
-            <ul class="nav nav-tabs justify-content-center">
-              <li>
-                <button onclick="location.href = '/'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Application</button>
-              </li>
-              <li>
-                <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
-              </li>
-            </ul>
-          </header>
-          <h2>
-            {{ name }}
-          </h2>
-
-
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link" href="/dashboard">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logs">Logs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/formcontact">formulaire de contacts</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/apimanagement">API</a>
-            </li>
-            <form action="/searchuser" method="post" class="d-flex" role="search">
-              <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
-              <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
-            </form>
-          </ul>
+    <div class="container-fluid text-center">
+      <header>
+        <h1>
+          Bienvenu sur l'application !
+        </h1>
+        <ul class="nav nav-tabs justify-content-center">
+          <li>
+            <button onclick="location.href = '/'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Application</button>
+          </li>
+          <li>
+            <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
+          </li>
+        </ul>
+      </header>
+      <h2>
+        {{ name }}
+      </h2>
 
 
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link"href="/showcruduser">Users</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/showcrudartist">Artists</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/showcrudcity">Cities</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/showcrudevent">Events</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/showcrudimage">Images</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/showcrudplace">Places</a>
-            </li>
-          </ul>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" href="/dashboard">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logs">Logs</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/formcontact">formulaire de contacts</a>
+        </li>
+        <li calss="nav-item">
+          <a class="nav-link active" aria-current="page" href="/showcruds">CRUDs</a>
+        </li>
+        <li calss="nav-item">
+          <a class="nav-link" href="/apimanagement">API</a>
+        </li>
+        <form action="/searchuser" method="post" class="d-flex" role="search">
+          <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
+          <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
+        </form>
+      </ul>
 
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Informations utilisateur</th>
-                <th scope="col">Accès</th>
-              </tr>
-            </thead>
 
-            <tbody>
-              <form action="/updateevent" method="post">
-                <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event_id }}">
-                <tr>
-                  <td>Identifiant BDD : {{ event_id }}</td>
-                  <td>Refusé</td>
-                </tr>
-                <input type="hidden" class="form-control" id="author_id" name="author_id" value="{{ author_id }}">
-                <tr>
-                  <td>author_id : {{ author_id }}</td>
-                  <td>Refusé</td>
-                </tr>
-                <tr>
-                  <td>name : {{ name }}</td>
-                  <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
-                </tr>
-                <tr>
-                  <td>description : {{ description }}</td>
-                  <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
-                </tr>
-                <tr>
-                  <td>images :
-                  </td>
-                  <td>
-                    <select class="form-control">
-                      <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
-                      {% for image in images %}
-                        <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
-                      {% endfor %}
-                    </select>
-                    <div id="addedimages">
-                      {% for image_id in images_id %}
-                        {% for image in images %}
-                          {% if image.image_id == image_id.image_id %}
-                            <img id="{{image.image_id}}" src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
-                          {% endif %}
-                        {% endfor %}
-                      {% endfor %}
-                    </div>
-                    <input type="hidden" value="" name="images" id="images"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>artistes :
-                  </td>
-                  <td>
-                    <select class="form-control">
-                      <option selected="selected" value="NULL" id="optionArtist">Ajouter un artiste</option>
-                      {% for artist in artists %}
-                        <option value="{{ artist.artist_id }}" name="optionArtist" onclick="add(event)" id="{{ artist.name }}">{{ artist.name }}</option>
-                      {% endfor %}
-                    </select>
-                    <div id="addedartists">
-                      {% for artist_id in artists_id %}
-                        {% for artist in artists %}
-                          {% if artist.artist_id == artist_id.artist_id %}
-                            <p id="{{ artist.artist_id }}">{{ artist.name }}</p>
-                          {% endif %}
-                        {% endfor %}
-                      {% endfor %}
-                    </div>
-                    <input type="hidden" value="" name="artists" id="artists"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>lieux :
-                  </td>
-                  <td>
-                    <select class="form-control">
-                      <option selected="selected" value="NULL" id="optionPlace">Ajouter un artiste</option>
-                      {% for place in places %}
-                        <option value="{{ place.place_id }}" name="optionPlace" onclick="add(event)" id="{{ place.name }}">{{ place.name }}</option>
-                      {% endfor %}
-                    </select>
-                    <div id="addedplaces">
-                      {% for place_id in places_id %}
-                        {% for place in places %}
-                          {% if place.place_id == place_id.place_id %}
-                            <p id="{{ place.place_id }}">{{ place.name }}</p>
-                          {% endif %}
-                        {% endfor %}
-                      {% endfor %}
-                    </div>
-                    <input type="hidden" value="" name="places" id="places"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>médias externes :
-                  </td>
-                  <td>
-                    <select class="form-control">
-                      <option selected="selected" value="NULL" id="optionExternal_media">Ajouter un média externe</option>
-                      {% for external_media in external_medias %}
-                        <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
-                      {% endfor %}
-                    </select>
-                    <div id="addedexternal_medias">
-                      {% for external_media_id in external_medias_id %}
-                        {% for external_media in external_medias %}
-                          {% if external_media.external_media_id == external_media_id.external_media_id %}
-                            <p id="{{ external_media.external_media_id }}">{{ external_media.url }}</p>
-                          {% endif %}
-                        {% endfor %}
-                      {% endfor %}
-                    </div>
-                    <input type="hidden" value="" name="external_medias" id="external_medias"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td>display_map : {{ display_map }}</td>
-                  <td><input type="checkbox" {% if display_map == true %} checked {% endif %} id="display_map" name="display_map"></td>
-                </tr>
-                <tr>
-                  <td>start_date : {{ start_date }}</td>
-                  <td><input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" required></td>
-                </tr>
-                <tr>
-                  <td>end_date : {{ end_date }}</td>
-                  <td><input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required></td>
-                </tr>
-                <tr>
-                  <td>price : {{ price }}</td>
-                  <td><input type="number" class="form-control" id="price" name="price" value="{{ price }}" required></td>
-                </tr>
-                <tr>
-                  <button type="submit" class="btn btn-outline-warning">Enregistrer modificaiton</button>
-              </form>
-            </tbody>
-          </table>
-          <form action="/deleteevent" method="post">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link"href="/showcruduser">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/showcrudartist">Artists</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/showcrudcity">Cities</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/showcrudevent">Events</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/showcrudexternalmedia">External medias</a>
+        </li>
+        <li calss="nav-item">
+          <a class="nav-link" href="/showcrudimage">Images</a>
+        </li>
+        <li calss="nav-item">
+          <a class="nav-link" href="/showcrudmediaplatform">Media Platform</a>
+        </li>
+        <li calss="nav-item">
+          <a class="nav-link" href="/showcrudplace">Places</a>
+        </li>
+      </ul>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Informations utilisateur</th>
+            <th scope="col">Accès</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <form action="/updateevent" method="post">
             <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event_id }}">
-            <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+            <tr>
+              <td>Identifiant BDD : {{ event_id }}</td>
+              <td>Refusé</td>
+            </tr>
+            <input type="hidden" class="form-control" id="author_id" name="author_id" value="{{ author_id }}">
+            <tr>
+              <td>author_id : {{ author_id }}</td>
+              <td>Refusé</td>
+            </tr>
+            <tr>
+              <td>name : {{ name }}</td>
+              <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+            </tr>
+            <tr>
+              <td>description : {{ description }}</td>
+              <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
+            </tr>
+            <tr>
+              <td>images :
+              </td>
+              <td>
+                <select class="form-control">
+                  <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
+                  {% for image in images %}
+                    <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+                  {% endfor %}
+                </select>
+                <div id="addedimages">
+                  {% for image_id in images_id %}
+                    {% for image in images %}
+                      {% if image.image_id == image_id.image_id %}
+                        <img id="{{image.image_id}}" src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </div>
+                <input type="hidden" value="" name="images" id="images"/>
+              </td>
+            </tr>
+            <tr>
+              <td>artistes :
+              </td>
+              <td>
+                <select class="form-control">
+                  <option selected="selected" value="NULL" id="optionArtist">Ajouter un artiste</option>
+                  {% for artist in artists %}
+                    <option value="{{ artist.artist_id }}" name="optionArtist" onclick="add(event)" id="{{ artist.name }}">{{ artist.name }}</option>
+                  {% endfor %}
+                </select>
+                <div id="addedartists">
+                  {% for artist_id in artists_id %}
+                    {% for artist in artists %}
+                      {% if artist.artist_id == artist_id.artist_id %}
+                        <p id="{{ artist.artist_id }}">{{ artist.name }}</p>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </div>
+                <input type="hidden" value="" name="artists" id="artists"/>
+              </td>
+            </tr>
+            <tr>
+              <td>lieux :
+              </td>
+              <td>
+                <select class="form-control">
+                  <option selected="selected" value="NULL" id="optionPlace">Ajouter un artiste</option>
+                  {% for place in places %}
+                    <option value="{{ place.place_id }}" name="optionPlace" onclick="add(event)" id="{{ place.name }}">{{ place.name }}</option>
+                  {% endfor %}
+                </select>
+                <div id="addedplaces">
+                  {% for place_id in places_id %}
+                    {% for place in places %}
+                      {% if place.place_id == place_id.place_id %}
+                        <p id="{{ place.place_id }}">{{ place.name }}</p>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </div>
+                <input type="hidden" value="" name="places" id="places"/>
+              </td>
+            </tr>
+            <tr>
+              <td>médias externes :
+              </td>
+              <td>
+                <select class="form-control">
+                  <option selected="selected" value="NULL" id="optionExternal_media">Ajouter un média externe</option>
+                  {% for external_media in external_medias %}
+                    <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
+                  {% endfor %}
+                </select>
+                <div id="addedexternal_medias">
+                  {% for external_media_id in external_medias_id %}
+                    {% for external_media in external_medias %}
+                      {% if external_media.external_media_id == external_media_id.external_media_id %}
+                        <p id="{{ external_media.external_media_id }}">{{ external_media.url }}</p>
+                      {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                </div>
+                <input type="hidden" value="" name="external_medias" id="external_medias"/>
+              </td>
+            </tr>
+            <tr>
+              <td>display_map : {{ display_map }}</td>
+              <td><input type="checkbox" {% if display_map == true %} checked {% endif %} id="display_map" name="display_map"></td>
+            </tr>
+            <tr>
+              <td>start_date : {{ start_date }}</td>
+              <td><input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" required></td>
+            </tr>
+            <tr>
+              <td>end_date : {{ end_date }}</td>
+              <td><input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required></td>
+            </tr>
+            <tr>
+              <td>price : {{ price }}</td>
+              <td><input type="number" class="form-control" id="price" name="price" value="{{ price }}" required></td>
+            </tr>
+            <tr>
+              <button type="submit" class="btn btn-outline-warning">Enregistrer modificaiton</button>
           </form>
+        </tbody>
+      </table>
+      <form action="/deleteevent" method="post">
+        <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event_id }}">
+        <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+      </form>
 
 
-        <!-- OffCanvas and hidden elements -->
-
-          <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-            <div class="offcanvas-header">
-              <h5 class="offcanvas-title" id="offcanvasExampleLabel">{{ id }}</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-              <div class="row justify-content-center">
-                <div class="col-12">
-                  <button onclick="location.href = '/information'" type="button" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Informations de compte</button>
-                </div>
-                <div class="col-12">
-                  <button type="button" onclick="location.href = '/settings'" style="margin-bottom: 10px;" class="btn btn-outline-secondary">Préferences de compte</button>
-                </div>
-                <div class="col-12">
-                  <button onclick="location.href = '/userLogout'" style="margin-bottom: 10px;" type="button" class="btn btn-outline-warning">Déconnexion</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-
-
+      {% include 'Components/sidemenu.html.twig' %}
       <script src="/js/crudevent_load.js"></script>
       <script src="/js/crudevent_add.js"></script>
+    </div>
 
   {% endblock %}
 </html>

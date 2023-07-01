@@ -12,6 +12,7 @@ async function redirectHomepage(req, res){
         const userToken = req.cookies.userToken.token
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
         const templateVars = {
+            "active" : "home",
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "role": req.role 
@@ -20,8 +21,11 @@ async function redirectHomepage(req, res){
     }
     else {
         // This variable "id" allowed the twig template to adapt what it need to show (connection button, create account button, ...)
-        const id = "unauthentificated"
-        res.render('./Templates/home.html.twig', { id })
+        const templateVars = {
+            "active": "home",
+            "id": "unauthentificated"
+        }
+        res.render('./Templates/home.html.twig', { ...templateVars })
     }
 }
 
@@ -47,6 +51,7 @@ async function redirectContact(req, res){
             const userToken = req.cookies.userToken.token
             const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
             const templateVars = {
+                "active": "contact",
                 "id": req.pseudo,
                 "preference": preferencesTab[0].preferences[0],
                 "role": req.role
@@ -54,8 +59,11 @@ async function redirectContact(req, res){
             res.render('./Templates/contact.html.twig', { ...templateVars })
         }
         else {
-            const id = "unauthentificated"
-            res.render('./Templates/contact.html.twig', { id })
+            const templateVars = {
+                "active": "contact",
+                "id": "unauthentificated"
+            }
+            res.render('./Templates/contact.html.twig', { ...templateVars })
         }
     }
 }
@@ -79,6 +87,7 @@ async function redirectSuscribe(req, res){
                 const userToken = req.cookies.userToken.token
                 const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
                 const templateVars = {
+                    "active": "suscribe",
                     "id": req.pseudo,
                     "preference": preferencesTab[0].preferences[0],
                     "role": req.role
@@ -86,8 +95,11 @@ async function redirectSuscribe(req, res){
                 res.render('./Templates/suscribe.html.twig', { ...templateVars })
             }
             else {
-                const id = "unauthentificated"
-                res.render('./Templates/suscribe.html.twig', { id })
+                const templateVars = {
+                    "active": "suscribe",
+                    "id": "unauthentificated"
+                }
+                res.render('./Templates/suscribe.html.twig', { ...templateVars })
             }
         }
         else {
@@ -95,6 +107,7 @@ async function redirectSuscribe(req, res){
                 const userToken = req.cookies.userToken.token
                 const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
                 const templateVars = {
+                    "active": "suscribe",
                     "id": req.pseudo,
                     "preference": preferencesTab[0].preferences[0],
                     "role": req.role
@@ -102,8 +115,11 @@ async function redirectSuscribe(req, res){
                 res.render('./Templates/createbetatester.html.twig', { ...templateVars })
             }
             else {
-                const id = "unauthentificated"
-                res.render('./Templates/login.html.twig', { id })
+                const templateVars = {
+                    "active": "suscribe",
+                    "id": "unauthentificated"
+                }
+                res.render('./Templates/login.html.twig', { ...templateVars })
             }
         }
     }
@@ -166,11 +182,12 @@ async function redirectInformation(req, res){
 async function redirectSettings(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
-        const id = req.pseudo
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const preference = preferencesTab[0].preferences[0]
-        const templateVars = [id, preference]
-        res.render('./Templates/settings.html.twig', { templateVars })
+        const templateVars = {
+            "id": req.pseudo, 
+            "preference": preferencesTab[0].preferences[0]
+        }
+        res.render('./Templates/settings.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -180,26 +197,39 @@ async function redirectSettings(req, res){
 
 async function userCreateAccount(req, res){
     const { sent, pseudo, email, password } = req.body
-    if (sent){
+    if (!sent){
+        const templateVars = {
+            "id": "unauthentificated"
+        }
+        res.render('./Templates/createaccount.html.twig', {...templateVars})
+    }
+    else {
         const checkUserExistByPseudo = await query.selectEqual('pseudo', "users", 'pseudo', pseudo)
         const checkUserExistByEmail = await query.selectEqual('email', "users", 'email', email)
         if (!checkUserExistByEmail[0] && !checkUserExistByPseudo[0]){
             await userCRUD.create(pseudo, email, password, "ROLE_USER")
-            res.render('./Templates/login.html.twig')
+            //res.render('./Templates/login.html.twig')
+            const templateVars = {
+                "id": "unauthentificated"
+            }
+            res.render('./Templates/login.html.twig', {...templateVars})
         }
         else {
-            res.render('./Templates/createaccount.html.twig')
+            const templateVars = {
+                "id": "unauthentificated"
+            }
+            res.render('./Templates/createaccount.html.twig', {...templateVars})
         }
-    }
-    else {
-        res.render('./Templates/createaccount.html.twig')
     }
 }
 
 async function userLogin(req, res){
     const { sent, id, password, remember } = req.body
     if (!sent){
-        res.render('./Templates/login.html.twig')
+        const templateVars = {
+            "id": "unauthentificated"
+        }
+        res.render('./Templates/login.html.twig', {...templateVars})
     }
     else {
         const answer_user_pseudo = await userCRUD.get('*', 'pseudo', id)

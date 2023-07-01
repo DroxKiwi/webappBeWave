@@ -80,3 +80,35 @@ Pour installer et manager les dépendances du projet j'utilise "*NPM*". Pour fai
 
 ## 2.0 Choix et description des entitées
 
+Les entités qui composent la BDD ont été discuter il y a plus d'un an quand nous avons démarré le projet sur Symfony. 
+L'application a pour but d'être principalement un agenda d'événements qui évoluera pour proposer de nombreux autres services par la suite.
+On a convenu qu'un événement est composé et/ou lié à : 
+- Des artistes
+- Des villes
+- Des lieux
+- Des images
+- Des plateformes de médias
+- Des médias externes
+
+Et un utilisateur possède : 
+- Un identifiant
+- Un mot de passe
+- Des préférences utilisateurs
+
+De manière plus concrète les tables qui composent la BDD sont : 
+
+- users
+- logs 
+- contacts 
+- betatesters
+- media_platform
+- images
+- external_medias
+- artists
+- cities
+- events
+- events_artists
+- events_places
+- events_images
+- events_external_medias
+

@@ -1,0 +1,67 @@
+<div class="container-fluid text-center">
+  <header>
+    <div class="apptop">
+      <h1 class="appname">
+        {% if modepreference == "lightmode" %}
+            <a href="/"> <img class="applogo" src="/Images/BeWave_logo_noir.png" alt="logo"/></a>
+        {% else %}
+            <a href="/"> <img class="applogo" src="/Images/BeWave_logo_blanc.png"  alt="logo"/></a>
+        {% endif %}
+        <a href="/">eWave</a>
+      </h1>
+    </div>
+    <div class="row">
+      <ul class="nav nav-tabs justify-content-center">
+        <li>
+          {% if role == "ROLE_ADMIN" %}
+            <button onclick="location.href = '/dashboard'" type="button" style="margin-right: 20px;" class="btn btn-outline-info">Tableau de bord</button>
+          {% endif %}
+        </li>
+        <div class="col-xl-2 col-12">
+          <li class="nav-item">
+            {% if active == "home" %}
+              <a class="nav-link active" aria-current="page" href="/">App</a>
+            {% else %}
+              <a class="nav-link" aria-current="page" href="/">App</a>
+            {% endif %}
+          </li>
+        </div>
+        <div class="col-xl-2 col-12">
+          <li class="nav-item">
+            {% if active == "contact" %}
+              <a class="nav-link active" href="/contact">Besoin d'aide ?</a>
+            {% else %}
+              <a class="nav-link" href="/contact">Besoin d'aide ?</a>
+            {% endif %}
+          </li>
+        </div>
+        <div class="col-xl-2 col-12">
+          <li class="nav-item">
+            {% if active == "suscribe" %}
+              <a class="nav-link active" href="/suscribe">Souscrire à la Bêta Test !</a>
+            {% else %}
+              <a class="nav-link" href="/suscribe">Souscrire à la Bêta Test !</a>
+            {% endif %}
+          </li>
+        </div>
+          <div class="col-xl-2 col-12">
+            <li class="nav-item">
+              <a class="nav-link" href="/forum">Forum</a>
+            </li>
+          </div>
+        {% if id == "unauthentificated" %}
+          <li>
+            <button onclick="location.href = '/login'" type="button" style="margin-left: 10px;" class="btn btn-outline-success">Connexion</button>
+          </li>
+          <li>
+            <button onclick="location.href = '/createAccount'" type="button" style="margin-left: 10px;" class="btn btn-outline-primary">Créer un compte</button>
+          </li>
+        {% else %}
+          <li>
+            <button data-bs-toggle="offcanvas" data-bs-target="#sidemenu" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </header>
+</div>
