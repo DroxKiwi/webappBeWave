@@ -1,0 +1,87 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+Ajouter
+</button>
+
+
+
+
+<table class="table">
+<thead>
+    <tr>
+    <th scope="col">place_id</th>
+    <th scope="col">name</th>
+    <th scope="col">description</th>
+    <th scope="col">adress</th>
+    <th scope="col">image</th>
+    <th scope="col">city</th>
+    <th scope="col"></th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for place in places %}
+    <tr class="table-info ">
+        <td>{{ place.place_id }}</td>
+        <td>{{ place.name }}</td>
+        <td>{{ place.description }}</td>
+        <td>{{ place.adress }}</td>
+        <td>
+        {% for image in images %}
+            {% if image.image_id == place.image_id %}
+            <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+            {% endif %}
+        {% endfor %}
+        </td>
+        <td>
+        {% for city in cities %}
+            {% if place.city_id == city.city_id %}
+            {{ city.name }}
+            {% endif %}
+        {% endfor %}
+        </td>
+        <td>
+        <form action="/showplace" method="post"> 
+            <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place.place_id }}">
+            <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form action="/addplace" method="post">
+        <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
+        <input type="text" class="form-control" id="description" name="description" placeholder="description">
+        <input type="text" class="form-control" id="adress" name="adress" placeholder="adress" required>
+        <select name="image_id" class="form-control">
+            <option selected="selected" value="NULL">Selectionner une image</option>
+            {% for image in images %}
+            <option value="{{ image.image_id }}">{{ image.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="city_id" class="form-control">
+            {% for city in cities %}
+            <option value="{{ city.city_id }}">{{ city.name }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-outline-info">Valider</button>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+    </div>
+</div>
+</div>

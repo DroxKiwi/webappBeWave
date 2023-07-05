@@ -1,0 +1,82 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Informations media platform</th>
+      <th scope="col">Accès</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <form action="/updateplace" method="post">
+      <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
+      <tr>
+        <td>Identifiant BDD : {{ place_id }}</td>
+        <td>Refusé</td>
+      </tr>
+      <tr>
+        <td>name : {{ name }}</td>
+        <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+      </tr>
+      <tr>
+        <td>description : {{ description }}</td>
+        <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
+      </tr>
+      <tr>
+        <td>adress : {{ adress }}</td>
+        <td><input type="text" class="form-control" id="adress" name="adress" value="{{ adress }}" required></td>
+      </tr>
+      <tr>
+        <td>image :
+          {% for image in images %}
+            {% if image.image_id == image_id %}
+              <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          <select name="image_id" class="form-control">
+            <option selected="selected" value="{{ image_id }}">
+              {% for image in images %}
+                {% if image.image_id == image_id %}
+                  {{ image.name }}
+                {% endif %}
+              {% endfor %}
+            </option>
+            <option value="NULL">Aucune</option>
+            {% for image in images %}
+              <option value="{{ image.image_id }}">{{ image.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      <tr>
+      <tr>
+        <td>city :
+          {% for city in cities %}
+            {% if city.city_id == city_id %}
+              {{ city.name }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          <select name="city_id" class="form-control">
+            <option selected="selected" value="{{ city_id }}">
+              {% for city in cities %}
+                {% if city.city_id == city_id %}
+                  {{ city.name }}
+                {% endif %}
+              {% endfor %}
+            </option>
+            {% for city in cities %}
+              <option value="{{ city.city_id }}">{{ city.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      <tr>
+      <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
+    </form>
+  </tbody>
+</table>
+<form action="/deleteplace" method="post">
+  <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
+  <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+</form>

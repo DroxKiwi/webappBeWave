@@ -15,7 +15,6 @@ const eventexternalMediaCRUD = require("../CRUD/event_external_media")
 const logger = require("../Utils/logger")
 const generateRandomPassword = require ("../Utils/generatePassword")
 const fs = require('fs')
-const path = require('path')
 const easyimg = require('easyimage')
 
 
@@ -103,7 +102,7 @@ async function showUsers(req, res){
             "active": "crud",
             "crud": "user"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -126,9 +125,11 @@ async function showDetailUser(req, res){
             "token": userToShow[0].token,
             "role": userToShow[0].role,
             "userLogs": await logCRUD.get('*', 'user_id', user_id),
-            "betatesterInfo": await betatesterCRUD.get('*', 'user_id', user_id)
+            "betatesterInfo": await betatesterCRUD.get('*', 'user_id', user_id),
+            "active": "crud",
+            "crud": "userDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/user/showuser.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -207,7 +208,7 @@ async function showArtists(req, res){
             "active": "crud",
             "crud": "artist"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -227,9 +228,11 @@ async function showDetailArtist(req, res){
             "name": artistToShow[0].name,
             "description": artistToShow[0].description,
             "image_id": artistToShow[0].image_id,
-            "images": await imageCRUD.get()
+            "images": await imageCRUD.get(),
+            "active": "crud",
+            "crud": "artistDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/artist/showartist.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -275,7 +278,7 @@ async function showCities(req, res){
             "active": "crud",
             "crud": "city"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/city/showcrudcity.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -293,9 +296,11 @@ async function showDetailCity(req, res){
             "city_id": city_id,
             "preference": preferencesTab[0].preferences[0],
             "name": cityToShow[0].name,
-            "postcode": cityToShow[0].postal_code
+            "postcode": cityToShow[0].postal_code,
+            "active": "crud",
+            "crud": "cityDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/city/showcity.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -350,7 +355,7 @@ async function showEvents(req, res){
             "active": "crud",
             "crud": "event"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -399,9 +404,11 @@ async function showDetailEvent(req, res){
             "places_id": await eventplaceCRUD.get('place_id', 'event_id', event_id),
             "places": await placeCRUD.get(),
             "external_medias_id": await eventexternalMediaCRUD.get('external_media_id', 'event_id', event_id),
-            "external_medias": await externalMediaCRUD.get()
+            "external_medias": await externalMediaCRUD.get(),
+            "active": "crud",
+            "crud": "eventDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/event/showevent.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -528,7 +535,7 @@ async function showExternalMedias(req, res){
                 templateVars.external_medias[i].media_platform_name = temp_answer[0].name
             }
         }
-        res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -547,9 +554,11 @@ async function showDetailExternalMedia(req, res){
             "external_media_id": externalMediaToShow[0].external_media_id,
             "url": externalMediaToShow[0].url,
             "media_platform_id": externalMediaToShow[0].media_platform_id,
-            "media_platforms": await MPCRUD.get()
+            "media_platforms": await MPCRUD.get(),
+            "active": "crud",
+            "crud": "external_mediaDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showexternalmedia.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -595,7 +604,7 @@ async function showImages(req, res){
             "active": "crud",
             "crud": "image"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -613,9 +622,11 @@ async function showDetailImage(req, res){
             "preference": preferencesTab[0].preferences[0],
             "image_id": imageToShow[0].image_id,
             "name": imageToShow[0].name,
-            "extension": imageToShow[0].extension
+            "extension": imageToShow[0].extension,
+            "active": "crud",
+            "crud": "imageDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/image/showimage.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -719,7 +730,7 @@ async function showMPs(req, res){
             "active": "crud",
             "crud": "mp"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showcrudmediaplatform.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -736,9 +747,11 @@ async function showDetailMP(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "media_platform_id": MPToShow[0].media_platform_id,
-            "name": MPToShow[0].name
+            "name": MPToShow[0].name,
+            "active": "crud",
+            "crud": "mpDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showmediaplatform.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')
@@ -790,7 +803,7 @@ async function showPlaces(req, res){
             "active": "crud",
             "crud": "place"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, "/")
@@ -813,9 +826,11 @@ async function showDetailPlace(req, res){
             "image_id": placeToShow[0].image_id,
             "city_id": placeToShow[0].city_id,
             "cities": await cityCRUD.get(),
-            "images": await imageCRUD.get()
+            "images": await imageCRUD.get(),
+            "active": "crud",
+            "crud": "placeDetail"
         }
-        res.render('./Templates/AdminDashboard/CRUDs/place/showplace.html.twig', { ...templateVars })
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')

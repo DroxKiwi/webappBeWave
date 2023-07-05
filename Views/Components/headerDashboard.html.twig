@@ -1,0 +1,47 @@
+<ul class="nav nav-tabs">
+    <button data-bs-toggle="offcanvas" data-bs-target="#sidemenu" type="button" style="margin-left: 10px;" class="btn btn-outline-info">{{ id }}</button>
+    <button onclick="location.href = '/'" type="button" style="margin-left: 10px; margin-right: 10px;" class="btn btn-outline-secondary">Retourner sur le site</button>
+    <li class="nav-item">
+        {% if active == "home" %}
+            <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
+        {% else %}
+            <a class="nav-link" aria-current="page" href="/dashboard">Dashboard</a>
+        {% endif %}
+    </li>
+    <li class="nav-item">
+        {% if active == "log" %}
+            <a class="nav-link active" href="/logs">Logs</a>
+        {% else %}
+            <a class="nav-link" href="/logs">Logs</a>
+        {% endif %}
+    </li>
+    <li class="nav-item">
+        {% if active == "contact"%}
+            <a class="nav-link active" href="/formcontact">formulaire de contact</a>
+        {% else %}
+            <a class="nav-link" href="/formcontact">formulaire de contact</a>
+        {% endif %}
+    </li>
+    <li calss="nav-item">
+        {% if active == "crud" %}
+            <a class="nav-link active" href="/spacruds">CRUDs</a>
+        {% else %}
+            <a class="nav-link" href="/spacruds">CRUDs</a>
+        {% endif %}
+    </li>
+    <li calss="nav-item">
+        {% if active == "api" %}
+            <a class="nav-link active" href="/apimanagement">API</a>
+        {% else %}
+            <a class="nav-link" href="/apimanagement">API</a>
+        {% endif %}
+    </li>
+    {% if active == "crud" %}
+        <form action="/search" method="post" class="d-flex" role="search">
+          <input type="hidden" id="searchtable" name="searchtable" value={{ crud }}>
+          <input class="form-control me-2" name="searchrequest" value="" type="search" placeholder="Rechercher" aria-label="Search">
+          <button class="btn btn-outline-info" type="submit"><img src="/Icones/search.png" alt="Rechercher" title="Rechercher" height="25px" width="25px"></button>
+        </form>
+    {% endif %}
+
+</ul>

@@ -1,0 +1,28 @@
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Informations media platform</th>
+      <th scope="col">Accès</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <form action="/updatemediaplatform" method="post">
+      <input type="hidden" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ media_platform_id }}">
+      <tr>
+        <td>Identifiant BDD : {{ media_platform_id }}</td>
+        <td>Refusé</td>
+      </tr>
+      <tr>
+        <td>name : {{ name }}</td>
+        <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+      </tr>
+      <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
+    </form>
+  </tbody>
+</table>
+<form action="/deletemediaplatform" method="post">
+  <input type="hidden" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ media_platform_id }}">
+  <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+</form>

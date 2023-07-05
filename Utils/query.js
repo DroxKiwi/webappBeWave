@@ -29,7 +29,7 @@ async function select(rows, table){
         await pool.query(`SELECT ${rows} FROM ${table}`)
         .then((results, error) => {
             if (error){
-                throw error
+                throw error 
             }
             else {
                 answer = results.rows

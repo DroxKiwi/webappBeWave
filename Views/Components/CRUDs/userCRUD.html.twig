@@ -1,0 +1,60 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+Ajouter
+</button>
+
+<table class="table">
+<thead>
+    <tr>
+    <th scope="col">user_id</th>
+    <th scope="col">Pseudo</th>
+    <th scope="col">Email</th>
+    <th scope="col">Role</th>
+    <th scope="col"></th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for user in users %}
+    <tr class="{% if user.role == 'ROLE_ADMIN' %} table-info {% else %} table-secondary {% endif %}">
+        <td>{{ user.user_id }}</td>
+        <td>{{ user.pseudo }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.role }}</td>
+        <td>
+        <form action="/showuser" method="post"> 
+            <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
+            <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form action="/adduser" method="post">
+        <input type="text" class="form-control" id="pseudo" name="pseudo" placeholder="pseudo" required>
+        <input type="text" class="form-control" id="email" name="email" placeholder="email" required>
+        <input type="text" class="form-control" id="password" name="password" placeholder="password" required>
+        <select id="role" name="role" required>
+            <option value="ROLE_USER">Utilisateur</option>
+            <option value="ROLE_ADMIN">Administrateur</option>
+        </select>
+        <button type="submit" class="btn btn-outline-info">Valider</button>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+    </div>
+</div>
+</div>

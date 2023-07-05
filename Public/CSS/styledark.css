@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(36, 36, 36);
+  background-color: #242424;
   color: rgb(214, 214, 214);
   font-family: system-ui;
 }
@@ -18,13 +18,4 @@ td {
 
 a {
   color: rgb(131, 131, 131) !important;
-}
-
-.applogo {
-  height: 48px;
-  width: 48px;
-}
-
-.appname {
-  text-shadow: 2px 2px 5px rgb(255, 0, 149);
 }/*# sourceMappingURL=styledark.css.map */

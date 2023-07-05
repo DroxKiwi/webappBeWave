@@ -20,7 +20,8 @@ console.log(`Port listening on ${process.env.PORT}`)
 const appRoute = require("./Routes/app")
 const adminRoute = require("./Routes/dashboard")
 const apiRoute = require("./Routes/api")
-const crudRoute = require("./Routes/cruds")
+//const crudRoute = require("./Routes/cruds")
+const spacrudRoute = require("./Routes/spacruds")
 
 app.use(cors())
 app.use(express.json())
@@ -48,7 +49,8 @@ app.use(
 appRoute(app)
 adminRoute(app)
 apiRoute(app)
-crudRoute(app)
+//crudRoute(app)
+spacrudRoute(app)
 
 app.listen(port, () => {
     console.log(`Dev app listening on port ${port}`)

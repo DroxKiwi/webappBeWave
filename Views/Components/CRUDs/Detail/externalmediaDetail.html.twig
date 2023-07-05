@@ -1,0 +1,51 @@
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Informations utilisateur</th>
+      <th scope="col">Accès</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <form action="/updateexternalmedia" method="post">
+      <input type="hidden" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media_id }}">
+      <tr>
+        <td>Identifiant BDD : {{ external_media_id }}</td>
+        <td>Refusé</td>
+      </tr>
+      <tr>
+        <td>url : {{ url }}</td>
+        <td><input type="text" class="form-control" id="url" name="url" value="{{ url }}" required></td>
+      </tr>
+      <tr>
+        <td>plateforme de média :
+          {% for media_platform in media_platforms %}
+            {% if media_platform.media_platform_id == media_platform_id %}
+              {{ media_platform.name }}
+            {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          <select name="media_platform_id" class="form-control">
+            <option selected="selected" value="{{ media_platform_id }}">
+              {% for media_platform in media_platforms %}
+                {% if media_platform.media_platform_id == media_platform_id %}
+                  {{ media_platform.name }}
+                {% endif %}
+              {% endfor %}
+            </option>
+            {% for media_platform in media_platforms %}
+              <option value="{{ media_platform.media_platform_id }}">{{ media_platform.name }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
+    </form>
+  </tbody>
+</table>
+<form action="/deleteexternalmedia" method="post">
+  <input type="hidden" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media_id }}">
+  <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+</form>

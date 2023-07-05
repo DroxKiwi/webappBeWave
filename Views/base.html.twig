@@ -9,6 +9,7 @@
 
     <!-- Bootstrap CSS -->
     {% block stylesheets %}
+        <link rel="stylesheet" href="/CSS/stylebase.css"/>
         <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css" />
         {% if modepreference == "lightmode" %}
             <link rel="stylesheet" href="/CSS/stylelight.css"/>
@@ -18,7 +19,6 @@
     {% endblock %}
 </head>
 <body>
-    {% include 'Components/header.html.twig' %}
 
     {% block content %}{% endblock %}
 

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+{% set modepreference = preference %}
+
+<!DOCTYPE html>
+
+<html>
+  {% block content %}
+    <div class="container-fluid text-center">
+      <h2>
+        Gestion des CRUDs
+      </h2>
+
+      {% include 'Components/headerDashboard.html.twig' %}
+      {% include 'Components/headerCRUD.html.twig' %}
+
+        {% if crud == "all" %}
+            {% include "/Components/CRUDs/allCRUD.html.twig" %}
+        {% elseif crud == "user" %}
+            {% include "/Components/CRUDs/userCRUD.html.twig" %}
+        {% elseif crud == "userDetail" %}
+            {% include "/Components/CRUDs/Detail/userDetail.html.twig" %}
+        {% elseif crud == "artist" %}
+            {% include "/Components/CRUDs/artistCRUD.html.twig" %}
+        {% elseif crud == "artistDetail" %}
+            {% include "/Components/CRUDs/Detail/artistDetail.html.twig" %}
+        {% elseif crud == "city" %}
+            {% include "/Components/CRUDs/cityCRUD.html.twig" %}
+        {% elseif crud == "cityDetail" %}
+            {% include "/Components/CRUDs/Detail/cityDetail.html.twig" %}
+        {% elseif crud == "event" %}
+            {% include "/Components/CRUDs/eventCRUD.html.twig" %}
+        {% elseif crud == "eventDetail" %}
+            {% include "/Components/CRUDs/Detail/eventDetail.html.twig" %}
+        {% elseif crud == "external_media" %}
+            {% include "/Components/CRUDs/externalmediaCRUD.html.twig" %}
+        {% elseif crud == "external_mediaDetail" %}
+            {% include "/Components/CRUDs/Detail/externalmediaDetail.html.twig" %}
+        {% elseif crud == "image" %}
+            {% include "/Components/CRUDs/imageCRUD.html.twig" %}
+        {% elseif crud == "imageDetail" %}
+            {% include "/Components/CRUDs/Detail/imageDetail.html.twig" %}
+        {% elseif crud == "mp" %}
+            {% include "/Components/CRUDs/mpCRUD.html.twig" %}
+        {% elseif crud == "mpDetail" %}
+            {% include "/Components/CRUDs/Detail/mpDetail.html.twig" %}
+        {% elseif crud == "place" %}
+            {% include "/Components/CRUDs/placeCRUD.html.twig" %}
+        {% elseif crud == "placeDetail" %}
+            {% include "/Components/CRUDs/Detail/placeDetail.html.twig" %}
+        {% endif %}
+
+      {% include 'Components/sidemenu.html.twig' %}
+    </div>
+
+  {% endblock %}
+</html>

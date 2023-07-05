@@ -1,0 +1,32 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Informations utilisateur</th>
+      <th scope="col">Accès</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <form action="/updatecity" method="post">
+      <input type="hidden" class="form-control" id="city_id" name="city_id" value="{{ city_id }}">
+      <tr>
+        <td>Identifiant BDD : {{ city_id }}</td>
+        <td>Refusé</td>
+      </tr>
+      <tr>
+        <td>name : {{ name }}</td>
+        <td><input type="text" class="form-control" id="name" name="name" value="{{ name }}" required></td>
+      </tr>
+      <tr>
+        <td>postal code : {{ postcode }}</td>
+        <td><input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ postcode }}"></td>
+      </tr>
+      <tr>
+        <button type="submit" class="btn btn-outline-warning">Enregistrer modificaiton</button>
+    </form>
+  </tbody>
+</table>
+<form action="/deletecity" method="post">
+  <input type="hidden" class="form-control" id="city_id" name="city_id" value="{{ city_id }}">
+  <button type="submit" class="btn btn-outline-danger">Supprimer</button>
+</form>

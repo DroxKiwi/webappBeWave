@@ -1,0 +1,100 @@
+
+<table class="table">
+<thead>
+    <tr>
+    <th scope="col">Informations utilisateur</th>
+    <th scope="col">Accès</th>
+    </tr>
+</thead>
+
+<tbody>
+    <form action="/updateuser" method="post">
+    <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
+    <input type="hidden" class="form-control" id="password" name="password" value="">
+    <tr>
+        <td>Identifiant BDD : {{ user_id }}</td>
+        <td>Refusé</td>
+    </tr>
+    <tr>
+        <td>Pseudonyme : {{ pseudo }}</td>
+        <td><input type="text" class="form-control" id="pseudo" name="pseudo" value="{{ pseudo }}" required></td>
+    </tr>
+    <tr>
+        <td>Email : {{ email }}</td>
+        <td><input type="text" class="form-control" id="email" name="email" value="{{ email }}" required></td>
+    </tr>
+    <tr>
+        <td>Token : {{ token }}</td>
+        <td>Refusé</td>
+    </tr>
+    <tr>
+        <td>Role : {{ role }}</td>
+        <td>
+        <select id="role" name="role" required>
+            <option value="ROLE_USER">Utilisateur</option>
+            <option value="ROLE_ADMIN">Administrateur</option>
+        </select>
+        </td>
+    </tr>
+        <button type="submit" class="btn btn-outline-warning">Enregistrer</button>
+    </form>
+    <form action="/resetpassworduser" method="post">
+    <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
+    <tr>
+        <td>Mot de passe</td>
+        <td><button type="submit" class="btn btn-outline-danger">Reinitialiser</button></td>
+    </tr>
+    </form>
+</tbody>
+</table>
+
+<form action="/deleteuser" method="post">
+<input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
+<button type="submit" class="btn btn-outline-danger">Supprimer utilisateur</button>
+</form>
+
+
+{% if betatesterInfo != "" %}
+<table class="table">
+<thead>
+    <tr>
+        Informations à propos du Bêta testeur :
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        {% for info in betatesterInfo %}
+        <td>
+            {{ info }}
+        </td>
+        {% endfor %}
+    </tr>
+</tbody>
+<form action="/betatesterDelete" method="post">
+    <input type="hidden" class="form-control" id="nonselfupdate" name="nonselfupdate" value="true">
+    <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user_id }}">
+    <input type="hidden" class="form-control" id="userPseudo" name="userPseudo" value="{{ pseudo }}">
+    <button type="submit" class="btn btn-outline-warning">Retirer</button>
+</form>
+{% endif %}
+
+
+
+<table class="table">
+<thead>
+    <tr>
+        logs :
+    </tr>
+</thead>
+<tbody>
+    {% for logs in userLogs %}
+    <tr>
+        <td>
+
+        {% for log in logs %}
+            {{ log }}
+        {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>

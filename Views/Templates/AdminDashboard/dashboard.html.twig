@@ -5,28 +5,12 @@
 
 <html>
   {% block content %}
-        <div class="container-fluid text-center">
-          <h2>
-            Dashboard administrateur
-          </h2>
+    <div class="container-fluid text-center">
+      <h2>
+        Dashboard administrateur
+      </h2>
 
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="/dashboard">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/logs">Logs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/formcontact">formulaire de contacts</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/showcruds">CRUDs</a>
-            </li>
-            <li calss="nav-item">
-              <a class="nav-link" href="/apimanagement">API</a>
-            </li>
-          </ul>
+      {% include 'Components/headerDashboard.html.twig' %}
 
       {% include 'Components/sidemenu.html.twig' %}
     

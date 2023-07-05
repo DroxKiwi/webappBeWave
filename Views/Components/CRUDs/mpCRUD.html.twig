@@ -1,0 +1,54 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+Ajouter
+</button>
+
+
+
+
+<table class="table">
+<thead>
+    <tr>
+    <th scope="col">mediaplatform_id</th>
+    <th scope="col">name</th>
+    <th scope="col"></th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for MP in MPs %}
+    <tr class="table-info ">
+        <td>{{ MP.media_platform_id }}</td>
+        <td>{{ MP.name }}</td>
+        <td>
+        <form action="/showmediaplatform" method="post"> 
+            <input type="hidden" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ MP.media_platform_id }}">
+            <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form action="/addmediaplatform" method="post">
+        <input type="text" class="form-control" id="name" name="name" placeholder="name" required>
+        <button type="submit" class="btn btn-outline-info">Valider</button>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+    </div>
+</div>
+</div>

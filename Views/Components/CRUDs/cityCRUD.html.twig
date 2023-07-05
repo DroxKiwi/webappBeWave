@@ -1,0 +1,54 @@
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">
+Ajouter
+</button>
+
+<table class="table">
+<thead>
+    <tr>
+    <th scope="col">city_id</th>
+    <th scope="col">name</th>
+    <th scope="col">postal code</th>
+    <th scope="col"></th>
+    </tr>
+</thead>
+
+
+<tbody>
+    {% for city in cities %}
+    <tr class="table-info ">
+        <td>{{ city.city_id }}</td>
+        <td>{{ city.name }}</td>
+        <td>{{ city.postal_code }}</td>
+        <td>
+        <form action="/showcity" method="post"> 
+            <input type="hidden" class="form-control" id="city_id" name="city_id" value="{{ city.city_id }}">
+            <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+        </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form action="/addcity" method="post">
+        <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
+        <input type="text" class="form-control" id="postalcode" name="postalcode" placeholder="code postale (0001 à 99999)" required="true">
+        <button type="submit" class="btn btn-outline-info">Valider</button>
+        </form>
+    </div>
+    <div class="modal-footer">
+    </div>
+    </div>
+</div>
+</div>
