@@ -21,7 +21,7 @@
               {% if id == "unauthentificated" %}
                 <h3>Vous devez créer un compte ou vous connecter pour nous contacter !</h3>
               {% else %}
-                <form action="/contact" method="post">
+                <form action="/contact" method="post" enctype="application/x-www-form-urlencoded">
                   <br>
                   <input type="hidden" name="_csrf" value="{{csrfToken}}">
                   <input type="hidden" class="form-control" id="sent" name="sent" value="true">

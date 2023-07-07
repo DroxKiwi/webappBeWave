@@ -8,6 +8,7 @@
 
   <tbody>
     <form action="/updateartist" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <input type="hidden" class="form-control" id="artist_id" name="artist_id" value="{{ artist_id }}">
       <tr>
         <td>Identifiant BDD : {{ id }}</td>
@@ -42,6 +43,7 @@
   </tbody>
 </table>
 <form action="/deleteartist" method="post">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" class="form-control" id="artist_id" name="artist_id" value="{{ artist_id }}">
   <button type="submit" class="btn btn-outline-danger">Supprimer</button>
 </form>

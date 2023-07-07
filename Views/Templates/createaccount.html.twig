@@ -9,7 +9,7 @@
         {% include 'Components/header.html.twig' %}
         <div class="row justify-content-center">
           <div class="col-6">
-            <form action="/userCreate" method="post">
+            <form action="/userCreate" method="post" enctype="application/x-www-form-urlencoded">
               <input type="hidden" name="_csrf" value="{{csrfToken}}">
               <input type="hidden" id="sent" name="sent" value="true"/>
               <div class="mb-3">

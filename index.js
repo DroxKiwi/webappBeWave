@@ -22,13 +22,11 @@ const adminRoute = require("./Routes/dashboard")
 const apiRoute = require("./Routes/api")
 const spacrudRoute = require("./Routes/spacruds")
 
-
 app.use(cors())
 app.use(express.json())
 app.use(cookieParser())
 // used to parse form
 app.use(getRolesMiddleware)
-
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(csrf({ cookie: true }))
 

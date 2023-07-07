@@ -1,5 +1,16 @@
 const pool = require("../Utils/db")
 
+const sanitizer = require('sanitizer');
+
+const SELECT = "SELECT"
+const FROM = "FROM"
+const WHERE = "WHERE"
+const INSERT = "INSERT"
+const UPDATE = "UPDATE"
+const LIKE = "LIKE"
+const INTO = "INTO"
+const SET = "SET"
+const DELETE = "DELETE"
 // Used to concatenate string of values for a query
 /**
  * The function prepares an array of values for use in a SQL query by adding quotes around non-null
@@ -38,13 +49,14 @@ function prepareValues(values){
  * @param table - The `table` parameter is the name of the table from which you want to select rows.
  * @returns the selected rows from the specified table.
  */
+
 async function select(rows, table){
     if (!rows || !table) {
         throw new Error('Input parameters cannot be null, undefined, or empty.');
     }
     let answer = ""
     try {
-        await pool.query(`SELECT ${rows} FROM ${table}`)
+        await pool.query(`${SELECT} ${rows} ${FROM} ${table}`)
         .then((results, error) => {
             if (error){
                 throw error 
@@ -80,7 +92,7 @@ async function select(rows, table){
 async function selectEqual(rows, table, rowsToCompare, valueToCompare){
     let answer = ""
     try {
-        await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} = '${valueToCompare}'`)
+        await pool.query(`${SELECT} ${rows} ${FROM} ${table} ${WHERE} ${rowsToCompare} = '${valueToCompare}'`)
         .then(results => {
             answer = results.rows
         })
@@ -105,10 +117,10 @@ function prepareSeveralLike(rowsToPrepare, model, operator){
     let preparedQuery = ""
     for (let i = 0; i < rowsToPrepare.length; i++){
         if (i < rowsToPrepare.length-1){
-            preparedQuery+=rowsToPrepare[i]+' '+'LIKE'+' '+"'"+model+"'"+' '+operator+' '
+            preparedQuery+=rowsToPrepare[i]+' '+LIKE+' '+"'"+model+"'"+' '+operator+' '
         }
         else {
-            preparedQuery+=rowsToPrepare[i]+' '+"LIKE"+' '+"'"+model+"'"
+            preparedQuery+=rowsToPrepare[i]+' '+LIKE+' '+"'"+model+"'"
         }
     }
     return preparedQuery
@@ -140,7 +152,7 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
         const preparedQuery = prepareSeveralLike(rowsToCompare, model, operator)
         let answer = ""
         try {
-            await pool.query(`SELECT ${rows} FROM ${table} WHERE ${preparedQuery}`)
+            await pool.query(`${SELECT} ${rows} ${FROM} ${table} ${WHERE} ${preparedQuery}`)
             .then((results, error) => {
                 if (error){
                     throw error
@@ -158,7 +170,7 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
     else {
         let answer = ""
         try {
-            await pool.query(`SELECT ${rows} FROM ${table} WHERE ${rowsToCompare} LIKE '${valueToCompare}'`)
+            await pool.query(`${SELECT} ${rows} ${FROM} ${table} ${WHERE} ${rowsToCompare} ${LIKE} '${valueToCompare}'`)
             .then((results, error) => {
                 if (error){
                     throw error
@@ -191,7 +203,7 @@ async function selectLike(rows, table, rowsToCompare, valueToCompare, several = 
 async function insert(rows, table, values){
     try {
         const preparedValues = prepareValues(values)
-        const answer = await pool.query(`INSERT INTO ${table} ${rows} VALUES ${preparedValues} RETURNING *`)
+        const answer = await pool.query(`${INSERT} ${INTO} ${table} ${rows} VALUES ${preparedValues} RETURNING *`)
         return answer
     }
     catch(err){
@@ -217,10 +229,10 @@ async function insert(rows, table, values){
 async function update(row, table, value, rowToCompare, valueToCompare){
     try {
         if (value == "NULL"){
-            await pool.query(`UPDATE ${table} SET ${row} = ${value} WHERE ${rowToCompare} = '${valueToCompare}'`)
+            await pool.query(`${UPDATE} ${table} ${SET} ${row} = ${value} ${WHERE} ${rowToCompare} = '${valueToCompare}'`)
         }
         else {
-            await pool.query(`UPDATE ${table} SET ${row} = '${value}' WHERE ${rowToCompare} = '${valueToCompare}'`)
+            await pool.query(`${UPDATE} ${table} ${SET} ${row} = '${value}' ${WHERE} ${rowToCompare} = '${valueToCompare}'`)
         }
     }
     catch(err){ 
@@ -238,7 +250,7 @@ async function update(row, table, value, rowToCompare, valueToCompare){
  */
 async function remove(table, rowToCompare, valueToCompare){
     try {
-        await pool.query(`DELETE FROM ${table} WHERE ${rowToCompare} = '${valueToCompare}'`)
+        await pool.query(`${DELETE} ${FROM} ${table} ${WHERE} ${rowToCompare} = '${valueToCompare}'`)
     }
     catch(err){
         throw err

@@ -82,6 +82,7 @@ Ajouter
         <td>{{ event.price }}</td>
         <td>
         <form action="/showevent" method="post"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <input type="hidden" class="form-control" id="event_id" name="event_id" value="{{ event.event_id }}">
             <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
@@ -103,6 +104,7 @@ Ajouter
     </div>
     <div class="modal-body">
         <form action="/addEvent" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="hidden" id="author_name" name="author_name" value="{{ id }}">
         <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
         <input type="text" class="form-control" id="description" name="description" placeholder="Description">

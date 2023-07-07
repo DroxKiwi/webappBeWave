@@ -8,6 +8,7 @@
 
   <tbody>
     <form action="/updateplace" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
       <tr>
         <td>Identifiant BDD : {{ place_id }}</td>
@@ -77,6 +78,7 @@
   </tbody>
 </table>
 <form action="/deleteplace" method="post">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" class="form-control" id="place_id" name="place_id" value="{{ place_id }}">
   <button type="submit" class="btn btn-outline-danger">Supprimer</button>
 </form>

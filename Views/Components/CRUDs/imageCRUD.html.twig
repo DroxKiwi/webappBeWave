@@ -26,6 +26,7 @@ Ajouter
         <td>{{ image.extension }}</td>
         <td>
         <form action="/showimage" method="post"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">    
             <input type="hidden" class="form-control" id="image_id" name="image_id" value="{{ image.image_id }}">
             <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
@@ -44,10 +45,10 @@ Ajouter
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <form action="/addimage" method="post" enctype="multipart/form-data">
-        <h3>Télécharger une image</h3>
-        <input type="file" class="form-control" id="image" name="image" required>
-        <button type="submit" class="btn btn-outline-info">Valider</button>
+        <form action="/addimage?_csrf={{csrfToken}}" method="post" enctype="multipart/form-data">
+            <h3>Télécharger une image</h3>
+            <input type="file" class="form-control" id="image" name="image" required>
+            <button type="submit" class="btn btn-outline-info">Valider</button>
         </form>
     </div>
     <div class="modal-footer">

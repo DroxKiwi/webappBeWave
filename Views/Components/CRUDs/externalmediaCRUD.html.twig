@@ -25,6 +25,7 @@ Ajouter
         <td>{{ external_media.media_platform_name }}</td>
         <td>
         <form action="/showexternalmedia" method="post"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <input type="hidden" class="form-control" id="external_media_id" name="external_media_id" value="{{ external_media.external_media_id }}">
             <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
@@ -46,6 +47,7 @@ Ajouter
     </div>
     <div class="modal-body">
         <form action="/addexternalmedia" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="text" class="form-control" id="url" name="url" placeholder="url" required>
         <select name="media_platform_id" class="form-control">
             <option selected="selected" value="NULL">Selectionner une plateforme de média (laisser si aucune)</option>

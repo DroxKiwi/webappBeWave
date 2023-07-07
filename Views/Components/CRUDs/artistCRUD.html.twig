@@ -32,6 +32,7 @@ Ajouter
         <td>{{ artist.description }}</td>
         <td>
         <form action="/showartist" method="post"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <input type="hidden" class="form-control" id="artist_id" name="artist_id" value="{{ artist.artist_id }}">
             <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
@@ -53,6 +54,7 @@ Ajouter
     </div>
     <div class="modal-body">
         <form action="/addartist" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
         <input type="text" class="form-control" id="description" name="description" placeholder="Description" required="true">
         <select name="image_id" class="form-control">

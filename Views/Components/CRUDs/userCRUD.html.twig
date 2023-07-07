@@ -23,6 +23,7 @@ Ajouter
         <td>{{ user.role }}</td>
         <td>
         <form action="/showuser" method="post"> 
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <input type="hidden" class="form-control" id="user_id" name="user_id" value="{{ user.user_id }}">
             <button type="submit" class="btn btn-outline-info"><img src="/Icones/more.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
@@ -43,6 +44,7 @@ Ajouter
     </div>
     <div class="modal-body">
         <form action="/adduser" method="post">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="text" class="form-control" id="pseudo" name="pseudo" placeholder="pseudo" required>
         <input type="text" class="form-control" id="email" name="email" placeholder="email" required>
         <input type="text" class="form-control" id="password" name="password" placeholder="password" required>

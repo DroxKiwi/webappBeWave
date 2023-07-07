@@ -25,7 +25,8 @@
               <button type="button" style="margin-top: 10px;" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#passwordModal">Modifier</button>
               <br>
               {% if betatesterInfo %}
-                <form action="/betatesterDelete" method="post">
+                <form action="/betatesterDelete" method="post" enctype="application/x-www-form-urlencoded">
+                  <input type="hidden" name="_csrf" value="{{csrfToken}}">
                   <p>Vous êtes Bêta testeur</p>
                   <ul>
                   {% for infos in betatesterInfo %}
@@ -52,7 +53,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="/updateaccount" method="post">
+                      <form action="/updateaccount" method="post" enctype="application/x-www-form-urlencoded">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="pseudo" class="form-label">Entrez votre nouveau pseudo</label>
@@ -78,7 +79,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="/updateaccount" method="post">
+                      <form action="/updateaccount" method="post" enctype="application/x-www-form-urlencoded">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="email" class="form-label">Entrez votre nouveau mail</label>
@@ -104,7 +105,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="/updateaccount" method="post">
+                      <form action="/updateaccount" method="post" enctype="application/x-www-form-urlencoded">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="password" class="form-label">Entrez votre nouveau mot de passe</label>
@@ -130,7 +131,7 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                      <form action="/deteleaccount" method="post">
+                      <form action="/deteleaccount" method="post" enctype="application/x-www-form-urlencoded">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <button type="submit" class="btn btn-outline-success">Confirmer</button>
                       </form>

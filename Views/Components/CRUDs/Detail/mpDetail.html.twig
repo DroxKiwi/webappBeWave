@@ -9,6 +9,7 @@
 
   <tbody>
     <form action="/updatemediaplatform" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <input type="hidden" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ media_platform_id }}">
       <tr>
         <td>Identifiant BDD : {{ media_platform_id }}</td>
@@ -23,6 +24,7 @@
   </tbody>
 </table>
 <form action="/deletemediaplatform" method="post">
+  <input type="hidden" name="_csrf" value="{{csrfToken}}">
   <input type="hidden" class="form-control" id="media_platform_id" name="media_platform_id" value="{{ media_platform_id }}">
   <button type="submit" class="btn btn-outline-danger">Supprimer</button>
 </form>

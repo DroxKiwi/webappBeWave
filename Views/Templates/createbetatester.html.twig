@@ -16,7 +16,7 @@
           <br>
           <div class="row">
             <div class="col">
-              <form action="/suscribe" method="post">
+              <form action="/suscribe" method="post" enctype="application/x-www-form-urlencoded">
                 <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
                 <input type="hidden" class="form-control" id="suscribeBeta" name="suscribeBeta" value="true">

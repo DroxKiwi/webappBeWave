@@ -33,7 +33,8 @@ async function search(req, res){
             "preference": preferencesTab[0].preferences[0],
             "users": await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR'),
             "active": "crud",
-            "crud": searchtable
+            "crud": searchtable,
+            "csrfToken": req.csrfToken()
         }
         switch (searchtable) {
             case 'all': 
@@ -92,7 +93,8 @@ async function showUsers(req, res){
             "preference": preferencesTab[0].preferences[0],
             "users": await userCRUD.get(),
             "active": "crud",
-            "crud": "user"
+            "crud": "user",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -119,7 +121,8 @@ async function showDetailUser(req, res){
             "userLogs": await logCRUD.get('*', 'user_id', user_id),
             "betatesterInfo": await betatesterCRUD.get('*', 'user_id', user_id),
             "active": "crud",
-            "crud": "userDetail"
+            "crud": "userDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -136,7 +139,7 @@ async function addUser(req, res){
         const message = "Create a user -> pseudo : "+pseudo+", email : "+email+", role : "+role
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.create(pseudo, email, password, role)
-        res.redirect(302, '/showcruduser')
+        res.redirect(302, '/spauser')
     }
     else {
         res.redirect(302, '/')
@@ -150,7 +153,7 @@ async function deleteUser(req, res){
         message = "Delete an user : "+email
         logger.newLog(req.cookies.userToken.token, message)
         userCRUD.remove(user_id)
-        res.redirect(302, '/showcruduser')
+        res.redirect(302, '/spauser')
     }
     else {
         res.redirect(302, "/")
@@ -165,7 +168,7 @@ async function updateUser(req, res){
         const message = "Update a user : "+pseudo 
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.update(user_id, pseudo, email, password, role)
-        res.redirect(302, '/showcruduser')
+        res.redirect(302, '/spauser')
     }
     else {
         res.redirect(302, '/')
@@ -182,7 +185,7 @@ async function resetPasswordUser(req, res){
         message = "Reset a password for : "+pseudo+" new password : "+password
         logger.newLog(req.cookies.userToken.token, message)
         await userCRUD.update(user_id, '', '', password, '', '')
-        res.redirect(302, '/showcruduser')
+        res.redirect(302, '/spauser')
     }
 }
 
@@ -198,7 +201,8 @@ async function showArtists(req, res){
             "artists": await artistCRUD.get(),
             "images": await imageCRUD.get(),
             "active": "crud",
-            "crud": "artist"
+            "crud": "artist",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -222,7 +226,8 @@ async function showDetailArtist(req, res){
             "image_id": artistToShow[0].image_id,
             "images": await imageCRUD.get(),
             "active": "crud",
-            "crud": "artistDetail"
+            "crud": "artistDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -235,7 +240,7 @@ async function addArtist(req, res){
     const { name, description, image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await artistCRUD.create(name, description, image_id)
-        res.redirect(302, '/showcrudartist')
+        res.redirect(302, '/spaartist')
     }
 }
 
@@ -243,7 +248,7 @@ async function deleteArtist(req, res){
     const { artist_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await artistCRUD.remove(artist_id)
-        res.redirect(302, '/showcrudartist')
+        res.redirect(302, '/spaartist')
     }
 }
 
@@ -253,7 +258,7 @@ async function updateArtist(req, res){
         const message = "Update an artist : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await artistCRUD.update(artist_id, name, description, image_id)
-        res.redirect(302, '/showcrudartist')
+        res.redirect(302, '/spaartist')
     }
 }
 
@@ -268,7 +273,8 @@ async function showCities(req, res){
             "preference": preferencesTab[0].preferences[0],
             "cities": await cityCRUD.get(),
             "active": "crud",
-            "crud": "city"
+            "crud": "city",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -290,7 +296,8 @@ async function showDetailCity(req, res){
             "name": cityToShow[0].name,
             "postcode": cityToShow[0].postal_code,
             "active": "crud",
-            "crud": "cityDetail"
+            "crud": "cityDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -303,7 +310,7 @@ async function addCity(req, res){
     const { name, postalcode } = req.body
     if (req.role == "ROLE_ADMIN"){
         await cityCRUD.create(name, postalcode)
-        res.redirect(302, '/showcrudcity')
+        res.redirect(302, '/spacity')
     }
 }
 
@@ -312,7 +319,7 @@ async function deleteCity(req, res){
     const { city_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await cityCRUD.remove(city_id)
-        res.redirect(302, '/showcrudcity')
+        res.redirect(302, '/spacity')
     }
 }
 
@@ -322,7 +329,7 @@ async function updateCity(req, res){
         const message = "Update a city : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await cityCRUD.update(city_id, name, postal_code)
-        res.redirect(302, '/showcrudcity')
+        res.redirect(302, '/spacity')
     }
 }
 
@@ -345,7 +352,8 @@ async function showEvents(req, res){
             "events_external_medias": await eventexternalMediaCRUD.get(),
             "external_medias": await externalMediaCRUD.get(),
             "active": "crud",
-            "crud": "event"
+            "crud": "event",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -398,7 +406,8 @@ async function showDetailEvent(req, res){
             "external_medias_id": await eventexternalMediaCRUD.get('external_media_id', 'event_id', event_id),
             "external_medias": await externalMediaCRUD.get(),
             "active": "crud",
-            "crud": "eventDetail"
+            "crud": "eventDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -431,7 +440,7 @@ async function addEvent(req, res){
         for(let i = 0; i < external_medias.length; i++){
             await eventexternalMediaCRUD.create(event_id_created, external_medias[i])
         }
-        res.redirect(302, '/showcrudevent')
+        res.redirect(302, '/spaevent')
     }
 }
 
@@ -455,7 +464,7 @@ async function deleteEvent(req, res){
             await eventexternalMediaCRUD.remove(answer_event_externalMedia_id[i].event_external_media_id)
         }
         await eventCRUD.remove(event_id)
-        res.redirect(302, '/showcrudevent')
+        res.redirect(302, '/spaevent')
     }
 }
 
@@ -503,7 +512,7 @@ async function updateEvent(req, res){
         }
         const message = "Update an event : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        res.redirect(302, '/showcrudevent')
+        res.redirect(302, '/spaevent')
     }
 }
 
@@ -519,7 +528,8 @@ async function showExternalMedias(req, res){
             "external_medias": await externalMediaCRUD.get(),
             "media_platforms": await MPCRUD.get(),
             "active": "crud",
-            "crud": "external_media"
+            "crud": "external_media",
+            "csrfToken": req.csrfToken()
         }
         for (let i = 0; i < templateVars.external_medias.length; i++){
             if (templateVars.external_medias[i].media_platform_id != null){
@@ -548,7 +558,8 @@ async function showDetailExternalMedia(req, res){
             "media_platform_id": externalMediaToShow[0].media_platform_id,
             "media_platforms": await MPCRUD.get(),
             "active": "crud",
-            "crud": "external_mediaDetail"
+            "crud": "external_mediaDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -561,7 +572,7 @@ async function addExternalMedia(req, res){
     const { url, media_platform_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await externalMediaCRUD.create(url, media_platform_id)
-        res.redirect(302, '/showcrudexternalmedia')
+        res.redirect(302, '/spaexternalmedia')
     }
 }
 
@@ -569,7 +580,7 @@ async function deleteExternalMedia(req, res){
     const { external_media_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await externalMediaCRUD.remove(external_media_id)
-        res.redirect(302, '/showcrudexternalmedia')
+        res.redirect(302, '/spaexternalmedia')
     }
 }
 
@@ -579,7 +590,7 @@ async function updateExternalMedia(req, res){
         const message = "Update an artist : "+url
         logger.newLog(req.cookies.userToken.token, message)
         await externalMediaCRUD.update(external_media_id, url, media_platform_id)
-        res.redirect(302, '/showcrudexternalmedia')
+        res.redirect(302, '/spaexternalmedia')
     }
 }
 
@@ -594,7 +605,8 @@ async function showImages(req, res){
             "preference": preferencesTab[0].preferences[0],
             "images": await imageCRUD.get(),
             "active": "crud",
-            "crud": "image"
+            "crud": "image",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -616,7 +628,8 @@ async function showDetailImage(req, res){
             "name": imageToShow[0].name,
             "extension": imageToShow[0].extension,
             "active": "crud",
-            "crud": "imageDetail"
+            "crud": "imageDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -629,7 +642,7 @@ async function addImage(req, res){
     if (req.role == "ROLE_ADMIN"){
         const { image } = req.files
         if (!image) {
-            res.send("Ce n'est pas une image !");
+            res.send("Aucune image trouvée !");
         }
         if (!(/^image/.test(image.mimetype))) {
             res.send("Ce n'est pas un format acceptable !");
@@ -639,11 +652,17 @@ async function addImage(req, res){
             res.send("Une image avec un nom identique existe déjà !")
         }
         else {
-            image.mv('./Public/Uploads/' + image.name)
             const ext = '.'+image.name.split('.')[1]
             const name = image.name.split('.')[0]
-            await imageCRUD.create(name, ext)
-            res.redirect(302, '/showcrudimage')
+            const toPreventWebShell = name+ext
+            if (!(/^image/.test(toPreventWebShell.mimetype))) {
+                res.send("Ce n'est pas un format acceptable !");
+            }
+            else {
+                image.mv('./Public/Uploads/' + toPreventWebShell)
+                await imageCRUD.create(name, ext)
+            }
+            res.redirect(302, '/spaimage')
         }
     }
     else {
@@ -654,13 +673,17 @@ async function addImage(req, res){
 async function deleteImage(req, res){
     const { image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        const answer_events = await eventCRUD.get('*', 'banner_id', image_id)
-        const answer_places = await placesCRUD.get('*', 'image_id', image_id)
+        const answer_eventsImage = await eventimageCRUD.get('*', 'image_id', image_id)
+        const answer_places = await placeCRUD.get('*', 'image_id', image_id)
+        const answer_artists = await artistCRUD.get('*', 'image_id', image_id)
         if (answer_places[0]){
             res.send("Des places sont liées à cette image ! Impossible de supprimer l'image")
         }
-        if (answer_events[0]){
+        else if (answer_eventsImage[0]){
             res.send("Des evenements sont liées à cette image ! Impossible de supprimer l'image")
+        }
+        else if (answer_artists[0]){
+            res.send("Des artistes sont liées à cette image ! Impossible de supprimer l'image")
         }
         else {
             try {
@@ -674,7 +697,7 @@ async function deleteImage(req, res){
             const ext = answer_name[0].extension
             const filePath = './Public/Uploads/'+name+ext
             fs.unlinkSync(filePath)
-            res.redirect(302, '/showcrudimage')
+            res.redirect(302, '/spaimage')
         }
     }
 }
@@ -704,7 +727,7 @@ async function updateImage(req, res){
         const message = "Update an image : "+name+extension
         logger.newLog(req.cookies.userToken.token, message)
         await imageCRUD.update(image_id, name, extension)
-        res.redirect(302, '/showcrudimage')
+        res.redirect(302, '/spaimage')
     }
 }
 
@@ -720,7 +743,8 @@ async function showMPs(req, res){
             "preference": preferencesTab[0].preferences[0],
             "MPs": await MPCRUD.get(),
             "active": "crud",
-            "crud": "mp"
+            "crud": "mp",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -741,7 +765,8 @@ async function showDetailMP(req, res){
             "media_platform_id": MPToShow[0].media_platform_id,
             "name": MPToShow[0].name,
             "active": "crud",
-            "crud": "mpDetail"
+            "crud": "mpDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -754,7 +779,7 @@ async function addMP(req, res){
     const { name } = req.body
     if (req.role == "ROLE_ADMIN"){
         await MPCRUD.create(name)
-        res.redirect(302, '/showcrudmediaplatform')
+        res.redirect(302, '/spamediaplatform')
     }
 }
 
@@ -766,7 +791,7 @@ async function deleteMP(req, res){
             res.send("Des media externes sont liés à cette plateform de média ! Impossible de supprimer la plateform de média")
         }
         await MPCRUD.remove(media_platform_id)
-        res.redirect(302, '/showcrudmediaplatform')
+        res.redirect(302, '/spamediaplatform')
     }
 }
 
@@ -776,7 +801,7 @@ async function updateMP(req, res){
         const message = "Update an image : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await MPCRUD.update(media_platform_id, name)
-        res.redirect(302, '/showcrudmediaplatform')
+        res.redirect(302, '/spamediaplatform')
     }
 }
 
@@ -793,7 +818,8 @@ async function showPlaces(req, res){
             "cities": await cityCRUD.get(),
             "images": await imageCRUD.get(),
             "active": "crud",
-            "crud": "place"
+            "crud": "place",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -820,7 +846,8 @@ async function showDetailPlace(req, res){
             "cities": await cityCRUD.get(),
             "images": await imageCRUD.get(),
             "active": "crud",
-            "crud": "placeDetail"
+            "crud": "placeDetail",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -833,7 +860,7 @@ async function addPlace(req, res){
     const { name, description, adress, image_id, city_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await placeCRUD.create(name, description, adress, image_id, city_id)
-        res.redirect(302, '/showcrudplace')
+        res.redirect(302, '/spaplace')
     }
 }
 
@@ -841,7 +868,7 @@ async function deletePlace(req, res){
     const { place_id } = req.body
     if (req.role == "ROLE_ADMIN"){
         await placeCRUD.remove(place_id)
-        res.redirect(302, '/showcrudplace')
+        res.redirect(302, '/spaplace')
     }
 }
 
@@ -851,7 +878,7 @@ async function updatePlace(req, res){
         const message = "Update a place : "+name
         logger.newLog(req.cookies.userToken.token, message)
         await placeCRUD.update(place_id, name, description, adress, image_id, city_id)
-        res.redirect(302, '/showcrudplace')
+        res.redirect(302, '/spaplace')
     }
 }
 
