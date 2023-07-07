@@ -5,7 +5,6 @@ const userCRUD = require("../CRUD/user")
 const contactCRUD = require("../CRUD/contact")
 const betatesterCRUD = require("../CRUD/betatesteur")
 
-
 // Redirection to the landingpage
 async function redirectHomepage(req, res){
     if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
@@ -54,7 +53,8 @@ async function redirectContact(req, res){
                 "active": "contact",
                 "id": req.pseudo,
                 "preference": preferencesTab[0].preferences[0],
-                "role": req.role
+                "role": req.role,
+                "csrfToken": req.csrfToken()
             }
             res.render('./Templates/contact.html.twig', { ...templateVars })
         }
@@ -81,7 +81,7 @@ async function redirectSuscribe(req, res){
         await betatesterCRUD.create(user_id, firstname, name, dob, adress, phone)
         res.redirect(302, '/')
     }
-    else {
+    else {        
         if (!consent){
             if (req.role == "ROLE_USER" || req.role == "ROLE_ADMIN"){
                 const userToken = req.cookies.userToken.token
@@ -90,7 +90,8 @@ async function redirectSuscribe(req, res){
                     "active": "suscribe",
                     "id": req.pseudo,
                     "preference": preferencesTab[0].preferences[0],
-                    "role": req.role
+                    "role": req.role,
+                    "csrfToken": req.csrfToken()
                 }
                 res.render('./Templates/suscribe.html.twig', { ...templateVars })
             }
@@ -110,14 +111,16 @@ async function redirectSuscribe(req, res){
                     "active": "suscribe",
                     "id": req.pseudo,
                     "preference": preferencesTab[0].preferences[0],
-                    "role": req.role
+                    "role": req.role,
+                    "csrfToken": req.csrfToken()
                 }
                 res.render('./Templates/createbetatester.html.twig', { ...templateVars })
             }
             else {
                 const templateVars = {
                     "active": "suscribe",
-                    "id": "unauthentificated"
+                    "id": "unauthentificated",
+                    "csrfToken": req.csrfToken()
                 }
                 res.render('./Templates/login.html.twig', { ...templateVars })
             }
@@ -168,7 +171,8 @@ async function redirectInformation(req, res){
             "preference": preferencesTab[0].preferences[0],
             "pseudo": answer_user_param[0].pseudo,
             "email": answer_user_param[0].email,
-            "betatesterInfo": answer_betatester[0]
+            "betatesterInfo": answer_betatester[0],
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/information.html.twig', { ...templateVars })
     }
@@ -185,7 +189,8 @@ async function redirectSettings(req, res){
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
         const templateVars = {
             "id": req.pseudo, 
-            "preference": preferencesTab[0].preferences[0]
+            "preference": preferencesTab[0].preferences[0],
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/settings.html.twig', { ...templateVars })
     }
@@ -199,7 +204,8 @@ async function userCreateAccount(req, res){
     const { sent, pseudo, email, password } = req.body
     if (!sent){
         const templateVars = {
-            "id": "unauthentificated"
+            "id": "unauthentificated",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/createaccount.html.twig', {...templateVars})
     }
@@ -227,7 +233,8 @@ async function userLogin(req, res){
     const { sent, id, password, remember } = req.body
     if (!sent){
         const templateVars = {
-            "id": "unauthentificated"
+            "id": "unauthentificated",
+            "csrfToken": req.csrfToken()
         }
         res.render('./Templates/login.html.twig', {...templateVars})
     }

@@ -11,6 +11,7 @@
         <div class="row justify-content-center">
           <div class="col-6">
             <form action="/userLogin" method="post">
+            <input type="hidden" name="_csrf" value="{{csrfToken}}">
             <input type="hidden" id="sent" name="sent" value="true"/>
               <div class="mb-3">
                 <label for="id" class="form-label">Identifiant (pseudo / @)</label>

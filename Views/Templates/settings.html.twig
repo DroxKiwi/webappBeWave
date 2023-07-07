@@ -17,6 +17,7 @@
               <div class="row justify-content-center">
                 <div class="col-6">
                   <form action="/settingsPreferences" method="post">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}">
                     <div class="mb-3">
                       <label for="colorapp" class="form-label">couleur d'application</label>
                       <select id="colorapp" name="colorapp">

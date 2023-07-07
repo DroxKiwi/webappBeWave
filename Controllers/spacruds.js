@@ -45,41 +45,33 @@ async function search(req, res){
                 templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
                 templateVars.media_platforms = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
                 templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/showcruds.html.twig', { ...templateVars })
                 break
             case 'user':
                 templateVars.users = await userCRUD.get('*', ['pseudo', 'email', 'role'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/user/showcruduser.html.twig', { ...templateVars })
                 break
             case 'artist':
                 templateVars.artists = await artistCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/artist/showcrudartist.html.twig', { ...templateVars })
                 break
             case 'city':
                 templateVars.cities = await cityCRUD.get('*', ['name', 'postal_code'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/city/showcrudcity.html.twig', { ...templateVars })
                 break
             case 'event':
                 templateVars.events = await eventCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/event/showcrudevent.html.twig', { ...templateVars })
                 break
             case 'external_media':
                 templateVars.external_medias = await externalMediaCRUD.get('*', ['url'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/externalmedia/showcrudexternalmedia.html.twig', { ...templateVars })
                 break
             case 'image':
                 templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/image/showcrudimage.html.twig', { ...templateVars })
                 break
             case 'mp':
                 templateVars.MPs = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/mediaplatform/showcrudmediaplatform.html.twig', { ...templateVars })
                 break
             case 'place':
                 templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
-                res.render('./Templates/AdminDashboard/CRUDs/place/showcrudplace.html.twig', { ...templateVars })
                 break
         }
+        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
     else {
         res.redirect(302, '/')

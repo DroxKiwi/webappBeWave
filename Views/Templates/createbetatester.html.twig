@@ -17,6 +17,8 @@
           <div class="row">
             <div class="col">
               <form action="/suscribe" method="post">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">
+
                 <input type="hidden" class="form-control" id="suscribeBeta" name="suscribeBeta" value="true">
 
                 <input name="firstname" id="firstname" type="text" placeholder="prénom" required/>

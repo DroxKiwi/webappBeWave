@@ -28,6 +28,7 @@ function appRoute(app){
     // Set preferences 
     app.post('/settingsPreferences', settingsPreferences)
 
+
     // Login
     app.get("/login", userLogin)
     app.post("/userLogin", userLogin)

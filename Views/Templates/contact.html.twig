@@ -23,6 +23,7 @@
               {% else %}
                 <form action="/contact" method="post">
                   <br>
+                  <input type="hidden" name="_csrf" value="{{csrfToken}}">
                   <input type="hidden" class="form-control" id="sent" name="sent" value="true">
                   <select id="type" name="type" required>
                     <option value="userBug">Bug sur la plateforme</option>

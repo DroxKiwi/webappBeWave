@@ -17,6 +17,7 @@
           <div class="row">
             <div class="col">
               <form action="/suscribe" method="post">
+                <input type="hidden" name="_csrf" value="{{csrfToken}}">
                 <button type="submit" class="btn btn-outline-success" style="margin-left: 10px;">Souscrire</button>
                 <br>
                 <label for="consent">Consentir au partage et traitement d'informations relative à vos données</label>

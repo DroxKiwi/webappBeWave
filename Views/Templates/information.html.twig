@@ -53,6 +53,7 @@
                     </div>
                     <div class="modal-body">
                       <form action="/updateaccount" method="post">
+                        <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="pseudo" class="form-label">Entrez votre nouveau pseudo</label>
                           <input type="text" class="form-control" id="pseudo" aria-describedby="idHelp" name="pseudo" required>
@@ -78,6 +79,7 @@
                     </div>
                     <div class="modal-body">
                       <form action="/updateaccount" method="post">
+                        <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="email" class="form-label">Entrez votre nouveau mail</label>
                           <input type="text" class="form-control" id="email" name="email" required>
@@ -103,6 +105,7 @@
                     </div>
                     <div class="modal-body">
                       <form action="/updateaccount" method="post">
+                        <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <div class="mb-3">
                           <label for="password" class="form-label">Entrez votre nouveau mot de passe</label>
                           <input type="password" class="form-control" id="password" name="password" required>
@@ -128,6 +131,7 @@
                     </div>
                     <div class="modal-body">
                       <form action="/deteleaccount" method="post">
+                        <input type="hidden" name="_csrf" value="{{csrfToken}}">
                         <button type="submit" class="btn btn-outline-success">Confirmer</button>
                       </form>
                     </div>
