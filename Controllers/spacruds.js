@@ -102,7 +102,6 @@ async function showUsers(req, res){
         res.redirect(302, '/')
     }
 }
-
 // Show a user profile
 async function showDetailUser(req, res){
     const { user_id } = req.body
@@ -642,21 +641,22 @@ async function addImage(req, res){
     if (req.role == "ROLE_ADMIN"){
         const { image } = req.files
         if (!image) {
-            res.send("Aucune image trouvée !");
+            res.send("Aucune image trouvée ! ERR00");
         }
         if (!(/^image/.test(image.mimetype))) {
-            res.send("Ce n'est pas un format acceptable !");
+            res.send("Ce n'est pas un format acceptable ! ERR01");
         }
         const answer_imgname_exist = await imageCRUD.get('*', 'name', image.name)
         if (answer_imgname_exist[0]){
-            res.send("Une image avec un nom identique existe déjà !")
+            res.send("Une image avec un nom identique existe déjà ! ERR02")
         }
         else {
             const ext = '.'+image.name.split('.')[1]
             const name = image.name.split('.')[0]
             const toPreventWebShell = name+ext
-            if (!(/^image/.test(toPreventWebShell.mimetype))) {
-                res.send("Ce n'est pas un format acceptable !");
+            console.log(ext)
+            if ((ext != ".png") && (ext != ".jpeg") && (ext != ".jpg")) {
+                res.send("Ce n'est pas un format acceptable ! ERR03");
             }
             else {
                 image.mv('./Public/Uploads/' + toPreventWebShell)
