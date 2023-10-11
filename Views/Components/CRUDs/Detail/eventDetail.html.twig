@@ -78,7 +78,7 @@
         </td>
         <td>
           <select class="form-control">
-            <option selected="selected" value="NULL" id="optionPlace">Ajouter un artiste</option>
+            <option selected="selected" value="NULL" id="optionPlace">Ajouter un lieu</option>
             {% for place in places %}
               <option value="{{ place.place_id }}" name="optionPlace" onclick="add(event)" id="{{ place.name }}">{{ place.name }}</option>
             {% endfor %}

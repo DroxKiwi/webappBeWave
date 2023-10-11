@@ -15,7 +15,8 @@ GET /events/:eventId => Retourne les infos d'un évènement
 
 async function getEvents(req, res){
     if (!req.params.event_id){
-        const answer = await eventCRUD.get()
+        const answer = {"events": []}
+        answer.events = await eventCRUD.get()
         for (let i = 0; i < answer.length; i++){
             answer[i].artists = {}
         }
@@ -127,11 +128,13 @@ GET /places/:placeId => Retourne les infos d'un lieu
 
 async function getPlaces(req, res){
     if (!req.params.place_id){
-        const answer = await placeCRUD.get()
+        const answer = {"places": []}
+        answer.places = await placeCRUD.get()
         res.send(answer)
     }
     else {
-        const answer = await placeCRUD.get("*", "place_id", req.params.place_id)
+        const answer = {"places": []}
+        answer.places = await placeCRUD.get("*", "place_id", req.params.place_id)
         res.send(answer)
     }
 }
@@ -144,7 +147,8 @@ async function getPlacesByCity(req, res){
         res.send('aucune ville selectionnée')
     }
     else {
-        const answer = await placeCRUD.get('*', 'city_id', req.params.city_id)
+        const answer = {"places": []}
+        answer.places = await placeCRUD.get('*', 'city_id', req.params.city_id)
         res.send(answer)
     }
 }
@@ -156,11 +160,13 @@ GET /artists/:artistId => Retourne les infos d'un artiste
 
 async function getArtists(req, res){
     if (!req.params.artist_id){
-        const answer = await artistCRUD.get()
+        const answer = {"artists": []}
+        answer.artists = await artistCRUD.get()
         res.send(answer)
     }
     else {
-        const answer = await artistCRUD.get("*", "artist_id", req.params.artist_id)
+        const answer = {"artists": []}
+        answer.artists = await artistCRUD.get("*", "artist_id", req.params.artist_id)
         res.send(answer)
     }
 }

@@ -5,7 +5,6 @@ Ajouter
 
 
 
-
 <table class="table">
 <thead>
     <tr>
@@ -103,6 +102,8 @@ Ajouter
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
+    <button type"button" id="test" class="btn btn-secondary" onclick="add(event)">test</button>
+
         <form action="/addEvent" method="post">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="hidden" id="author_name" name="author_name" value="{{ id }}">
@@ -162,5 +163,6 @@ Ajouter
     </div>
 </div>
 </div>
+
 
 <script src="./js/crudevent_add.js"/>
