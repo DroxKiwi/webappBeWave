@@ -22,18 +22,25 @@
             <a class="nav-link" href="/formcontact">formulaire de contact</a>
         {% endif %}
     </li>
-    <li calss="nav-item">
+    <li class="nav-item">
         {% if active == "crud" %}
             <a class="nav-link active" href="/spacruds">CRUDs</a>
         {% else %}
             <a class="nav-link" href="/spacruds">CRUDs</a>
         {% endif %}
     </li>
-    <li calss="nav-item">
+    <li class="nav-item">
         {% if active == "api" %}
             <a class="nav-link active" href="/apimanagement">API</a>
         {% else %}
             <a class="nav-link" href="/apimanagement">API</a>
+        {% endif %}
+    </li>
+    <li class="nav-item">
+        {% if active == "csv" %}
+            <a class="nav-link active" href="/csvmanagement">CSV</a>
+        {% else %}
+            <a class="nav-link" href="/csvmanagement">CSV</a>
         {% endif %}
     </li>
     {% if active == "crud" %}

@@ -106,4 +106,67 @@ async function showAPI(req, res){
     }
 }
 
-module.exports = { homeDashboard, showLogs, showFormcontact, spacruds, showAPI }
+async function showCSV(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "active": "csv",
+            "csrfToken": req.csrfToken()
+        }
+        res.render('./Templates/AdminDashboard/CSVmanagement/csvmanagement.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
+
+
+const fs = require('fs');
+const csv = require('csv-parser');
+
+function csvToArray(csvString) {
+    const results = [];
+    fs.createReadStream(csvString) // Replace 'data.csv' with your CSV file's path
+    .pipe(csv())
+    .on('data', (row) => {
+      results.push(row);
+    })
+    .on('end', () => {
+      // All rows have been processed
+      console.log(results);
+    });
+  
+    return results;
+}
+
+
+async function addCSV(req, res){
+    if (req.role == "ROLE_ADMIN"){
+        const userToken = req.cookies.userToken.token
+        const { csvFile } = req.files
+        if (!csvFile) {
+            res.send("Aucun CSV trouvé ! ERR00");
+        }
+        csvFile.mv('./Public/Uploads/CSV' + csvFile.name)
+        const result = csvToArray('./Public/Uploads/CSV' + csvFile.name)
+        console.log(result)
+
+        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
+        const templateVars = {
+            "id": req.pseudo,
+            "preference": preferencesTab[0].preferences[0],
+            "active": "csv",
+            "csrfToken": req.csrfToken()
+        }
+        res.render('./Templates/AdminDashboard/CSVmanagement/csvmanagement.html.twig', { ...templateVars })
+    }
+    else {
+        res.redirect(302, "/")
+    }
+}
+
+module.exports = { homeDashboard, showLogs, showFormcontact, spacruds, showAPI, showCSV, addCSV }

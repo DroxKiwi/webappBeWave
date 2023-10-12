@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS artists (
     artist_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
     description varchar(500),
+    media varchar(256),
     image_id int,
     FOREIGN KEY (image_id)
         REFERENCES images (image_id)
@@ -76,6 +77,8 @@ CREATE TABLE IF NOT EXISTS places (
     name varchar(256) NOT NULL,
     description varchar(500),
     adress varchar(256),
+    lat varchar(256),
+    long varchar(256),
     image_id int,
     city_id int,
     FOREIGN KEY (image_id)
@@ -89,7 +92,7 @@ CREATE TABLE IF NOT EXISTS events (
     author_name varchar(256) NOT NULL,
     name varchar(256) NOT NULL,
     description varchar(500),
-    display_map boolean NOT NULL,
+    validated boolean NOT NULL,
     start_date date NOT NULL,
     end_date date NOT NULL,
     price float
