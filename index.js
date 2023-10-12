@@ -9,7 +9,7 @@ const cors = require('cors')
 const csrf = require('csurf')
 
 // IF USING NPM !
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 //IF USING NODEMON !
 // const port = 3000
 
