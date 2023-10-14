@@ -30,7 +30,7 @@
         <td>image :
           {% for image in images %}
             {% if image.image_id == image_id %}
-              <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                <img src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
             {% endif %}
           {% endfor %}
         </td>

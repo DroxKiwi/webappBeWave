@@ -7,6 +7,7 @@ Ajouter
 <thead>
     <tr>
     <th scope="col">city_id</th>
+    <th scope="col">image</th>
     <th scope="col">name</th>
     <th scope="col">postal code</th>
     <th scope="col"></th>
@@ -18,6 +19,13 @@ Ajouter
     {% for city in cities %}
     <tr class="table-info ">
         <td>{{ city.city_id }}</td>
+        <td>
+        {% for image in images %}
+        {% if image.image_id == city.image_id %}
+            <img src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
+        {% endif %}
+        {% endfor %}
+        </td>
         <td>{{ city.name }}</td>
         <td>{{ city.postal_code }}</td>
         <td>
@@ -44,6 +52,12 @@ Ajouter
     <div class="modal-body">
         <form action="/addcity" method="post">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <select name="image_id" class="form-control">
+            <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
+            {% for image in images %}
+            <option value="{{ image.image_id }}">{{ image.name }}</option>
+            {% endfor %}
+        </select>
         <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
         <input type="text" class="form-control" id="postalcode" name="postalcode" placeholder="code postale (0001 à 99999)" required="true">
         <button type="submit" class="btn btn-outline-info">Valider</button>

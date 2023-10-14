@@ -43,7 +43,7 @@
             {% for image_id in images_id %}
               {% for image in images %}
                 {% if image.image_id == image_id.image_id %}
-                  <img id="{{image.image_id}}" src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                  <img id="{{image.image_id}}" src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
                 {% endif %}
               {% endfor %}
             {% endfor %}
@@ -96,29 +96,7 @@
         </td>
       </tr>
       <tr>
-        <td>médias externes :
-        </td>
-        <td>
-          <select class="form-control">
-            <option selected="selected" value="NULL" id="optionExternal_media">Ajouter un média externe</option>
-            {% for external_media in external_medias %}
-              <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
-            {% endfor %}
-          </select>
-          <div id="addedexternal_medias">
-            {% for external_media_id in external_medias_id %}
-              {% for external_media in external_medias %}
-                {% if external_media.external_media_id == external_media_id.external_media_id %}
-                  <p id="{{ external_media.external_media_id }}">{{ external_media.url }}</p>
-                {% endif %}
-              {% endfor %}
-            {% endfor %}
-          </div>
-          <input type="hidden" value="" name="external_medias" id="external_medias"/>
-        </td>
-      </tr>
-      <tr>
-        <td>display_map : {{ display_map }}</td>
+        <td>validated : {{ validated }}</td>
         <td><input type="checkbox" {% if display_map == true %} checked {% endif %} id="display_map" name="display_map"></td>
       </tr>
       <tr>
@@ -127,7 +105,7 @@
       </tr>
       <tr>
         <td>end_date : {{ end_date }}</td>
-        <td><input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required></td>
+        <td><input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}"></td>
       </tr>
       <tr>
         <td>price : {{ price }}</td>

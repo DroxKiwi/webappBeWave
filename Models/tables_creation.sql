@@ -37,23 +37,12 @@ CREATE TABLE IF NOT EXISTS betatesters (
         REFERENCES users(user_id)
 );
 
-CREATE TABLE IF NOT EXISTS media_platform(
-    media_platform_id serial PRIMARY KEY,
-    name varchar(256) NOT NULL
-);
-
 CREATE TABLE IF NOT EXISTS images(
     image_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
-    extension varchar(256) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS external_medias(
-    external_media_id serial PRIMARY KEY,
-    url varchar(256) NOT NULL,
-    media_platform_id int,
-    FOREIGN KEY (media_platform_id)
-        REFERENCES media_platform (media_platform_id)
+    extension varchar(256) NOT NULL,
+    imageType varchar(12) NOT NULL,
+    data text NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS artists (
@@ -69,7 +58,10 @@ CREATE TABLE IF NOT EXISTS artists (
 CREATE TABLE IF NOT EXISTS cities (
     city_id serial PRIMARY KEY,
     name varchar(256) NOT NULL,
-    postal_code varchar(5) NOT NULL
+    postal_code varchar(5) NOT NULL,
+    image_id int,
+    FOREIGN KEY (image_id)
+        REFERENCES images (image_id)
 );
 
 CREATE TABLE IF NOT EXISTS places (
@@ -92,9 +84,9 @@ CREATE TABLE IF NOT EXISTS events (
     author_name varchar(256) NOT NULL,
     name varchar(256) NOT NULL,
     description varchar(500),
-    validated boolean NOT NULL,
+    validated boolean DEFAULT 'false',
     start_date date NOT NULL,
-    end_date date NOT NULL,
+    end_date date,
     price float
 );
 
@@ -126,14 +118,4 @@ CREATE TABLE IF NOT EXISTS events_images(
         REFERENCES events (event_id),
     FOREIGN KEY (image_id)
         REFERENCES images (image_id)
-);
-
-CREATE TABLE IF NOT EXISTS events_external_medias(
-    event_external_media_id serial PRIMARY KEY,
-    event_id int NOT NULL,
-    external_media_id int NOT NULL,
-    FOREIGN KEY (event_id)
-        REFERENCES events (event_id),
-    FOREIGN KEY (external_media_id)
-        REFERENCES external_medias (external_media_id)
 );

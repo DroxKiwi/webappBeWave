@@ -13,6 +13,8 @@ Ajouter
     <th scope="col">image</th>
     <th scope="col">name</th>
     <th scope="col">description</th>
+    <th scope="col">URL media</th>
+    <th scope="col">embed</th>
     <th scope="col"></th>
     </tr>
 </thead>
@@ -24,12 +26,26 @@ Ajouter
         <td>
         {% for image in images %}
         {% if image.image_id == artist.image_id %}
-            <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+            <img src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
         {% endif %}
         {% endfor %}
         </td>
         <td>{{ artist.name }}</td>
         <td>{{ artist.description }}</td>
+        <td>
+            <p>{{ artist.media }}</p>
+        </td>
+        <td>
+            <iframe
+                className="spotify"
+                src={{ artist.media }} 
+                width="100%" 
+                height="15%" 
+                frameBorder="0" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                loading="lazy">
+            </iframe>
+        </td>
         <td>
         <form action="/showartist" method="post"> 
             <input type="hidden" name="_csrf" value="{{csrfToken}}">
@@ -56,7 +72,8 @@ Ajouter
         <form action="/addartist" method="post">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
         <input type="text" class="form-control" id="name" name="name" placeholder="Nom" required="true">
-        <input type="text" class="form-control" id="description" name="description" placeholder="Description" required="true">
+        <input type="text" class="form-control" id="description" name="description" placeholder="Description">
+        <input type"test" class="form-control" id="media" name="media" placeholder="URL media">
         <select name="image_id" class="form-control">
             <option selected="selected" value="NULL" id="optionImage">Ajouter une image</option>
             {% for image in images %}

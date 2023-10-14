@@ -18,7 +18,7 @@
         <td>image :
           {% for image in images %}
             {% if image.image_id == image_id %}
-              <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+              <img src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
             {% endif %}
           {% endfor %}
         </td>
@@ -37,6 +37,10 @@
       <tr>
         <td>description : {{ description }}</td>
         <td><input type="text" class="form-control" id="description" name="description" value="{{ description }}"></td>
+      </tr>
+      <tr>
+        <td>URL media : {{ media }}</td>
+        <td><input type="text" class="form-control" id="media" name="media" value="{{ media }}"></td>
       </tr>
       <button type="submit" class="btn btn-outline-warning">Enregistrer modification</button>
     </form>

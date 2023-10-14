@@ -21,20 +21,22 @@ async function getRolesMiddleware(req, res, next){
         req.role = UNAUTHENTICATED_ROLE
         return next()
     }
-    const userToken = req.cookies.userToken.token
-    // Validating user input is a best practice to prevent SQL injection attacks.
-    if (!/^[a-zA-Z0-9]+$/.test(userToken)) {
-        throw new Error('Invalid userToken');
-    }
-    const answer_user = await userCRUD.get("*", "token", userToken)
-    const userCheck = answer_user[0]
-    if (!userCheck){
-        req.role = UNAUTHENTICATED_ROLE
+    else {
+        const userToken = req.cookies.userToken.token
+        // Validating user input is a best practice to prevent SQL injection attacks.
+        //if (!/^[a-zA-Z0-9]+$/.test(userToken)) {
+        //    throw new Error('Invalid userToken');
+        //}
+        const answer_user = await userCRUD.get("*", "token", userToken)
+        const userCheck = answer_user[0]
+        if (!userCheck){
+            req.role = UNAUTHENTICATED_ROLE
+            return next()
+        }
+        req.pseudo = userCheck.pseudo
+        req.role = userCheck.role
         return next()
     }
-    req.pseudo = userCheck.pseudo
-    req.role = userCheck.role
-    return next()
 }
 
 module.exports = getRolesMiddleware

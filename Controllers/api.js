@@ -2,11 +2,9 @@ const eventCRUD = require("../CRUD/event")
 const placeCRUD = require("../CRUD/place")
 const artistCRUD = require("../CRUD/artists")
 const imageCRUD = require("../CRUD/image")
-const externalmediaCRUD = require("../CRUD/external_medias")
 const eventsplacesCRUD = require("../CRUD/event_place")
 const eventsartistsCRUD = require("../CRUD/event_artist")
 const eventsimagesCRUD = require("../CRUD/event_image")
-const eventsexternalmediasCRUD = require("../CRUD/event_external_media")
 
 /*
 GET /events => Retourne tous les évènements
@@ -34,15 +32,6 @@ async function getEvents(req, res){
                 answer[i].images[k] = await imageCRUD.get('*', 'image_id', images_id[k].image_id)
             }
         }
-        for (let i = 0; i < answer.length; i++){
-            answer[i].externalmedias = {}
-        }
-        for (let i = 0; i < answer.length; i++){
-            const external_medias_id = await eventsexternalmediasCRUD.get('external_media_id', 'event_id', answer[i].event_id)
-            for (let k = 0; k < external_medias_id.length; k++){
-                answer[i].externalmedias[k] = await externalmediaCRUD.get('*', 'external_media_id', external_medias_id[k].external_media_id)
-            }
-        }
         res.json(answer)
     }
     else {
@@ -56,11 +45,6 @@ async function getEvents(req, res){
         const images_id = await eventsimagesCRUD.get('image_id', 'event_id', req.params.event_id)
         for (let k = 0; k < images_id.length; k++){
             answer[0].images[k] = await imageCRUD.get('*', 'image_id', images_id[k].image_id)
-        }
-        answer[0].externalmedias = {}
-        const external_medias_id = await eventsexternalmediasCRUD.get('external_media_id', 'event_id', req.params.event_id)
-        for (let k = 0; k < external_medias_id.length; k++){
-            answer[0].externalmedias[k] = await externalmediaCRUD.get('*', 'external_media_id', external_medias_id[k].external_media_id)
         }
         res.json(answer)
     }
@@ -109,11 +93,6 @@ async function getEventsByCity(req, res){
             const images_id = await eventsimagesCRUD.get('image_id', 'event_id', tab_eventId[i])
             for (let k = 0; k < images_id.length; k++){
                 answer[i][0].images[k] = await imageCRUD.get('*', 'image_id', images_id[k].image_id)
-            }
-            answer[i][0].externalmedias = {}
-            const external_medias_id = await eventsexternalmediasCRUD.get('external_media_id', 'event_id', tab_eventId[i])
-            for (let k = 0; k < external_medias_id.length; k++){
-                answer[i][0].externalmedias[k] = await externalmediaCRUD.get('*', 'external_media_id', external_medias_id[k].external_media_id)
             }
         }
         res.send(answer)

@@ -25,14 +25,24 @@
       {% include 'Components/headerDashboard.html.twig' %}
 
 
+      <div class="row">
+
+        <div class="col-6">
         <h2>Ajouter un CSV</h2>
 
-        <form action="/addcsv?_csrf={{csrfToken}}" method="post" enctype="multipart/form-data"> 
-            <input type="file" name="csvFile" id="csvFile" accept=".csv">
-            <button type="submit" class="btn btn-outline-info"><img src="/Icones/add.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
+        <form action="/addcsv?_csrf={{csrfToken}}" method="post" enctype="multipart/form-data">
+          <div class="col-2">
+            <select class="form-control" required="true" name="csvType">
+              <option selected="selected" value="events">events</option>
+              <option value="artists">artists</option>
+              <option value="places">places</option>
+            </select>
+          </div>
+          <input type="file" name="csvFile" id="csvFile" accept=".csv">
+          <button type="submit" class="btn btn-outline-info"><img src="/Icones/add.png" alt="Plus" title="Information utilisateur" height="25px" width="25px"></button>
         </form>
 
-        <h3>- Evenements - structure type</h3>
+        <h3>- events - structure type</h3>
         <pre>
           <code>
             name: string (256) NOT NULL
@@ -40,10 +50,12 @@
             start_date: date NOT NULL
             end_date: date NOT NULL
             price: float
+            place: place_id
+            artist: artist_id
           </code>
         </pre>
 
-        <h3>- Artists - structure type</h3>
+        <h3>- artists - structure type</h3>
         <pre>
           <code>
             name: string (256) NOT NULL
@@ -52,7 +64,7 @@
           </code>
         </pre>
 
-        <h3>- Places - structure type</h3>
+        <h3>- places - structure type</h3>
         <pre>
           <code>
             name: string (256) NOT NULL
@@ -60,8 +72,22 @@
             adress: string (256)
             lat: string (256)
             long: string (256)
+            city: city_id
           </code>
         </pre>
+        </div>
+        <div class="col-6">
+          <h2> ----------------- AFFICHAGE CSV ---------------- </h2>
+          <ul>
+          <h3>{{ CSVtitle }}</h3>
+          {% for CSVdata in CSV_show %}
+            <li>{{ CSVdata }}</li>
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+
 
 
         <!-- OffCanvas and hidden elements -->

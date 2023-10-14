@@ -2,16 +2,13 @@ const artistCRUD = require("../CRUD/artists")
 const userCRUD = require("../CRUD/user")
 const cityCRUD = require("../CRUD/city")
 const eventCRUD = require("../CRUD/event")
-const externalMediaCRUD = require("../CRUD/external_medias")
 const imageCRUD = require("../CRUD/image")
-const MPCRUD = require("../CRUD/mediaplatform")
 const placeCRUD = require("../CRUD/place")
 const logCRUD = require("../CRUD/log")
 const betatesterCRUD = require("../CRUD/betatesteur")
 const eventimageCRUD = require("../CRUD/event_image")
 const eventartistCRUD = require("../CRUD/event_artist")
 const eventplaceCRUD = require("../CRUD/event_place")
-const eventexternalMediaCRUD = require("../CRUD/event_external_media")
 const logger = require("../Utils/logger")
 const generateRandomPassword = require ("../Utils/generatePassword")
 const fs = require('fs')
@@ -42,9 +39,7 @@ async function search(req, res){
                 templateVars.artists = await artistCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
                 templateVars.cities = await cityCRUD.get('*', ['name', 'postal_code'], "", true, modeleSQL, 'OR')
                 templateVars.events = await eventCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
-                templateVars.external_medias = await externalMediaCRUD.get('*', ['url'], "", true, modeleSQL, 'OR')
                 templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
-                templateVars.media_platforms = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
                 templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
                 break
             case 'user':
@@ -59,14 +54,8 @@ async function search(req, res){
             case 'event':
                 templateVars.events = await eventCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
                 break
-            case 'external_media':
-                templateVars.external_medias = await externalMediaCRUD.get('*', ['url'], "", true, modeleSQL, 'OR')
-                break
             case 'image':
                 templateVars.images = await imageCRUD.get('*', ['name', 'extension'], "", true, modeleSQL, 'OR')
-                break
-            case 'mp':
-                templateVars.MPs = await MPCRUD.get('*', ['name'], "", true, modeleSQL, 'OR')
                 break
             case 'place':
                 templateVars.places = await placeCRUD.get('*', ['name', 'adress'], "", true, modeleSQL, 'OR')
@@ -222,6 +211,7 @@ async function showDetailArtist(req, res){
             "artist_id": artist_id,
             "name": artistToShow[0].name,
             "description": artistToShow[0].description,
+            "media": artistToShow[0].media,
             "image_id": artistToShow[0].image_id,
             "images": await imageCRUD.get(),
             "active": "crud",
@@ -236,9 +226,9 @@ async function showDetailArtist(req, res){
 }
 
 async function addArtist(req, res){
-    const { name, description, image_id } = req.body
+    const { name, description, media, image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        await artistCRUD.create(name, description, image_id)
+        await artistCRUD.create(name, description, media, image_id)
         res.redirect(302, '/spaartist')
     }
 }
@@ -253,10 +243,10 @@ async function deleteArtist(req, res){
 
 async function updateArtist(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const { artist_id, name, description, image_id } = req.body
+        const { artist_id, name, description, media, image_id } = req.body
         const message = "Update an artist : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        await artistCRUD.update(artist_id, name, description, image_id)
+        await artistCRUD.update(artist_id, name, description, media, image_id)
         res.redirect(302, '/spaartist')
     }
 }
@@ -271,6 +261,7 @@ async function showCities(req, res){
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "cities": await cityCRUD.get(),
+            "images": await imageCRUD.get(),
             "active": "crud",
             "crud": "city",
             "csrfToken": req.csrfToken()
@@ -291,6 +282,8 @@ async function showDetailCity(req, res){
         const templateVars = {
             "id": req.pseudo,
             "city_id": city_id,
+            "image_id": cityToShow[0].image_id,
+            "images": await imageCRUD.get(),
             "preference": preferencesTab[0].preferences[0],
             "name": cityToShow[0].name,
             "postcode": cityToShow[0].postal_code,
@@ -306,9 +299,9 @@ async function showDetailCity(req, res){
 }
 
 async function addCity(req, res){
-    const { name, postalcode } = req.body
+    const { name, postalcode, image_id } = req.body
     if (req.role == "ROLE_ADMIN"){
-        await cityCRUD.create(name, postalcode)
+        await cityCRUD.create(name, postalcode, image_id)
         res.redirect(302, '/spacity')
     }
 }
@@ -324,10 +317,10 @@ async function deleteCity(req, res){
 
 async function updateCity(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const { city_id, name, postal_code } = req.body
+        const { city_id, name, postal_code, image_id } = req.body
         const message = "Update a city : "+name
         logger.newLog(req.cookies.userToken.token, message)
-        await cityCRUD.update(city_id, name, postal_code)
+        await cityCRUD.update(city_id, name, postal_code, image_id)
         res.redirect(302, '/spacity')
     }
 }
@@ -348,8 +341,6 @@ async function showEvents(req, res){
             "artists": await artistCRUD.get(),
             "events_places": await eventplaceCRUD.get(),
             "places": await placeCRUD.get(),
-            "events_external_medias": await eventexternalMediaCRUD.get(),
-            "external_medias": await externalMediaCRUD.get(),
             "active": "crud",
             "crud": "event",
             "csrfToken": req.csrfToken()
@@ -392,7 +383,7 @@ async function showDetailEvent(req, res){
             "author_name": eventToShow[0].author_name,
             "name": eventToShow[0].name,
             "description": eventToShow[0].description,
-            "display_map": eventToShow[0].display_map,
+            "validated": eventToShow[0].validated,
             "start_date": start_date,
             "end_date": end_date,
             "price": eventToShow[0].price,
@@ -402,8 +393,6 @@ async function showDetailEvent(req, res){
             "artists": await artistCRUD.get(),
             "places_id": await eventplaceCRUD.get('place_id', 'event_id', event_id),
             "places": await placeCRUD.get(),
-            "external_medias_id": await eventexternalMediaCRUD.get('external_media_id', 'event_id', event_id),
-            "external_medias": await externalMediaCRUD.get(),
             "active": "crud",
             "crud": "eventDetail",
             "csrfToken": req.csrfToken()
@@ -417,27 +406,54 @@ async function showDetailEvent(req, res){
 
 
 async function addEvent(req, res){
-    const { author_name, name, description, images, artists, places, external_medias, display_map, start_date, end_date, price } = req.body
-    if (display_map == undefined){
-        var display_map_value = false
+    const { author_name, name, description, images, artists, places, validated, start_date, end_date, price } = req.body
+    if (validated == undefined){
+        var validated_value = false
     }
     else {
-        var display_map_value = true
+        var validated_value = true
     }
     if (req.role == "ROLE_ADMIN"){
-        const answer_insert = await eventCRUD.create(author_name, name, description, display_map_value, start_date, end_date, price, true)
+        var answer_insert;
+        if (end_date == ""){
+            answer_insert = await eventCRUD.create(author_name, name, description, validated_value, start_date, start_date, price, true)
+        }
+        else {
+            answer_insert = await eventCRUD.create(author_name, name, description, validated_value, start_date, end_date, price, true)
+        }
         const event_id_created = answer_insert.rows[0].event_id
-        for(let i = 0; i < images.length; i++){
-            await eventimageCRUD.create(event_id_created, images[i])
+        if (images[0] != undefined){
+            if (images.length > 1){
+                const images_tab = images.split(',')
+                for(let i = 0; i < images_tab.length; i++){
+                    await eventimageCRUD.create(event_id_created, images_tab[i])
+                }
+            }
+            else {
+                await eventimageCRUD.create(event_id_created, images[0])
+            }
         }
-        for(let i = 0; i < artists.length; i++){
-            await eventartistCRUD.create(event_id_created, artists[i])
+        if (artists[0] != undefined){
+            if (artists.length > 1){
+                const artists_tab = artists.split(',')
+                for(let i = 0; i < artists_tab.length; i++){
+                    await eventartistCRUD.create(event_id_created, artists_tab[i])
+                }
+            }
+            else {
+                await eventartistCRUD.create(event_id_created, artists[0])
+            }
         }
-        for(let i = 0; i < places.length; i++){
-            await eventplaceCRUD.create(event_id_created, places[i])
-        }
-        for(let i = 0; i < external_medias.length; i++){
-            await eventexternalMediaCRUD.create(event_id_created, external_medias[i])
+        if (places[0] != undefined){
+            if (places.length > 1){
+                const places_tab = places.split(',')
+                for(let i = 0; i < places_tab.length; i++){
+                    await eventplaceCRUD.create(event_id_created, places_tab[i])
+                }
+            }
+            else {
+                await eventplaceCRUD.create(event_id_created, places[0])
+            }
         }
         res.redirect(302, '/spaevent')
     }
@@ -458,10 +474,6 @@ async function deleteEvent(req, res){
         for (let i = 0; i < answer_event_place_id.length; i++){
             await eventplaceCRUD.remove(answer_event_place_id[i].event_place_id)
         }
-        const answer_event_externalMedia_id = await eventexternalMediaCRUD.get("event_external_media_id", "event_id", event_id)
-        for (let i = 0; i < answer_event_externalMedia_id.length; i++){
-            await eventexternalMediaCRUD.remove(answer_event_externalMedia_id[i].event_external_media_id)
-        }
         await eventCRUD.remove(event_id)
         res.redirect(302, '/spaevent')
     }
@@ -469,127 +481,74 @@ async function deleteEvent(req, res){
 
 async function updateEvent(req, res){
     if (req.role == "ROLE_ADMIN"){
-        const { event_id, author_id, name, description, images, artists, places, external_medias, display_map, start_date, end_date, price } = req.body
-        if (display_map == undefined){
-            var display_map_value = false
+        const { event_id, author_id, name, description, images, artists, places, validated, start_date, end_date, price } = req.body
+        if (validated == undefined){
+            var validated_value = false
         }
         else {
-            var display_map_value = true
+            var validated_value = true
         }
-        await eventCRUD.update(event_id, author_id, name, description, display_map_value, start_date, end_date, price)
+        await eventCRUD.update(event_id, author_id, name, description, validated_value, start_date, end_date, price)
         // Update images link to the event selected for update
         const answer_event_image_id = await eventimageCRUD.get("event_image_id", "event_id", event_id)
         for (let i = 0; i < answer_event_image_id.length; i++){
             await eventimageCRUD.remove(answer_event_image_id[i].event_image_id)
         }
-        for(let i = 0; i < images.length; i++){
-            await eventimageCRUD.create(event_id, images[i])
+        if (images[0] != undefined){
+            if (images.length > 1){
+                const images_tab = images.split(',')
+                for(let i = 0; i < images_tab.length; i++){
+                    await eventimageCRUD.create(event_id, images_tab[i])
+                }
+            }
+            else {
+                await eventimageCRUD.create(event_id, images[0])
+            }
         }
+        //for(let i = 0; i < images.length; i++){
+        //    await eventimageCRUD.create(event_id, images[i])
+        //}
         // Update artists link to the event selected for update
         const answer_event_artist_id = await eventartistCRUD.get("event_artist_id", "event_id", event_id)
         for (let i = 0; i < answer_event_artist_id.length; i++){
             await eventartistCRUD.remove(answer_event_artist_id[i].event_artist_id)
         }
-        for(let i = 0; i < artists.length; i++){
-            await eventartistCRUD.create(event_id, artists[i])
+        if (artists[0] != undefined){
+            if (artists.length > 1){
+                const artists_tab = artists.split(',')
+                for(let i = 0; i < artists_tab.length; i++){
+                    await eventartistCRUD.create(event_id, artists_tab[i])
+                }
+            }
+            else {
+                await eventartistCRUD.create(event_id, artists[0])
+            }
         }
+        //for(let i = 0; i < artists.length; i++){
+        //    await eventartistCRUD.create(event_id, artists[i])
+        //}
         // Update places link to the event selected for update
         const answer_event_place_id = await eventplaceCRUD.get("event_place_id", "event_id", event_id)
         for (let i = 0; i < answer_event_place_id.length; i++){
             await eventplaceCRUD.remove(answer_event_place_id[i].event_place_id)
         }
-        for(let i = 0; i < places.length; i++){
-            await eventplaceCRUD.create(event_id, places[i])
+        if (places[0] != undefined){
+            if (places.length > 1){
+                const places_tab = places.split(',')
+                for(let i = 0; i < places_tab.length; i++){
+                    await eventplaceCRUD.create(event_id, places_tab[i])
+                }
+            }
+            else {
+                await eventplaceCRUD.create(event_id, places[0])
+            }
         }
-        // Update places link to the event selected for update
-        const answer_event_externalMedia_id = await eventexternalMediaCRUD.get("event_external_media_id", "event_id", event_id)
-        for (let i = 0; i < answer_event_externalMedia_id.length; i++){
-            await eventexternalMediaCRUD.remove(answer_event_externalMedia_id[i].event_external_media_id)
-        }
-        for(let i = 0; i < external_medias.length; i++){
-            await eventexternalMediaCRUD.create(event_id, external_medias[i])
-        }
+        //for(let i = 0; i < places.length; i++){
+        //    await eventplaceCRUD.create(event_id, places[i])
+        //}
         const message = "Update an event : "+name
         logger.newLog(req.cookies.userToken.token, message)
         res.redirect(302, '/spaevent')
-    }
-}
-
-// Management External medias
-
-async function showExternalMedias(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "external_medias": await externalMediaCRUD.get(),
-            "media_platforms": await MPCRUD.get(),
-            "active": "crud",
-            "crud": "external_media",
-            "csrfToken": req.csrfToken()
-        }
-        for (let i = 0; i < templateVars.external_medias.length; i++){
-            if (templateVars.external_medias[i].media_platform_id != null){
-                var temp_answer = await MPCRUD.get('name', 'media_platform_id', templateVars.external_medias[i].media_platform_id)
-                templateVars.external_medias[i].media_platform_name = temp_answer[0].name
-            }
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
-    }
-    else {
-        res.redirect(302, "/")
-    }
-}
-
-async function showDetailExternalMedia(req, res){
-    const { external_media_id } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const externalMediaToShow = await externalMediaCRUD.get('*', 'external_media_id', external_media_id)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "external_media_id": externalMediaToShow[0].external_media_id,
-            "url": externalMediaToShow[0].url,
-            "media_platform_id": externalMediaToShow[0].media_platform_id,
-            "media_platforms": await MPCRUD.get(),
-            "active": "crud",
-            "crud": "external_mediaDetail",
-            "csrfToken": req.csrfToken()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
-async function addExternalMedia(req, res){
-    const { url, media_platform_id } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        await externalMediaCRUD.create(url, media_platform_id)
-        res.redirect(302, '/spaexternalmedia')
-    }
-}
-
-async function deleteExternalMedia(req, res){
-    const { external_media_id } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        await externalMediaCRUD.remove(external_media_id)
-        res.redirect(302, '/spaexternalmedia')
-    }
-}
-
-async function updateExternalMedia(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const { external_media_id, url, media_platform_id } = req.body
-        const message = "Update an artist : "+url
-        logger.newLog(req.cookies.userToken.token, message)
-        await externalMediaCRUD.update(external_media_id, url, media_platform_id)
-        res.redirect(302, '/spaexternalmedia')
     }
 }
 
@@ -626,6 +585,8 @@ async function showDetailImage(req, res){
             "image_id": imageToShow[0].image_id,
             "name": imageToShow[0].name,
             "extension": imageToShow[0].extension,
+            "imageType": imageToShow[0].imageType,
+            "data": imageToShow[0].data,
             "active": "crud",
             "crud": "imageDetail",
             "csrfToken": req.csrfToken()
@@ -659,8 +620,20 @@ async function addImage(req, res){
                 res.send("Ce n'est pas un format acceptable ! ERR03");
             }
             else {
-                image.mv('./Public/Uploads/' + toPreventWebShell)
-                await imageCRUD.create(name, ext)
+                await image.mv('./Public/Uploads/images/' + toPreventWebShell);
+                const imageBuffer = fs.readFileSync('./Public/Uploads/images/' + toPreventWebShell);
+                var imageType;
+                if (ext == "png"){
+                    imageType = "image/png"
+                }
+                else if (ext == "jpg"){
+                    imageType = "image/jpg"
+                }
+                else if (ext == "jpeg"){
+                    imageType = "image/jpeg"
+                }
+                const data = imageBuffer.toString('base64');
+                await imageCRUD.create(name, ext, imageType, data);
             }
             res.redirect(302, '/spaimage')
         }
@@ -731,79 +704,6 @@ async function updateImage(req, res){
     }
 }
 
-
-// Management media platform
-
-async function showMPs(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "MPs": await MPCRUD.get(),
-            "active": "crud",
-            "crud": "mp",
-            "csrfToken": req.csrfToken()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
-    }
-    else {
-        res.redirect(302, "/")
-    }
-}
-
-async function showDetailMP(req, res){
-    const { media_platform_id } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        const userToken = req.cookies.userToken.token
-        const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
-        const MPToShow = await MPCRUD.get('*', 'media_platform_id', media_platform_id)
-        const templateVars = {
-            "id": req.pseudo,
-            "preference": preferencesTab[0].preferences[0],
-            "media_platform_id": MPToShow[0].media_platform_id,
-            "name": MPToShow[0].name,
-            "active": "crud",
-            "crud": "mpDetail",
-            "csrfToken": req.csrfToken()
-        }
-        res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
-    }
-    else {
-        res.redirect(302, '/')
-    }
-}
-
-async function addMP(req, res){
-    const { name } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        await MPCRUD.create(name)
-        res.redirect(302, '/spamediaplatform')
-    }
-}
-
-async function deleteMP(req, res){
-    const { media_platform_id } = req.body
-    if (req.role == "ROLE_ADMIN"){
-        const answer_external_media = await externalmediaCRUD.get('*', 'media_platform_id', media_platform_id)
-        if (answer_external_media[0]){
-            res.send("Des media externes sont liés à cette plateform de média ! Impossible de supprimer la plateform de média")
-        }
-        await MPCRUD.remove(media_platform_id)
-        res.redirect(302, '/spamediaplatform')
-    }
-}
-
-async function updateMP(req, res){
-    if (req.role == "ROLE_ADMIN"){
-        const { media_platform_id, name } = req.body
-        const message = "Update an image : "+name
-        logger.newLog(req.cookies.userToken.token, message)
-        await MPCRUD.update(media_platform_id, name)
-        res.redirect(302, '/spamediaplatform')
-    }
-}
 
 // Management place
 
@@ -887,7 +787,5 @@ module.exports = { search,
     showArtists, showDetailArtist, addArtist, deleteArtist, updateArtist,
     showCities, showDetailCity, addCity, deleteCity, updateCity,
     showEvents, showDetailEvent, addEvent, deleteEvent, updateEvent,
-    showExternalMedias, showDetailExternalMedia, addExternalMedia, deleteExternalMedia, updateExternalMedia,
     showImages, showDetailImage, addImage, deleteImage, updateImage,
-    showMPs,showDetailMP, addMP, deleteMP, updateMP,
     showPlaces,showDetailPlace, addPlace, deletePlace, updatePlace }

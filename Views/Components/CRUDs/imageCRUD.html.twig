@@ -21,7 +21,7 @@ Ajouter
     {% for image in images %}
     <tr class="table-info ">
         <td>{{ image.image_id }}</td>
-        <td><img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" /></td>
+        <td><img height="100px" width="100px" src="data:{{ image.imageType }};base64,{{ image.data }}" alt="image"/></td>
         <td>{{ image.name }}</td>
         <td>{{ image.extension }}</td>
         <td>

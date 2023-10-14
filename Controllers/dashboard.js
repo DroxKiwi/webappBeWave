@@ -1,13 +1,15 @@
-const userCRUD = require("../CRUD/user")
-const logCRUD = require("../CRUD/log")
-const contactCRUD = require("../CRUD/contact")
-const artistCRUD = require("../CRUD/artists")
-const cityCRUD = require("../CRUD/city")
-const eventCRUD = require("../CRUD/event")
-const externalMediaCRUD = require("../CRUD/external_medias")
-const imageCRUD = require("../CRUD/image")
-const MPCRUD = require("../CRUD/mediaplatform")
-const placeCRUD = require("../CRUD/place")
+const userCRUD = require("../CRUD/user");
+const logCRUD = require("../CRUD/log");
+const contactCRUD = require("../CRUD/contact");
+const artistCRUD = require("../CRUD/artists");
+const cityCRUD = require("../CRUD/city");
+const eventCRUD = require("../CRUD/event");
+const imageCRUD = require("../CRUD/image");
+const placeCRUD = require("../CRUD/place");
+const fs = require('fs');
+const csv = require('csv-parser');
+const mv = require('mv');
+
 
 // Landing page of dashboard
 async function homeDashboard(req, res){
@@ -78,9 +80,7 @@ async function spacruds(req, res){
         templateVars.artists = await artistCRUD.get()
         templateVars.cities = await cityCRUD.get()
         templateVars.events = await eventCRUD.get()
-        templateVars.external_medias = await externalMediaCRUD.get()
         templateVars.images = await imageCRUD.get()
-        templateVars.media_platforms = await MPCRUD.get()
         templateVars.places = await placeCRUD.get()
         res.render('./Templates/AdminDashboard/CRUDs/spacruds.html.twig', { ...templateVars })
     }
@@ -106,6 +106,7 @@ async function showAPI(req, res){
     }
 }
 
+
 async function showCSV(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
@@ -113,6 +114,7 @@ async function showCSV(req, res){
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
+            "CSV_show": "aucun contenu",
             "active": "csv",
             "csrfToken": req.csrfToken()
         }
@@ -123,24 +125,8 @@ async function showCSV(req, res){
     }
 }
 
-
-
-const fs = require('fs');
-const csv = require('csv-parser');
-
-function csvToArray(csvString) {
-    const results = [];
-    fs.createReadStream(csvString) // Replace 'data.csv' with your CSV file's path
-    .pipe(csv())
-    .on('data', (row) => {
-      results.push(row);
-    })
-    .on('end', () => {
-      // All rows have been processed
-      console.log(results);
-    });
-  
-    return results;
+async function insertCSV(CSV){
+    console.log(CSV)
 }
 
 
@@ -148,18 +134,22 @@ async function addCSV(req, res){
     if (req.role == "ROLE_ADMIN"){
         const userToken = req.cookies.userToken.token
         const { csvFile } = req.files
+        const { csvType } = req.body
         if (!csvFile) {
             res.send("Aucun CSV trouvé ! ERR00");
         }
-        csvFile.mv('./Public/Uploads/CSV' + csvFile.name)
-        const result = csvToArray('./Public/Uploads/CSV' + csvFile.name)
-        console.log(result)
+        const data = csvFile.data.toString('utf-8')
+        const dataTab = data.split("\r\n")
+        const dataTitle = "CSV type "+ csvType +" upload validated !"
 
+        //insertCSV(result)
         const preferencesTab = await userCRUD.get('preferences', 'token', userToken)
         const templateVars = {
             "id": req.pseudo,
             "preference": preferencesTab[0].preferences[0],
             "active": "csv",
+            "CSVtitle": dataTitle,
+            "CSV_show": dataTab,
             "csrfToken": req.csrfToken()
         }
         res.render('./Templates/AdminDashboard/CSVmanagement/csvmanagement.html.twig', { ...templateVars })

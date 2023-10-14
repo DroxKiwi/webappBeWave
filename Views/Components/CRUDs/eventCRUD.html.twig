@@ -15,8 +15,7 @@ Ajouter
     <th scope="col">images</th>
     <th scope="col">artists</th>
     <th scope="col">places</th>
-    <th scope="col">médias</th>
-    <th scope="col">display_map</th>
+    <th scope="col">validated</th>
     <th scope="col">start_date</th>
     <th scope="col">end_date</th>
     <th scope="col">price</th>
@@ -36,7 +35,7 @@ Ajouter
             {% if ei.event_id == event.event_id %}
             {% for image in images %}
                 {% if image.image_id == ei.image_id %}
-                <img src="/Uploads/{{image.name ~ image.extension}}" alt="img" style="height: 100px; width: 100px;" />
+                <img src="data:{{ image.imageType }};base64,{{ image.data }}" alt="img" style="height: 100px; width: 100px;" />
                 {% endif %}
             {% endfor %}
             {% endif %}
@@ -64,18 +63,7 @@ Ajouter
             {% endif %}
         {% endfor %}
         </td>
-        <td>
-        {% for eem in events_external_medias %}
-            {% if eem.event_id == event.event_id %}
-            {% for external_media in external_medias %}
-                {% if external_media.external_media_id == eem.external_media_id %}
-                {{ external_media.url }}
-                {% endif %}
-            {% endfor %}
-            {% endif %}
-        {% endfor %}
-        </td>
-        <td>{{ event.display_map }}</td>
+        <td>{{ event.validated }}</td>
         <td>{{ event.start_date }}</td>
         <td>{{ event.end_date }}</td>
         <td>{{ event.price }}</td>
@@ -98,11 +86,10 @@ Ajouter
 <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Event</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-    <button type"button" id="test" class="btn btn-secondary" onclick="add(event)">test</button>
 
         <form action="/addEvent" method="post">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
@@ -113,7 +100,7 @@ Ajouter
         <select class="form-control">
             <option selected="selected" value="NULL" id="optionImage">Ajouter des images</option>
             {% for image in images %}
-            <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="{{ '/Uploads/' ~ image.name ~ image.extension }}">{{ image.name }}</option>
+            <option value="{{ image.image_id }}" name="optionImage" onclick="add(event)" id="data:{{ image.imageType }};base64,{{ image.data }}">{{ image.name }}</option>
             {% endfor %}
         </select>
         <div id="addedimages">
@@ -140,21 +127,11 @@ Ajouter
         </div>
         <input type="hidden" value="" name="places" id="places"/>
 
-        <select class="form-control">
-            <option selected="selected" value="NULL" id="optionExternal_media">Ajouter des médias externes (laissez si aucun)</option>
-            {% for external_media in external_medias %}
-            <option value="{{ external_media.external_media_id }}" name="optionExternal_media" onclick="add(event)" id="{{ external_media.url }}">{{ external_media.url }}</option>
-            {% endfor %}
-        </select>
-        <div id="addedexternal_medias">
-        </div>
-        <input type="hidden" value="" name="external_medias" id="external_medias"/>
-
-        <label for="display_map" style="color: black;">sur la map ?</label>
-        <input type="checkbox" id="display_map" name="display_map">
+        <label for="validated" style="color: black;">validé ?</label>
+        <input type="checkbox" id="validated" name="validated">
         <input type="date" class="form-control" id="start_date" name="start_date" placeholder="date de début" required="true">
-        <input type="date" class="form-control" id="end_date" name="end_date" placeholder="date de fin" required="true">
-        <input type="number" class="form-control" id="price" name="price" placeholder="prix" required="true">
+        <input type="date" class="form-control" id="end_date" name="end_date" placeholder="date de fin">
+        <input type="number" class="form-control" id="price" name="price" placeholder="prix">
         <button type="submit" class="btn btn-outline-info">Valider</button>
         </form>
     </div>
